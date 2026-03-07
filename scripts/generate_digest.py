@@ -367,6 +367,8 @@ def build_html(digest: dict, generated_at: datetime, article_count: dict) -> str
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="المنتقي"/>
   <meta name="theme-color" content="#0a0a0a" id="theme-meta"/>
+  <link rel="apple-touch-icon" href="icon-180.png"/>
+  <link rel="manifest" href="manifest.json"/>
   <title>المنتقي السيادي للأخبار</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
