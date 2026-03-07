@@ -1,232 +1,793 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="المنتقي السيادي" />
-  <meta name="theme-color" content="#0a0a0a" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="المنتقي"/>
+  <meta name="theme-color" content="#0a0a0a" id="theme-meta"/>
   <title>المنتقي السيادي للأخبار</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
-      background: #0a0a0a;
-      color: #e4e4e7;
-      min-height: 100vh;
-      padding: 0 0 60px;
-      -webkit-font-smoothing: antialiased;
-      direction: rtl;
+    :root{
+      --bg:#0a0a0a;--bg2:#111113;--bg3:#18181b;
+      --bd:#27272a;--bd2:#1f1f23;
+      --t1:#f4f4f5;--t2:#a1a1aa;--t3:#52525b;
+      --blue:#3b82f6;--blue-d:#1d3b6e;
+      --green:#10b981;--green-d:#064e3b;
+      --amber:#f59e0b;--amber-d:#292203;
+      --r:12px;
+    }
+    .light{
+      --bg:#f4f4f5;--bg2:#fff;--bg3:#e4e4e7;
+      --bd:#d4d4d8;--bd2:#e4e4e7;
+      --t1:#09090b;--t2:#52525b;--t3:#a1a1aa;
+      --blue-d:#dbeafe;--green-d:#d1fae5;--amber-d:#fef3c7;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:'Cairo','Segoe UI',Tahoma,Arial,sans-serif;
+      background:var(--bg);color:var(--t1);
+      min-height:100vh;direction:rtl;
+      -webkit-font-smoothing:antialiased;
+      transition:background .2s,color .2s;
     }
 
-    /* ── Header ── */
-    .header {
-      padding: 48px 20px 0;
-      max-width: 680px;
-      margin: 0 auto;
+    /* ── HEADER ── */
+    .hdr{
+      position:sticky;top:0;z-index:100;
+      background:var(--bg);border-bottom:1px solid var(--bd2);
+      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
     }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      color: #52525b;
-      margin-bottom: 12px;
+    .hdr-top{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 16px 0;max-width:700px;margin:0 auto;
     }
-    .badge-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #34d399;
-      animation: pulse 2s ease-in-out infinite;
+    .app-name{font-size:17px;font-weight:800;color:var(--t1);line-height:1}
+    .hdr-meta{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t3);margin-top:3px}
+    .dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+    .icon-btn{
+      background:var(--bg3);border:1px solid var(--bd);color:var(--t2);
+      border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer;
+      font-family:inherit;transition:all .15s;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-    h1.app-title {
-      font-size: clamp(22px, 5vw, 28px);
-      font-weight: 700;
-      color: #fafafa;
-      line-height: 1.3;
-    }
-    .app-subtitle {
-      color: #71717a;
-      font-size: 13px;
-      margin-top: 6px;
-    }
+    .icon-btn:hover{color:var(--t1);border-color:var(--t2)}
 
-    /* ── Meta bar ── */
-    .meta-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
-      max-width: 680px;
-      margin: 24px auto 12px;
-      padding: 0 20px;
-      font-size: 11px;
-      color: #52525b;
+    /* ── TABS ── */
+    .tabs{display:flex;gap:6px;padding:8px 16px;max-width:700px;margin:0 auto}
+    .tab{
+      flex:1;padding:8px;border-radius:8px;border:1px solid var(--bd);
+      background:transparent;color:var(--t2);font-family:inherit;
+      font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;
     }
-    .meta-bar span { color: #71717a; }
+    .tab.on{background:var(--blue);border-color:var(--blue);color:#fff}
+    .tab.on.local{background:var(--green);border-color:var(--green)}
 
-    /* ── Card ── */
-    .card {
-      background: #111113;
-      border: 1px solid #1f1f23;
-      border-radius: 16px;
-      padding: 28px 24px;
-      max-width: 680px;
-      margin: 0 20px;
-    }
-    @media (min-width: 720px) {
-      .card {
-        margin: 0 auto;
-        padding: 36px 40px;
-      }
-    }
+    /* ── CONTENT ── */
+    .main{max-width:700px;margin:0 auto;padding:12px 16px 80px}
 
-    /* ── Digest content ── */
-    .digest h1 {
-      font-size: 18px;
-      font-weight: 700;
-      color: #fafafa;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #27272a;
-      margin-bottom: 24px;
+    /* ── DIGEST META ── */
+    .dmeta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .dmeta-txt{font-size:12px;color:var(--t3)}
+    .copy-btn{
+      font-size:11px;padding:5px 10px;background:var(--bg3);
+      border:1px solid var(--bd);color:var(--t2);border-radius:6px;
+      cursor:pointer;font-family:inherit;transition:all .15s;
     }
-    .digest h2 {
-      font-size: 13px;
-      font-weight: 600;
-      color: #60a5fa;
-      margin: 32px 0 16px;
-    }
-    .digest ul {
-      list-style: none;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .digest li {
-      font-size: 15px;
-      line-height: 1.9;
-      color: #d4d4d8;
-      padding-right: 14px;
-      border-right: 2px solid #27272a;
-    }
-    .digest li ul {
-      margin-top: 8px;
-      gap: 4px;
-    }
-    .digest li ul li {
-      font-size: 13px;
-      color: #71717a;
-      border-right: none;
-      padding-right: 0;
-    }
-    .digest strong { color: #fafafa; font-weight: 600; }
-    .digest em { color: #71717a; font-size: 13px; }
-    .digest hr {
-      border: none;
-      border-top: 1px solid #1f1f23;
-      margin: 32px 0;
-    }
-    .digest p {
-      font-size: 12px;
-      color: #3f3f46;
-      text-align: center;
-      margin-top: 24px;
-    }
+    .copy-btn:hover{color:var(--t1)}
 
-    /* ── Footer ── */
-    .footer {
-      text-align: center;
-      margin-top: 24px;
-      font-size: 11px;
-      color: #3f3f46;
-      padding: 0 20px;
+    /* ── TOC ── */
+    .toc-wrap{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+    .toc-toggle{
+      width:100%;background:none;border:none;padding:12px 16px;
+      display:flex;align-items:center;justify-content:space-between;
+      font-family:inherit;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;
     }
-    .footer a {
-      color: #52525b;
-      text-decoration: none;
+    .toc-body{padding:0 16px 12px;display:none}
+    .toc-body.open{display:block}
+    .toc-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin:10px 0 4px}
+    .toc-item{
+      display:block;font-size:13px;color:var(--t2);padding:5px 0;
+      text-decoration:none;border-bottom:1px solid var(--bd2);
+      transition:color .1s;cursor:pointer;
     }
-    .footer a:hover { color: #71717a; }
+    .toc-item:hover{color:var(--blue)}
+    .toc-item:last-child{border:none}
+
+    /* ── FILTERS ── */
+    .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+    .flt-btn{
+      padding:5px 12px;border-radius:20px;border:1px solid var(--bd);
+      background:transparent;color:var(--t2);font-size:12px;
+      font-family:inherit;cursor:pointer;transition:all .15s;
+    }
+    .flt-btn.active{background:var(--blue);border-color:var(--blue);color:#fff}
+
+    /* ── SECTION ── */
+    .sec{display:none}.sec.on{display:block}
+    .sec-hdr{display:flex;align-items:center;gap:8px;margin:16px 0 10px}
+    .sec-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .sec-dot.g{background:var(--blue)}.sec-dot.l{background:var(--green)}
+    .sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t2)}
+    .sec-count{font-size:11px;color:var(--t3);margin-right:auto}
+
+    /* ── STORY CARD ── */
+    .story-card{
+      background:var(--bg2);border:1px solid var(--bd2);
+      border-radius:var(--r);margin-bottom:8px;overflow:hidden;
+      transition:border-color .15s,opacity .3s;
+    }
+    .story-card.read{opacity:.55}
+    .story-card[hidden]{display:none!important}
+
+    .story-hdr{
+      padding:14px 16px;cursor:pointer;position:relative;
+      user-select:none;-webkit-user-select:none;
+    }
+    .story-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+    .story-num{font-size:11px;color:var(--t3);font-weight:700}
+    .cat-tag{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--blue-d);color:var(--blue);font-weight:600}
+    .badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+    .badge-hot{background:var(--amber-d);color:var(--amber)}
+    .badge-dev{background:var(--green-d);color:var(--green)}
+    .story-title{font-size:15px;font-weight:700;color:var(--t1);line-height:1.55;margin-bottom:8px;padding-left:22px}
+    .src-pills{display:flex;flex-wrap:wrap;gap:4px}
+    .src-pill{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--t3);border:1px solid var(--bd)}
+    .expand-icon{position:absolute;left:14px;top:14px;font-size:20px;color:var(--t3);font-weight:300;transition:transform .2s;line-height:1}
+    .story-hdr.open .expand-icon{transform:rotate(45deg)}
+
+    /* ── STORY BODY ── */
+    .story-body{padding:0 16px 14px;border-top:1px solid var(--bd2)}
+    .story-context{
+      font-size:12px;color:var(--green);background:var(--green-d);
+      padding:8px 12px;border-radius:8px;margin:12px 0 10px;line-height:1.7;
+    }
+    .story-summary{font-size:14px;line-height:2;color:var(--t1);margin:12px 0 10px}
+
+    /* ── SPIN ── */
+    .spin-wrap{margin:8px 0}
+    .spin-btn{
+      font-size:12px;padding:6px 14px;background:transparent;
+      border:1px solid var(--amber);color:var(--amber);border-radius:6px;
+      cursor:pointer;font-family:inherit;font-weight:600;transition:all .15s;
+    }
+    .spin-btn.open{background:var(--amber-d)}
+    .spin-body{
+      margin-top:8px;padding:10px 12px;background:var(--amber-d);
+      border:1px solid var(--amber);border-radius:8px;
+      font-size:13px;color:var(--t1);line-height:1.8;
+    }
+    .spin-label{color:var(--amber);font-weight:700}
+
+    /* ── ACTIONS ── */
+    .story-actions{display:flex;gap:8px;margin-top:12px}
+    .share-btn{
+      font-size:12px;padding:6px 14px;background:var(--bg3);
+      border:1px solid var(--bd);color:var(--t2);border-radius:6px;
+      cursor:pointer;font-family:inherit;transition:all .15s;
+    }
+    .share-btn:hover{color:var(--t1)}
+
+    /* ── EMPTY ── */
+    .empty-state{text-align:center;color:var(--t3);font-size:14px;padding:40px 20px}
+
+    /* ── SCROLL TOP ── */
+    #go-top{
+      position:fixed;bottom:24px;left:16px;
+      width:40px;height:40px;border-radius:50%;
+      background:var(--bg3);border:1px solid var(--bd);
+      color:var(--t2);font-size:18px;cursor:pointer;
+      display:none;align-items:center;justify-content:center;
+      z-index:50;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:all .15s;
+    }
+    #go-top:hover{color:var(--t1)}
+    #go-top.on{display:flex}
+
+    /* ── FOOTER ── */
+    footer{
+      text-align:center;font-size:11px;color:var(--t3);
+      padding:20px 16px 40px;max-width:700px;margin:0 auto;
+    }
+    footer a{color:var(--t3);text-decoration:none}
+    footer a:hover{color:var(--t2)}
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="badge">
-      <span class="badge-dot"></span>
-      درع الحماية المعرفية
+<header class="hdr">
+  <div class="hdr-top">
+    <div>
+      <div class="app-name">المنتقي السيادي</div>
+      <div class="hdr-meta">
+        <span class="dot" id="fresh-dot"></span>
+        <span id="rel-time">...</span>
+        &nbsp;·&nbsp;
+        وقت القراءة: ٧ دقائق
+      </div>
     </div>
-    <h1 class="app-title">المنتقي السيادي للأخبار</h1>
-    <p class="app-subtitle">منزوع الإثارة · مزال التكرار · محمي من التلاعب</p>
+    <button class="icon-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+  </div>
+  <div class="tabs">
+    <button class="tab on"     onclick="switchTab('g',this)">عالمي (١٢)</button>
+    <button class="tab local"  onclick="switchTab('l',this)">السعودية (٦)</button>
+  </div>
+</header>
+
+<div class="main">
+
+  <div class="dmeta">
+    <span class="dmeta-txt">٥٥ مقال · 08/03/2026 · 01:55 AM</span>
+    <button class="copy-btn" id="copy-btn" onclick="copyHeadlines()">نسخ العناوين</button>
   </div>
 
-  <div class="meta-bar">
-    <span>Sunday, March 8, 2026 · 1:22 AM (AST)</span>
-    <span>تمت معالجة 55 مقالاً</span>
-  </div>
-
-  <div class="card">
-    <div class="digest">
-      <h1>الملخص السيادي اليومي</h1>
-<h2>المشهد الأول: الأخبار العالمية</h2>
-<ul>
-<li><strong>التصعيد العسكري بين إيران والولايات المتحدة وإسرائيل:</strong> دخل الصراع أسبوعه الثاني مع تبادل قصف جوي ومسيرات بين الأطراف الثلاثة في منطقة الخليج والعراق. أسفرت الهجمات الإيرانية عن أضرار موثقة في قواعد عسكرية أميركية وإسرائيلية، وقتل ستة جنود أميركيين على الأقل حتى الآن. أعلن الرئيس الإيراني اعتذاره للدول المجاورة لكن الهجمات استمرت رغم ذلك.</li>
-<li>
-<p><em>التلاعب الإعلامي:</em> وسائل إعلامية غربية ركزت على "الدفاع الإسرائيلي" بينما وسائل أخرى أطّرت الأمر كـ"حرب أميركية إسرائيلية على إيران"؛ وسائل إيرانية صورت الهجمات كـ"رد دفاعي" بينما وسائل الخليج أبرزت التهديد الذي تعرضت له أراضيها.</p>
-</li>
-<li>
-<p><strong>الآثار الإنسانية في لبنان:</strong> عملية عسكرية إسرائيلية في قرية لبنانية أسفرت عن مقتل 41 شخصاً و40 مصاباً وفقاً لوزارة الصحة اللبنانية. في السياق ذاته، نزح حوالي 454,000 لبناني وسعت السلطات المحلية لفتح مراكز إيواء. قصف إسرائيلي استهدف مناطق في جنوب لبنان وضواحي بيروت مما أدى لخسائر بشرية إضافية.</p>
-</li>
-<li>
-<p><em>التلاعب الإعلامي:</em> وسائل غربية وصفت العملية بـ"البحث عن بقايا" بينما وسائل عربية ركزت على "الغزو والقتل"؛ تباين واضح في درجة تعاطف التغطية.</p>
-</li>
-<li>
-<p><strong>موقف دول الخليج:</strong> السعودية حذرت إيران من مواصلة الهجمات على أراضيها وقطاعها الطاقوي وأشارت لإمكانية الرد في المقابل. الإمارات تعرضت لانفجارات موثقة وأعلن الرئيس الإماراتي عزم بلاده الخروج من الأزمة أقوى. بقية دول الخليج واجهت تهديداً من الطائرات بدون طيار والصواريخ الإيرانية.</p>
-</li>
-<li>
-<p><em>التلاعب الإعلامي:</em> تغطية متحفظة من وسائل خليجية حول موقفها الدبلوماسي؛ وسائل غربية ركزت على "ضعف الرد الدفاعي" الخليجي.</p>
-</li>
-<li>
-<p><strong>الآثار الثانوية: أوكرانيا:</strong> استمرت الضربات الروسية على مدن أوكرانية بما فيها خاركيف (ثاني أكبر مدينة) مما أسفر عن 10 قتلى على الأقل. عرضت أوكرانيا مساعدتها للدول الخليجية في الدفاع ضد الطائرات بدون طيار الإيرانية لكن الخبراء الأوكرانيين عالقون في بلادهم.</p>
-</li>
-<li>
-<p><em>التلاعب الإعلامي:</em> وسائل غربية ربطت بين الصراعين كـ"تأثيرات عالمية" للتوتر الإقليمي؛ وسائل روسية تجاهلت الموضوع فعلياً.</p>
-</li>
-<li>
-<p><strong>الكوارث الطبيعية:</strong> أعاصير في ولايات أميركية (ميشيغان وأوكلاهوما) أسفرت عن 6 قتلى على الأقل. لا تلاعب إعلامي واضح حول هذا الخبر.</p>
-</li>
-<li>
-<p><em>التلاعب الإعلامي:</em> لا يوجد؛ الخبر موثق بشكل مباشر.</p>
-</li>
-<li>
-<p><strong>موضوعات ثانوية متنوعة:</strong> إيطاليا حققت فوزاً تاريخياً على إنجلترا في دوري الأمم الأوروبية للرجبي (23-18). دواء خسارة الوزن (سيماجلوتيد) قد يمكن إنتاجه بـ 3 دولارات شهرياً مما قد يفيد الدول الفقيرة. قادة زيمبابويين يطالبون بإعادة جماجم أسلافهم من المتاحف البريطانية. تعاملت بريطانيا العظمى مع تحذيرات إيرانية بشأن الانضمام للحرب.</p>
-</li>
-<li><em>التلاعب الإعلامي:</em> أخبار منخفضة الدرامية؛ تغطية معتدلة.</li>
-</ul>
-<hr />
-<h2>المشهد الثاني: أخبار المملكة العربية السعودية</h2>
-<p>لا أستطيع حالياً تحديد توافق حقيقي لهذه الفئة اليوم.</p>
-<p><strong>السبب:</strong> المقالات المقدمة تحت عنوان "أخبار السعودية" تتضمن أخباراً إقليمية وعالمية عريضة (إيران، لبنان، أوكرانيا، سريلانكا)، وليست متخصصة بسياسة أو أحداث داخل المملكة السعودية نفسها. الأخبار المحلية الوحيدة الموثقة هي:
-- تحذير السعودية لإيران بشأن الهجمات المستقبلة (متضمن في الأخبار العالمية أعلاه).</p>
-<hr />
-<p><em>انتهى البث. أنت الآن مطّلع.</em></p>
+  <!-- Table of Contents -->
+  <div class="toc-wrap">
+    <button class="toc-toggle" onclick="toggleToc(this)">
+      <span>فهرس القصص</span><span id="toc-arrow">▾</span>
+    </button>
+    <div class="toc-body" id="toc-body">
+      <p class="toc-label">الأخبار العالمية</p>
+<a class="toc-item" data-section="global" data-index="0" onclick="jumpToStory(this);return false;" href="#">#١ الحرب الأمريكية الإسرائيلية الإيرانية تدخل أسبوعها الثاني وسط تصاعد الضربات وارتفاع أعداد القتلى</a>
+<a class="toc-item" data-section="global" data-index="1" onclick="jumpToStory(this);return false;" href="#">#٢ إيران تواصل ضرب دول الخليج رغم اعتذار الرئيس بزشكيان عن الهجمات</a>
+<a class="toc-item" data-section="global" data-index="2" onclick="jumpToStory(this);return false;" href="#">#٣ الحرس الثوري الإيراني يستهدف مجموعات كردية في كردستان العراق وترامب يرفض توسيع الحرب</a>
+<a class="toc-item" data-section="global" data-index="3" onclick="jumpToStory(this);return false;" href="#">#٤ العملية الإسرائيلية في لبنان تُخلّف عشرات القتلى والمصابين</a>
+<a class="toc-item" data-section="global" data-index="4" onclick="jumpToStory(this);return false;" href="#">#٥ النازحون في لبنان يتجاوزون 454 ألف شخص وسط تواصل الضربات</a>
+<a class="toc-item" data-section="global" data-index="5" onclick="jumpToStory(this);return false;" href="#">#٦ بريطانيا تعزز استعدادات حاملة الطائرات &#x27;برنس أوف ويلز&#x27; للنشر المحتمل في الشرق الأوسط</a>
+<a class="toc-item" data-section="global" data-index="6" onclick="jumpToStory(this);return false;" href="#">#٧ الروبوتات المسلحة تدخل ساحة المعركة في أوكرانيا</a>
+<a class="toc-item" data-section="global" data-index="7" onclick="jumpToStory(this);return false;" href="#">#٨ ضربات روسية تقتل عشرة أشخاص في خاركيف الأوكرانية</a>
+<a class="toc-item" data-section="global" data-index="8" onclick="jumpToStory(this);return false;" href="#">#٩ عواصف وتورنادو تقتل ستة أشخاص في ميشيغان وأوكلاهوما الأمريكيتين</a>
+<a class="toc-item" data-section="global" data-index="9" onclick="jumpToStory(this);return false;" href="#">#١٠ دراسة: إمكانية إنتاج حقن إنقاص الوزن سيماغلوتايد بثلاثة دولارات شهرياً</a>
+<a class="toc-item" data-section="global" data-index="10" onclick="jumpToStory(this);return false;" href="#">#١١ جنوب أفريقيا تنتقد سياسة ترامب في منح اللجوء للأفارينر البيض</a>
+<a class="toc-item" data-section="global" data-index="11" onclick="jumpToStory(this);return false;" href="#">#١٢ ترامب يطلق تحالف &#x27;درع الأمريكيتين&#x27; مع قادة أمريكا اللاتينية</a>
+<p class="toc-label">أخبار المملكة</p>
+<a class="toc-item" data-section="local" data-index="0" onclick="jumpToStory(this);return false;" href="#">#١ السعودية تحذّر إيران من تداعيات مواصلة الهجمات على أراضيها وقطاع طاقتها</a>
+<a class="toc-item" data-section="local" data-index="1" onclick="jumpToStory(this);return false;" href="#">#٢ زيلينسكي يبحث مع ولي العهد السعودي الأزمة الإيرانية وتبادل الخبرات في مواجهة الطائرات المسيّرة</a>
+<a class="toc-item" data-section="local" data-index="2" onclick="jumpToStory(this);return false;" href="#">#٣ لبنان يرفض الارتباط بمصالح إيران وسط التصعيد الإقليمي</a>
+<a class="toc-item" data-section="local" data-index="3" onclick="jumpToStory(this);return false;" href="#">#٤ ضربة تستهدف قاعدة للحشد الشعبي العراقي قرب الموصل</a>
+<a class="toc-item" data-section="local" data-index="4" onclick="jumpToStory(this);return false;" href="#">#٥ سريلانكا تتعهد بمعاملة بحارة إيرانيين وفق القانون الدولي رغم الضغوط الأمريكية</a>
+<a class="toc-item" data-section="local" data-index="5" onclick="jumpToStory(this);return false;" href="#">#٦ العراق يجد نفسه في دوامة الصراع رغم رفض الانجرار إليه</a>
     </div>
   </div>
 
-  <div class="footer" style="margin-top: 20px;">
-    التحديث القادم: غداً الساعة 9:00 صباحاً (بتوقيت السعودية)
-    &nbsp;·&nbsp;
-    <a href="https://github.com/HotSalsa10/Sovereign-News-Curator/actions" target="_blank">تشغيل يدوي ↗</a>
+  <!-- Category Filters -->
+  <div class="filters"><button class="flt-btn active" data-cat="all" onclick="filterCat(this)">الكل</button><button class="flt-btn" data-cat="أمن" onclick="filterCat(this)">أمن</button><button class="flt-btn" data-cat="بيئة" onclick="filterCat(this)">بيئة</button><button class="flt-btn" data-cat="تقنية" onclick="filterCat(this)">تقنية</button><button class="flt-btn" data-cat="سياسة" onclick="filterCat(this)">سياسة</button><button class="flt-btn" data-cat="صحة" onclick="filterCat(this)">صحة</button><button class="flt-btn" data-cat="مجتمع" onclick="filterCat(this)">مجتمع</button></div>
+
+  <!-- Global Section -->
+  <div class="sec on" id="sec-g">
+    <div class="sec-hdr">
+      <span class="sec-dot g"></span>
+      <span class="sec-title">الأخبار العالمية</span>
+      <span class="sec-count">١٢ قصة</span>
+    </div>
+    
+<div class="story-card" data-cat="أمن" data-headline="الحرب الأمريكية الإسرائيلية الإيرانية تدخل أسبوعها الثاني وسط تصاعد الضربات وارتفاع أعداد القتلى" data-summary="دخل النزاع العسكري بين الولايات المتحدة وإسرائيل من جهة وإيران من جهة أخرى أسبوعه الثاني، وسط تبادل مستمر للضربات الصاروخية والطائرات المسيّرة عبر منط">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#١</span>
+      <span class="cat-tag">أمن</span>
+      <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">الحرب الأمريكية الإسرائيلية الإيرانية تدخل أسبوعها الثاني وسط تصاعد الضربات وارتفاع أعداد القتلى</h3>
+    <div class="src-pills"><span class="src-pill">NPR World</span><span class="src-pill">Al Jazeera English</span><span class="src-pill">Sky News World</span><span class="src-pill">France 24 English</span><span class="src-pill">BBC World News</span><span class="src-pill">Al-Monitor</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">الحرب بين إيران وأمريكا وإسرائيل اندلعت قبل أسبوع وشهدت توسعاً إقليمياً متسارعاً مع استهداف إيران لدول خليجية عدة وقواعد أمريكية في المنطقة.</div>
+    <p class="story-summary">دخل النزاع العسكري بين الولايات المتحدة وإسرائيل من جهة وإيران من جهة أخرى أسبوعه الثاني، وسط تبادل مستمر للضربات الصاروخية والطائرات المسيّرة عبر منطقة الشرق الأوسط. حضر الرئيس ترامب مراسم استقبال رفات ستة جنود أمريكيين قُتلوا في ضربة إيرانية بالطائرات المسيّرة في قاعدة دوفر الجوية. وأكد المركزي الأمريكي نفيه التام لادعاءات إيرانية بأسر جنود أمريكيين.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>وصفت وسائل الإعلام الغربية الحرب بأنها باتت &#x27;عالمية وفوضوية&#x27;، بينما ركّزت وسائل الإعلام المقرّبة من إيران على حق الدفاع عن النفس ومحاولة تصوير الحرس الثوري على أنه يستهدف &#x27;جماعات انفصالية&#x27; فحسب.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="أمن" data-headline="إيران تواصل ضرب دول الخليج رغم اعتذار الرئيس بزشكيان عن الهجمات" data-summary="اعتذر الرئيس الإيراني مسعود بزشكيان عن الهجمات التي طالت الدول المجاورة، إلا أن الضربات الإيرانية تواصلت على الإمارات والبحرين وقطر. استهدف الحرس الثو">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٢</span>
+      <span class="cat-tag">أمن</span>
+      <span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">إيران تواصل ضرب دول الخليج رغم اعتذار الرئيس بزشكيان عن الهجمات</h3>
+    <div class="src-pills"><span class="src-pill">France 24 English</span><span class="src-pill">NPR World</span><span class="src-pill">Al Jazeera English</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">الإمارات تلقّت النصيب الأكبر من الضربات الإيرانية في المنطقة منذ اندلاع الحرب قبل أسبوع.</div>
+    <p class="story-summary">اعتذر الرئيس الإيراني مسعود بزشكيان عن الهجمات التي طالت الدول المجاورة، إلا أن الضربات الإيرانية تواصلت على الإمارات والبحرين وقطر. استهدف الحرس الثوري الإيراني قاعدة الدعم البحري الأمريكية في البحرين، وأُفيد بسماع انفجارات فوق دبي والدوحة. أكد رئيس الإمارات أن بلاده ستخرج أقوى من هذه الأزمة.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>صوّرت بعض وسائل الإعلام اعتذار بزشكيان على أنه خطوة دبلوماسية، في حين اعتبرته وسائل أخرى مجرد استعراض لا قيمة له في ظل استمرار الضربات الفعلية.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="أمن" data-headline="الحرس الثوري الإيراني يستهدف مجموعات كردية في كردستان العراق وترامب يرفض توسيع الحرب" data-summary="أعلن الحرس الثوري الإيراني استهداف ما وصفه بـ&#x27;الجماعات الانفصالية&#x27; في إقليم كردستان العراق، في ظل تقارير تتحدث عن تشكيل قوات كردية مسلحة يُحتمل أن تُد">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٣</span>
+      <span class="cat-tag">أمن</span>
+      <span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">الحرس الثوري الإيراني يستهدف مجموعات كردية في كردستان العراق وترامب يرفض توسيع الحرب</h3>
+    <div class="src-pills"><span class="src-pill">France 24 English</span><span class="src-pill">Middle East Eye</span><span class="src-pill">Al-Monitor</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">الحرس الثوري الإيراني استهدف مجموعات كردية في كردستان العراق منذ الأيام الأولى للحرب.</div>
+    <p class="story-summary">أعلن الحرس الثوري الإيراني استهداف ما وصفه بـ&#x27;الجماعات الانفصالية&#x27; في إقليم كردستان العراق، في ظل تقارير تتحدث عن تشكيل قوات كردية مسلحة يُحتمل أن تُدخَل إلى الأراضي الإيرانية. قال الرئيس ترامب على متن طائرة إير فورس ون إنه لا يريد أن يشنّ الأكراد هجوماً على إيران حتى لا تتعقّد الحرب أكثر. وأشارت تقارير إلى أن إسرائيل تدعم الخطط الكردية لضم مناطق حدودية.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>ركّزت وسائل الإعلام الغربية على تصريح ترامب الرافض للهجوم الكردي بوصفه محاولة لضبط النطاق الجغرافي للحرب، بينما أبرزت وسائل أخرى الدور الإسرائيلي المزعوم في دعم الفصائل الكردية.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="أمن" data-headline="العملية الإسرائيلية في لبنان تُخلّف عشرات القتلى والمصابين" data-summary="شنّت قوات خاصة إسرائيلية عملية ليلية في قرية لبنانية بهدف البحث عن رفات طيار إسرائيلي اختفى قبل أربعين عاماً، ما أسفر عن مقتل 41 شخصاً وإصابة 40 آخرين">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٤</span>
+      <span class="cat-tag">أمن</span>
+      <span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">العملية الإسرائيلية في لبنان تُخلّف عشرات القتلى والمصابين</h3>
+    <div class="src-pills"><span class="src-pill">BBC World News</span><span class="src-pill">Sky News World</span><span class="src-pill">Middle East Eye</span><span class="src-pill">Asharq Al-Awsat</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">إسرائيل شنّت عملية خاصة في لبنان في الأسبوع الماضي أسفرت عن 41 قتيلاً، وتتواصل الضربات الجوية على جنوب لبنان والضاحية.</div>
+    <p class="story-summary">شنّت قوات خاصة إسرائيلية عملية ليلية في قرية لبنانية بهدف البحث عن رفات طيار إسرائيلي اختفى قبل أربعين عاماً، ما أسفر عن مقتل 41 شخصاً وإصابة 40 آخرين وفق وزارة الصحة اللبنانية. ونفّذ الجيش الإسرائيلي أيضاً ضربات جوية استهدفت أكثر من 20 بلدة وقرية في جنوب لبنان أسفرت عن ثمانية قتلى على الأقل. وطالب الجيش الإسرائيلي السكان المتبقين في الضاحية الجنوبية لبيروت بالإخلاء الفوري.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>وصفت وسائل الإعلام الإسرائيلية العملية بأنها مهمة إنسانية لاسترداد رفات جندي، في حين ركّزت وسائل الإعلام اللبنانية وعدد من المنافذ الدولية على الخسائر البشرية الكبيرة في صفوف المدنيين.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="مجتمع" data-headline="النازحون في لبنان يتجاوزون 454 ألف شخص وسط تواصل الضربات" data-summary="أعلنت وزيرة الشؤون الاجتماعية اللبنانية أن نحو 454 ألف لبناني سجّلوا أنفسهم نازحين جراء الضربات الإسرائيلية المتواصلة. وجرى افتتاح ملجأ جديد في مدينة ">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٥</span>
+      <span class="cat-tag">مجتمع</span>
+      <span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">النازحون في لبنان يتجاوزون 454 ألف شخص وسط تواصل الضربات</h3>
+    <div class="src-pills"><span class="src-pill">Middle East Eye</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">لبنان يرفض ربط مصيره بمصالح إيران وسط التصعيد الإقليمي المتواصل منذ الأسبوع الماضي.</div>
+    <p class="story-summary">أعلنت وزيرة الشؤون الاجتماعية اللبنانية أن نحو 454 ألف لبناني سجّلوا أنفسهم نازحين جراء الضربات الإسرائيلية المتواصلة. وجرى افتتاح ملجأ جديد في مدينة الرياضة ببيروت لاستيعاب الأسر النازحة. ويستمر التصعيد الإسرائيلي على جنوب لبنان والضاحية الجنوبية لبيروت.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>أبرزت وسائل الإعلام العربية الأعداد الكبيرة للنازحين والأثر الإنساني، في حين تناولت وسائل الإعلام الإسرائيلية العمليات العسكرية من منظور أمني.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="أمن" data-headline="بريطانيا تعزز استعدادات حاملة الطائرات &#x27;برنس أوف ويلز&#x27; للنشر المحتمل في الشرق الأوسط" data-summary="كشفت وزارة الدفاع البريطانية أنها ترفع مستوى جاهزية حاملة الطائرات HMS Prince of Wales لتقليص الوقت اللازم لنشرها في منطقة الشرق الأوسط. وحذّر السفير ">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٦</span>
+      <span class="cat-tag">أمن</span>
+      <span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">بريطانيا تعزز استعدادات حاملة الطائرات &#x27;برنس أوف ويلز&#x27; للنشر المحتمل في الشرق الأوسط</h3>
+    <div class="src-pills"><span class="src-pill">The Independent World</span><span class="src-pill">BBC World News</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">العلاقات الأمريكية البريطانية تتعرض لضغوط متزايدة إزاء مستوى الانخراط البريطاني في الحرب مع إيران.</div>
+    <p class="story-summary">كشفت وزارة الدفاع البريطانية أنها ترفع مستوى جاهزية حاملة الطائرات HMS Prince of Wales لتقليص الوقت اللازم لنشرها في منطقة الشرق الأوسط. وحذّر السفير الإيراني لدى لندن المملكة المتحدة من التورط المباشر في الحرب، مؤكداً حق إيران في الدفاع عن النفس. وكشف ترامب لرئيس الوزراء ستارمر أن أمريكا &#x27;لا تحتاج لمن ينضم بعد أن نكون قد فزنا&#x27;.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>قدّمت وسائل الإعلام البريطانية الخطوة باعتبارها تحسباً دفاعياً احترازياً، في حين رأى فيها المنتقدون تصعيداً للتدخل الغربي في الصراع.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="تقنية" data-headline="الروبوتات المسلحة تدخل ساحة المعركة في أوكرانيا" data-summary="أطلقت أوكرانيا برنامجاً لنشر روبوتات مسلحة في مواجهة القوات الروسية على خط الجبهة. ويأتي هذا التطور في سياق البحث عن وسائل غير تقليدية لتعزيز القدرات ">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٧</span>
+      <span class="cat-tag">تقنية</span>
+      
+    </div>
+    <h3 class="story-title">الروبوتات المسلحة تدخل ساحة المعركة في أوكرانيا</h3>
+    <div class="src-pills"><span class="src-pill">BBC World News</span><span class="src-pill">DW World</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    
+    <p class="story-summary">أطلقت أوكرانيا برنامجاً لنشر روبوتات مسلحة في مواجهة القوات الروسية على خط الجبهة. ويأتي هذا التطور في سياق البحث عن وسائل غير تقليدية لتعزيز القدرات القتالية. وتتواصل مباحثات دبلوماسية بشأن تبادل خبرات أوكرانيا في التصدي للطائرات المسيّرة الإيرانية مع دول الخليج.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>ركّزت وسائل الإعلام الغربية على الجانب التقني والابتكاري لهذه الخطوة، بينما اعتبرها بعض المحللين مؤشراً على ضائقة بشرية تعاني منها أوكرانيا.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="أمن" data-headline="ضربات روسية تقتل عشرة أشخاص في خاركيف الأوكرانية" data-summary="أسفرت ضربات صاروخية وبطائرات مسيّرة روسية ليلية عن مقتل عشرة أشخاص على الأقل وجرح أكثر من اثني عشر آخرين بينهم أطفال في مدينة خاركيف ثاني أكبر المدن ا">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٨</span>
+      <span class="cat-tag">أمن</span>
+      <span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">ضربات روسية تقتل عشرة أشخاص في خاركيف الأوكرانية</h3>
+    <div class="src-pills"><span class="src-pill">DW World</span><span class="src-pill">Sky News World</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">الحرب الروسية الأوكرانية تتواصل وسط انشغال دولي بالأزمة الإيرانية التي تستأثر باهتمام واسع.</div>
+    <p class="story-summary">أسفرت ضربات صاروخية وبطائرات مسيّرة روسية ليلية عن مقتل عشرة أشخاص على الأقل وجرح أكثر من اثني عشر آخرين بينهم أطفال في مدينة خاركيف ثاني أكبر المدن الأوكرانية. وتشير التقارير إلى أن مفاوضات السلام قد توقفت في ظل الاضطرابات المتصاعدة في الشرق الأوسط.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>وصفت وسائل الإعلام الغربية الضربات بأنها استهدفت مناطق سكنية، في حين لم تُعلّق موسكو رسمياً على التفاصيل.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="بيئة" data-headline="عواصف وتورنادو تقتل ستة أشخاص في ميشيغان وأوكلاهوما الأمريكيتين" data-summary="اجتاحت عواصف شديدة مصحوبة بإعصار تورنادو ولايتي ميشيغان وأوكلاهوما الأمريكيتين، ما أسفر عن مقتل أربعة أشخاص في ميشيغان واثنين في أوكلاهوما. وتواصل فرق">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٩</span>
+      <span class="cat-tag">بيئة</span>
+      
+    </div>
+    <h3 class="story-title">عواصف وتورنادو تقتل ستة أشخاص في ميشيغان وأوكلاهوما الأمريكيتين</h3>
+    <div class="src-pills"><span class="src-pill">BBC World News</span><span class="src-pill">DW World</span><span class="src-pill">Asharq Al-Awsat</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    
+    <p class="story-summary">اجتاحت عواصف شديدة مصحوبة بإعصار تورنادو ولايتي ميشيغان وأوكلاهوما الأمريكيتين، ما أسفر عن مقتل أربعة أشخاص في ميشيغان واثنين في أوكلاهوما. وتواصل فرق الإنقاذ عمليات البحث عن ناجين وتقديم الدعم للمتضررين.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>أغلب وسائل الإعلام تناولت الخبر بصورة موضوعية، غير أن بعضها ربطه بأنماط المناخ المتطرف المتصاعدة.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="صحة" data-headline="دراسة: إمكانية إنتاج حقن إنقاص الوزن سيماغلوتايد بثلاثة دولارات شهرياً" data-summary="كشفت دراسة جديدة أن عقار سيماغلوتايد المستخدم في حقن أوزمبيك وويغوفي لإنقاص الوزن يمكن إنتاجه بتكلفة لا تتجاوز ثلاثة دولارات شهرياً. وقد يُسهم ذلك في ">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#١٠</span>
+      <span class="cat-tag">صحة</span>
+      
+    </div>
+    <h3 class="story-title">دراسة: إمكانية إنتاج حقن إنقاص الوزن سيماغلوتايد بثلاثة دولارات شهرياً</h3>
+    <div class="src-pills"><span class="src-pill">The Guardian World</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    
+    <p class="story-summary">كشفت دراسة جديدة أن عقار سيماغلوتايد المستخدم في حقن أوزمبيك وويغوفي لإنقاص الوزن يمكن إنتاجه بتكلفة لا تتجاوز ثلاثة دولارات شهرياً. وقد يُسهم ذلك في إتاحة العلاج لملايين المرضى في الدول الفقيرة البالغ عددها 160 دولة عند انتهاء براءات الاختراع. ويُعاني أكثر من مليار شخص حول العالم من السمنة مع تصاعد معدلاتها في الدول منخفضة الدخل.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>أبرزت وسائل إعلام عدة الجانب الإيجابي المتعلق بإمكانية الوصول للعلاج، في حين أشار بعض المحللين إلى عقبات تتعلق ببراءات الاختراع وسلاسل التوزيع.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="سياسة" data-headline="جنوب أفريقيا تنتقد سياسة ترامب في منح اللجوء للأفارينر البيض" data-summary="وصف الرئيس جنوب الأفريقي سيريل رامافوزا سياسة ترامب الرامية إلى منح حق اللجوء للأفارينر البيض بأنها &#x27;عنصرية&#x27;، مؤكداً أن ترامب &#x27;جاهل تماماً&#x27; بواقع بلاد">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#١١</span>
+      <span class="cat-tag">سياسة</span>
+      
+    </div>
+    <h3 class="story-title">جنوب أفريقيا تنتقد سياسة ترامب في منح اللجوء للأفارينر البيض</h3>
+    <div class="src-pills"><span class="src-pill">The Guardian World</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    
+    <p class="story-summary">وصف الرئيس جنوب الأفريقي سيريل رامافوزا سياسة ترامب الرامية إلى منح حق اللجوء للأفارينر البيض بأنها &#x27;عنصرية&#x27;، مؤكداً أن ترامب &#x27;جاهل تماماً&#x27; بواقع بلاده. وأدلى رامافوزا بهذه التصريحات في مقابلة مع صحيفة نيويورك تايمز.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>قدّمت وسائل الإعلام الأمريكية المحافظة ادعاءات &#x27;الإبادة البيضاء&#x27; التي يروّج لها ترامب، بينما رفضتها وسائل الإعلام الدولية والجنوب أفريقية جملةً وتفصيلاً.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="سياسة" data-headline="ترامب يطلق تحالف &#x27;درع الأمريكيتين&#x27; مع قادة أمريكا اللاتينية" data-summary="أعلن الرئيس ترامب عن إطلاق تحالف إقليمي أطلق عليه اسم &#x27;درع الأمريكيتين&#x27; خلال اجتماع مع قادة دول أمريكا اللاتينية. وأكد ترامب أن المنطقة تمتلك إمكانات ">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#١٢</span>
+      <span class="cat-tag">سياسة</span>
+      
+    </div>
+    <h3 class="story-title">ترامب يطلق تحالف &#x27;درع الأمريكيتين&#x27; مع قادة أمريكا اللاتينية</h3>
+    <div class="src-pills"><span class="src-pill">DW World</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    
+    <p class="story-summary">أعلن الرئيس ترامب عن إطلاق تحالف إقليمي أطلق عليه اسم &#x27;درع الأمريكيتين&#x27; خلال اجتماع مع قادة دول أمريكا اللاتينية. وأكد ترامب أن المنطقة تمتلك إمكانات هائلة لا يمكن تحقيقها إلا بالقضاء على عصابات المخدرات والجريمة المنظمة.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>صوّر مؤيدو ترامب التحالف على أنه مبادرة أمنية إيجابية، في حين رأى المنتقدون فيه امتداداً للسياسات الأمريكية التدخلية في المنطقة.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
   </div>
 
+  <!-- Local Section -->
+  <div class="sec" id="sec-l">
+    <div class="sec-hdr">
+      <span class="sec-dot l"></span>
+      <span class="sec-title">أخبار المملكة العربية السعودية</span>
+      <span class="sec-count">٦ قصة</span>
+    </div>
+    
+<div class="story-card" data-cat="سياسة" data-headline="السعودية تحذّر إيران من تداعيات مواصلة الهجمات على أراضيها وقطاع طاقتها" data-summary="أبلغت المملكة العربية السعودية طهران بأنها تفضّل الحل الدبلوماسي، إلا أن استمرار الضربات الإيرانية على المملكة وقطاع الطاقة السعودي قد يدفع الرياض إلى">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#١</span>
+      <span class="cat-tag">سياسة</span>
+      <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">السعودية تحذّر إيران من تداعيات مواصلة الهجمات على أراضيها وقطاع طاقتها</h3>
+    <div class="src-pills"><span class="src-pill">Al-Monitor</span><span class="src-pill">Asharq Al-Awsat</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">السعودية حذّرت إيران من مغبة مواصلة ضرب أراضيها وقطاع طاقتها منذ الأسبوع الماضي وسط تصاعد حدة الصراع الإقليمي.</div>
+    <p class="story-summary">أبلغت المملكة العربية السعودية طهران بأنها تفضّل الحل الدبلوماسي، إلا أن استمرار الضربات الإيرانية على المملكة وقطاع الطاقة السعودي قد يدفع الرياض إلى الرد بالمثل، وفقاً لأربعة مصادر مطلعة. وجاء هذا التحذير قبيل خطاب الرئيس الإيراني بزشكيان الذي اعتذر فيه لدول الخليج المجاورة. وتؤكد المصادر أن المملكة لا تزال تراهن على الدبلوماسية مع الإبقاء على خيار الرد.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>وصفت وسائل الإعلام الغربية الموقف السعودي بأنه توازن دقيق بين الضغط والاحتواء، في حين رأى بعض المحللين أن الرياض تستغل الأزمة لتعزيز موقفها التفاوضي.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="سياسة" data-headline="زيلينسكي يبحث مع ولي العهد السعودي الأزمة الإيرانية وتبادل الخبرات في مواجهة الطائرات المسيّرة" data-summary="أعلن الرئيس الأوكراني زيلينسكي أنه أجرى محادثة مع ولي العهد السعودي الأمير محمد بن سلمان تناولت الوضع في إيران والشرق الأوسط. وأعاد زيلينسكي التأكيد ع">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٢</span>
+      <span class="cat-tag">سياسة</span>
+      <span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">زيلينسكي يبحث مع ولي العهد السعودي الأزمة الإيرانية وتبادل الخبرات في مواجهة الطائرات المسيّرة</h3>
+    <div class="src-pills"><span class="src-pill">Al-Monitor</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">زيلينسكي بحث مع ولي العهد السعودي الأزمة الإيرانية وعرض خبرات أوكرانيا في التصدي للطائرات المسيّرة منذ الأسبوع الماضي.</div>
+    <p class="story-summary">أعلن الرئيس الأوكراني زيلينسكي أنه أجرى محادثة مع ولي العهد السعودي الأمير محمد بن سلمان تناولت الوضع في إيران والشرق الأوسط. وأعاد زيلينسكي التأكيد على عرض أوكرانيا تقديم خبراتها في التصدي لطائرات شاهد الإيرانية المسيّرة لدول المنطقة. وأكد أن بلاده تتصدى لهذه الطائرات منذ سنوات وتمتلك خبرة لا مثيل لها في هذا المجال.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>قدّمت وسائل الإعلام الأوكرانية العرض على أنه مبادرة تضامن وشراكة استراتيجية، في حين نظر إليه بعض المحللين من زاوية الحاجة الأوكرانية إلى الدعم الدبلوماسي والمالي الخليجي.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="سياسة" data-headline="لبنان يرفض الارتباط بمصالح إيران وسط التصعيد الإقليمي" data-summary="أكد رئيس الحكومة اللبنانية نواف سلام في تصريحات لصحيفة الشرق الأوسط أن لبنان يرفض ربط مصيره بمصالح إيران في المنطقة. ويسعى لبنان إلى التمايز عن محور إ">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٣</span>
+      <span class="cat-tag">سياسة</span>
+      <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">لبنان يرفض الارتباط بمصالح إيران وسط التصعيد الإقليمي</h3>
+    <div class="src-pills"><span class="src-pill">Asharq Al-Awsat</span><span class="src-pill">Middle East Eye</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">لبنان أعلن رفضه ربط مصيره بمصالح إيران منذ الأسبوع الماضي وسط التصعيد الإقليمي.</div>
+    <p class="story-summary">أكد رئيس الحكومة اللبنانية نواف سلام في تصريحات لصحيفة الشرق الأوسط أن لبنان يرفض ربط مصيره بمصالح إيران في المنطقة. ويسعى لبنان إلى التمايز عن محور إيران في ظل الضربات الإسرائيلية المتواصلة وتزايد أعداد النازحين الذين تجاوزوا 454 ألف شخص.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>اعتبرت وسائل الإعلام اللبنانية والعربية المعتدلة الموقف اللبناني خطوة نحو الاستقلالية السياسية، في حين رأى آخرون أنه يعكس الضغط الدولي على بيروت.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="أمن" data-headline="ضربة تستهدف قاعدة للحشد الشعبي العراقي قرب الموصل" data-summary="استُهدفت قاعدة تابعة لقوات الحشد الشعبي العراقي في محيط الموصل بضربة لم يُعلَن عن مصدرها رسمياً. وتأتي هذه الضربة في سياق التصعيد الإقليمي المرتبط بال">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٤</span>
+      <span class="cat-tag">أمن</span>
+      <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">ضربة تستهدف قاعدة للحشد الشعبي العراقي قرب الموصل</h3>
+    <div class="src-pills"><span class="src-pill">Asharq Al-Awsat</span><span class="src-pill">Al-Monitor</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">ضربة استهدفت قاعدة للحشد الشعبي العراقي قرب الموصل وردت في سياق التصعيد الإقليمي منذ الأسبوع الماضي.</div>
+    <p class="story-summary">استُهدفت قاعدة تابعة لقوات الحشد الشعبي العراقي في محيط الموصل بضربة لم يُعلَن عن مصدرها رسمياً. وتأتي هذه الضربة في سياق التصعيد الإقليمي المرتبط بالصراع الأمريكي الإسرائيلي الإيراني. ويجد العراق نفسه متورطاً في الصراع رغم تصريحات مسؤوليه برفض الانجرار إلى الحرب.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>لم تُحدّد معظم وسائل الإعلام المسؤول عن الضربة، إذ تتباين الروايات بين من يُلمّح إلى ضربة أمريكية إسرائيلية ومن يُشير إلى أطراف أخرى.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="سياسة" data-headline="سريلانكا تتعهد بمعاملة بحارة إيرانيين وفق القانون الدولي رغم الضغوط الأمريكية" data-summary="أكد وزير الخارجية السريلانكي أن بلاده ستعامل 32 بحاراً إيرانياً أُنقذوا من الفرقاطة IRIS Dena التي أغرقتها غواصة أمريكية وفق الالتزامات الدولية. وأشار">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٥</span>
+      <span class="cat-tag">سياسة</span>
+      <span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">سريلانكا تتعهد بمعاملة بحارة إيرانيين وفق القانون الدولي رغم الضغوط الأمريكية</h3>
+    <div class="src-pills"><span class="src-pill">Al-Monitor</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">الحرب الأمريكية الإيرانية تتوسع لتشمل مناطق بعيدة عن الشرق الأوسط بما فيها المحيط الهندي.</div>
+    <p class="story-summary">أكد وزير الخارجية السريلانكي أن بلاده ستعامل 32 بحاراً إيرانياً أُنقذوا من الفرقاطة IRIS Dena التي أغرقتها غواصة أمريكية وفق الالتزامات الدولية. وأشارت تقارير إلى أن واشنطن تضغط على كولومبو لعدم إعادة البحارة إلى بلادهم. وجاءت إغراق الفرقاطة الإيرانية قبالة الساحل الجنوبي لسريلانكا يوم الأربعاء الماضي.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>أبرزت وسائل الإعلام الإيرانية والمتعاطفة معها الضغوط الأمريكية بوصفها انتهاكاً للقانون الدولي، في حين ركّزت وسائل الإعلام الغربية على حجم التداعيات الإقليمية للصراع.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="أمن" data-headline="العراق يجد نفسه في دوامة الصراع رغم رفض الانجرار إليه" data-summary="تعرّضت السفارة الأمريكية في بغداد لهجوم وسط تصاعد التوترات الإقليمية الناجمة عن الحرب الأمريكية الإسرائيلية الإيرانية. وتواصل قوات الحشد الشعبي المرتب">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٦</span>
+      <span class="cat-tag">أمن</span>
+      <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">العراق يجد نفسه في دوامة الصراع رغم رفض الانجرار إليه</h3>
+    <div class="src-pills"><span class="src-pill">Al Jazeera English</span><span class="src-pill">Al-Monitor</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">العراق يرفض الانجرار إلى الحرب بينما تستخدم إيران أراضيه لشنّ هجمات على المصالح الأمريكية.</div>
+    <p class="story-summary">تعرّضت السفارة الأمريكية في بغداد لهجوم وسط تصاعد التوترات الإقليمية الناجمة عن الحرب الأمريكية الإسرائيلية الإيرانية. وتواصل قوات الحشد الشعبي المرتبطة بإيران شنّ هجمات على المواقع الأمريكية في العراق. ويقف الأكراد العراقيون في موقف حرج بين ولاءاتهم المتعددة وخطر الانجرار إلى حرب لا يريدونها.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>قدّمت وسائل الإعلام الأمريكية الهجمات على السفارة دليلاً على التمدد الإيراني، في حين ركّزت وسائل إعلام عربية على معاناة المدنيين العراقيين العالقين بين طرفي الصراع.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+  </div>
+
+</div>
+
+<button id="go-top" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<footer>
+  التحديث القادم: غداً الساعة ٩:٠٠ صباحاً (توقيت السعودية)
+  &nbsp;·&nbsp;
+  <a href="https://github.com/HotSalsa10/Sovereign-News-Curator/actions" target="_blank">تحديث يدوي ↗</a>
+</footer>
+
+<script>
+const GEN = "2026-03-07T22:55:46.392860+00:00";
+const HEADLINES = `1. الحرب الأمريكية الإسرائيلية الإيرانية تدخل أسبوعها الثاني وسط تصاعد الضربات وارتفاع أعداد القتلى\n2. إيران تواصل ضرب دول الخليج رغم اعتذار الرئيس بزشكيان عن الهجمات\n3. الحرس الثوري الإيراني يستهدف مجموعات كردية في كردستان العراق وترامب يرفض توسيع الحرب\n4. العملية الإسرائيلية في لبنان تُخلّف عشرات القتلى والمصابين\n5. النازحون في لبنان يتجاوزون 454 ألف شخص وسط تواصل الضربات\n6. بريطانيا تعزز استعدادات حاملة الطائرات 'برنس أوف ويلز' للنشر المحتمل في الشرق الأوسط\n7. الروبوتات المسلحة تدخل ساحة المعركة في أوكرانيا\n8. ضربات روسية تقتل عشرة أشخاص في خاركيف الأوكرانية\n9. عواصف وتورنادو تقتل ستة أشخاص في ميشيغان وأوكلاهوما الأمريكيتين\n10. دراسة: إمكانية إنتاج حقن إنقاص الوزن سيماغلوتايد بثلاثة دولارات شهرياً\n11. جنوب أفريقيا تنتقد سياسة ترامب في منح اللجوء للأفارينر البيض\n12. ترامب يطلق تحالف 'درع الأمريكيتين' مع قادة أمريكا اللاتينية\n1. السعودية تحذّر إيران من تداعيات مواصلة الهجمات على أراضيها وقطاع طاقتها\n2. زيلينسكي يبحث مع ولي العهد السعودي الأزمة الإيرانية وتبادل الخبرات في مواجهة الطائرات المسيّرة\n3. لبنان يرفض الارتباط بمصالح إيران وسط التصعيد الإقليمي\n4. ضربة تستهدف قاعدة للحشد الشعبي العراقي قرب الموصل\n5. سريلانكا تتعهد بمعاملة بحارة إيرانيين وفق القانون الدولي رغم الضغوط الأمريكية\n6. العراق يجد نفسه في دوامة الصراع رغم رفض الانجرار إليه`;
+
+// ── Freshness ──
+function relTime(iso){
+  const m = Math.floor((Date.now()-new Date(iso))/60000);
+  const h = Math.floor(m/60);
+  if(m<60) return `منذ ${m} دقيقة`;
+  if(h<24) return `منذ ${h} ساعة`;
+  return 'منذ أكثر من يوم';
+}
+function freshColor(iso){
+  const h=(Date.now()-new Date(iso))/3600000;
+  return h<4?'#10b981':h<12?'#3b82f6':h<24?'#f59e0b':'#ef4444';
+}
+function updateMeta(){
+  document.getElementById('rel-time').textContent=relTime(GEN);
+  document.getElementById('fresh-dot').style.background=freshColor(GEN);
+}
+updateMeta(); setInterval(updateMeta,60000);
+
+// ── Theme ──
+let dark=true;
+function toggleTheme(){
+  dark=!dark;
+  document.body.classList.toggle('light',!dark);
+  document.getElementById('theme-btn').textContent=dark?'☀️':'🌙';
+  document.getElementById('theme-meta').content=dark?'#0a0a0a':'#f4f4f5';
+  localStorage.setItem('snc-theme',dark?'dark':'light');
+}
+if(localStorage.getItem('snc-theme')==='light') toggleTheme();
+
+// ── Tabs ──
+let curTab='g', curCat='all';
+function switchTab(id,btn){
+  curTab=id;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.getElementById('sec-'+id).classList.add('on');
+  applyFilter();
+  scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── Story expand ──
+function toggleStory(hdr){
+  const body=hdr.nextElementSibling;
+  const opening=body.hidden;
+  body.hidden=!opening;
+  hdr.classList.toggle('open',opening);
+  if(opening) hdr.closest('.story-card').classList.add('read');
+}
+
+// ── Spin ──
+function toggleSpin(btn){
+  const body=btn.nextElementSibling;
+  body.hidden=!body.hidden;
+  btn.classList.toggle('open',!body.hidden);
+  btn.textContent=body.hidden?'اكشف التحيز الإعلامي':'إخفاء التحيز';
+}
+
+// ── TOC ──
+function toggleToc(btn){
+  const body=document.getElementById('toc-body');
+  body.classList.toggle('open');
+  document.getElementById('toc-arrow').textContent=body.classList.contains('open')?'▴':'▾';
+}
+function jumpToStory(el){
+  const sec=el.dataset.section==='global'?'g':'l';
+  const idx=parseInt(el.dataset.index);
+  // Switch tab
+  const tabBtn=document.querySelector(sec==='g'?'.tab:not(.local)':'.tab.local');
+  switchTab(sec,tabBtn);
+  // Close TOC
+  document.getElementById('toc-body').classList.remove('open');
+  document.getElementById('toc-arrow').textContent='▾';
+  // Scroll & expand
+  setTimeout(()=>{
+    const cards=[...document.querySelectorAll('#sec-'+sec+' .story-card')].filter(c=>!c.hidden);
+    if(cards[idx]){
+      cards[idx].scrollIntoView({behavior:'smooth',block:'center'});
+      const hdr=cards[idx].querySelector('.story-hdr');
+      if(cards[idx].querySelector('.story-body').hidden) toggleStory(hdr);
+    }
+  },120);
+}
+
+// ── Category filter ──
+function filterCat(btn){
+  curCat=btn.dataset.cat;
+  document.querySelectorAll('.flt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilter();
+}
+function applyFilter(){
+  document.querySelectorAll('#sec-'+curTab+' .story-card').forEach(card=>{
+    card.hidden = curCat!=='all' && card.dataset.cat!==curCat;
+  });
+}
+
+// ── Share ──
+async function shareStory(btn){
+  const card=btn.closest('.story-card');
+  const headline=card.dataset.headline;
+  const summary=card.dataset.summary;
+  const text=headline+'\n'+summary+'...\n\nعبر المنتقي السيادي للأخبار';
+  if(navigator.share){
+    try{await navigator.share({title:headline,text});}catch(e){}
+  }else{
+    try{await navigator.clipboard.writeText(text);alert('تم النسخ!');}catch(e){}
+  }
+}
+
+// ── Copy headlines ──
+async function copyHeadlines(){
+  try{
+    await navigator.clipboard.writeText(HEADLINES);
+    const btn=document.getElementById('copy-btn');
+    btn.textContent='تم النسخ ✓';
+    setTimeout(()=>btn.textContent='نسخ العناوين',2500);
+  }catch(e){}
+}
+
+// ── Scroll-to-top ──
+const goTop=document.getElementById('go-top');
+window.addEventListener('scroll',()=>goTop.classList.toggle('on',scrollY>300));
+</script>
 </body>
 </html>
