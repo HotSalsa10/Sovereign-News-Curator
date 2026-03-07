@@ -47,7 +47,11 @@ ARTICLES_PER_FEED = 5  # 18 feeds × 5 = up to 90 articles
 # CLAUDE SYSTEM PROMPT (from CLAUDE.md spec)
 # ─────────────────────────────────────────────
 
-SYSTEM_PROMPT = """<role>
+SYSTEM_PROMPT = """<language>
+IMPORTANT: You must write your ENTIRE response in Arabic (العربية). All headlines, summaries, and spin analysis must be in Arabic. Do not use English in the output.
+</language>
+
+<role>
 You are the Sovereign News Curator, an elite, highly defensive AI reading agent. Your directive is to protect the user from cognitive exploitation while delivering a pure, verified signal.
 </role>
 
@@ -66,24 +70,24 @@ The user requires a finite digest of the day's events, strictly separated into t
 <constraints>
 - STRICT NEGATIVE CONSTRAINT: Do NOT hallucinate quotes, dates, or URLs.
 - STRICT NEGATIVE CONSTRAINT: You must output exactly two main sections: Global News and Local News.
-- ESCAPE HATCH: If the input data for a category is empty or entirely contradictory, output: "I am currently unable to establish a factual consensus for this category today."
+- ESCAPE HATCH: If the input data for a category is empty or entirely contradictory, output in Arabic: "لا أستطيع حالياً تحديد توافق حقيقي لهذه الفئة اليوم."
 </constraints>
 
 <response_format>
-Format your output in clean Markdown:
+Format your output in clean Markdown, fully in Arabic:
 
-# Daily Sovereign Digest
+# الملخص السيادي اليومي
 
-## View 1: Global News
-* **[De-sensationalized Headline]:** [3-sentence maximum summary of the undeniable facts.]
-  * *Media Spin:* [1-sentence breakdown of how different outlets framed the story.]
+## المشهد الأول: الأخبار العالمية
+* **[عنوان منزوع الإثارة]:** [ملخص لا يتجاوز ثلاث جمل للحقائق الموثقة.]
+  * *التلاعب الإعلامي:* [جملة واحدة توضح كيف أطّرت وسائل إعلام مختلفة القصة.]
 
-## View 2: Local News — Saudi Arabia
-* **[De-sensationalized Headline]:** [3-sentence maximum summary of the undeniable local facts.]
-  * *Media Spin:* [1-sentence breakdown of spin, if any.]
+## المشهد الثاني: أخبار المملكة العربية السعودية
+* **[عنوان منزوع الإثارة]:** [ملخص لا يتجاوز ثلاث جمل للحقائق المحلية الموثقة.]
+  * *التلاعب الإعلامي:* [جملة واحدة عن التأطير إن وُجد.]
 
 ---
-*End of feed. You are caught up.*
+*انتهى البث. أنت الآن مطّلع.*
 </response_format>"""
 
 # ─────────────────────────────────────────────
@@ -193,31 +197,32 @@ def build_html(digest_md: str, generated_at: datetime, article_count: dict) -> s
     # Saudi time = UTC+3
     saudi_time = generated_at.astimezone(timezone(timedelta(hours=3)))
     time_str = saudi_time.strftime("%A, %B %d, %Y · %I:%M %p (AST)").replace(" 0", " ")
-    next_run = "Tomorrow at 9:00 AM Saudi Time"
+    next_run = "غداً الساعة 9:00 صباحاً (بتوقيت السعودية)"
     total_articles = article_count["global"] + article_count["local"]
 
     return f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Sovereign News" />
+  <meta name="apple-mobile-web-app-title" content="المنتقي السيادي" />
   <meta name="theme-color" content="#0a0a0a" />
-  <title>Sovereign News Curator</title>
+  <title>المنتقي السيادي للأخبار</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
 
     body {{
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
       background: #0a0a0a;
       color: #e4e4e7;
       min-height: 100vh;
       padding: 0 0 60px;
       -webkit-font-smoothing: antialiased;
+      direction: rtl;
     }}
 
     /* ── Header ── */
@@ -230,10 +235,7 @@ def build_html(digest_md: str, generated_at: datetime, article_count: dict) -> s
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
+      font-size: 11px;
       color: #52525b;
       margin-bottom: 12px;
     }}
@@ -251,8 +253,7 @@ def build_html(digest_md: str, generated_at: datetime, article_count: dict) -> s
       font-size: clamp(22px, 5vw, 28px);
       font-weight: 700;
       color: #fafafa;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
+      line-height: 1.3;
     }}
     .app-subtitle {{
       color: #71717a;
@@ -270,7 +271,6 @@ def build_html(digest_md: str, generated_at: datetime, article_count: dict) -> s
       max-width: 680px;
       margin: 24px auto 12px;
       padding: 0 20px;
-      font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       color: #52525b;
     }}
@@ -283,14 +283,11 @@ def build_html(digest_md: str, generated_at: datetime, article_count: dict) -> s
       border-radius: 16px;
       padding: 28px 24px;
       max-width: 680px;
-      margin: 0 auto;
-      margin-left: 20px;
-      margin-right: 20px;
+      margin: 0 20px;
     }}
     @media (min-width: 720px) {{
       .card {{
-        margin-left: auto;
-        margin-right: auto;
+        margin: 0 auto;
         padding: 36px 40px;
       }}
     }}
@@ -303,16 +300,12 @@ def build_html(digest_md: str, generated_at: datetime, article_count: dict) -> s
       padding-bottom: 16px;
       border-bottom: 1px solid #27272a;
       margin-bottom: 24px;
-      letter-spacing: -0.01em;
     }}
     .digest h2 {{
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
       color: #60a5fa;
       margin: 32px 0 16px;
-      font-family: 'JetBrains Mono', monospace;
     }}
     .digest ul {{
       list-style: none;
@@ -322,35 +315,33 @@ def build_html(digest_md: str, generated_at: datetime, article_count: dict) -> s
       gap: 20px;
     }}
     .digest li {{
-      font-size: 14px;
-      line-height: 1.7;
+      font-size: 15px;
+      line-height: 1.9;
       color: #d4d4d8;
-      padding-left: 14px;
-      border-left: 2px solid #27272a;
+      padding-right: 14px;
+      border-right: 2px solid #27272a;
     }}
     .digest li ul {{
       margin-top: 8px;
       gap: 4px;
     }}
     .digest li ul li {{
-      font-size: 12px;
+      font-size: 13px;
       color: #71717a;
-      border-left: none;
-      padding-left: 0;
-      font-style: italic;
+      border-right: none;
+      padding-right: 0;
     }}
     .digest strong {{ color: #fafafa; font-weight: 600; }}
-    .digest em {{ color: #71717a; font-style: italic; font-size: 12px; }}
+    .digest em {{ color: #71717a; font-size: 13px; }}
     .digest hr {{
       border: none;
       border-top: 1px solid #1f1f23;
       margin: 32px 0;
     }}
     .digest p {{
-      font-size: 11px;
+      font-size: 12px;
       color: #3f3f46;
       text-align: center;
-      font-family: 'JetBrains Mono', monospace;
       margin-top: 24px;
     }}
 
@@ -358,8 +349,7 @@ def build_html(digest_md: str, generated_at: datetime, article_count: dict) -> s
     .footer {{
       text-align: center;
       margin-top: 24px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 11px;
       color: #3f3f46;
       padding: 0 20px;
     }}
@@ -375,15 +365,15 @@ def build_html(digest_md: str, generated_at: datetime, article_count: dict) -> s
   <div class="header">
     <div class="badge">
       <span class="badge-dot"></span>
-      Epistemic Defense Shield
+      درع الحماية المعرفية
     </div>
-    <h1 class="app-title">Sovereign News Curator</h1>
-    <p class="app-subtitle">De-sensationalized · Deduplicated · Defended</p>
+    <h1 class="app-title">المنتقي السيادي للأخبار</h1>
+    <p class="app-subtitle">منزوع الإثارة · مزال التكرار · محمي من التلاعب</p>
   </div>
 
   <div class="meta-bar">
     <span>{time_str}</span>
-    <span>{total_articles} articles processed</span>
+    <span>تمت معالجة {total_articles} مقالاً</span>
   </div>
 
   <div class="card">
@@ -393,9 +383,9 @@ def build_html(digest_md: str, generated_at: datetime, article_count: dict) -> s
   </div>
 
   <div class="footer" style="margin-top: 20px;">
-    Next update: {next_run}
+    التحديث القادم: {next_run}
     &nbsp;·&nbsp;
-    <a href="https://github.com" target="_blank">Trigger manual refresh ↗</a>
+    <a href="https://github.com/HotSalsa10/Sovereign-News-Curator/actions" target="_blank">تشغيل يدوي ↗</a>
   </div>
 
 </body>
