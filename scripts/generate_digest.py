@@ -1,106 +1,99 @@
 """
 Sovereign News Curator — Daily Digest Generator
-Fetches RSS feeds, calls Claude 3.5 Sonnet, outputs index.html
+Model: claude-sonnet-4-6
 """
 
-import os
-import re
-import sys
-import concurrent.futures
+import os, re, sys, json, concurrent.futures, html as html_lib
 from datetime import datetime, timezone, timedelta
+from pathlib import Path
 
 import feedparser
 import anthropic
-import markdown as md_lib
 
 # ─────────────────────────────────────────────
-# RSS FEED SOURCES (18 total)
+# CONFIG
 # ─────────────────────────────────────────────
+
+MODEL = "claude-sonnet-4-6"
+ARTICLES_PER_FEED = 5
+ARCHIVE_DAYS = 7
+ROOT_DIR = Path(__file__).parent.parent
 
 GLOBAL_FEEDS = [
-    {"name": "BBC World News",       "url": "http://feeds.bbci.co.uk/news/world/rss.xml"},
-    {"name": "Al Jazeera English",   "url": "https://www.aljazeera.com/xml/rss/all.xml"},
-    {"name": "The Guardian World",   "url": "https://www.theguardian.com/world/rss"},
-    {"name": "France 24 English",    "url": "https://www.france24.com/en/rss"},
-    {"name": "DW World",             "url": "https://rss.dw.com/rdf/rss-en-world"},
-    {"name": "NPR World",            "url": "https://feeds.npr.org/1004/rss.xml"},
-    {"name": "Reuters World",        "url": "https://feeds.reuters.com/reuters/worldNews"},
-    {"name": "AP Top News",          "url": "https://rsshub.app/apnews/topics/apf-topnews"},
-    {"name": "Sky News World",       "url": "https://feeds.skynews.com/feeds/rss/world.xml"},
-    {"name": "The Independent World","url": "https://www.independent.co.uk/news/world/rss"},
+    {"name": "BBC World News",        "url": "http://feeds.bbci.co.uk/news/world/rss.xml"},
+    {"name": "Al Jazeera English",    "url": "https://www.aljazeera.com/xml/rss/all.xml"},
+    {"name": "The Guardian World",    "url": "https://www.theguardian.com/world/rss"},
+    {"name": "France 24 English",     "url": "https://www.france24.com/en/rss"},
+    {"name": "DW World",              "url": "https://rss.dw.com/rdf/rss-en-world"},
+    {"name": "NPR World",             "url": "https://feeds.npr.org/1004/rss.xml"},
+    {"name": "Reuters World",         "url": "https://feeds.reuters.com/reuters/worldNews"},
+    {"name": "AP Top News",           "url": "https://rsshub.app/apnews/topics/apf-topnews"},
+    {"name": "Sky News World",        "url": "https://feeds.skynews.com/feeds/rss/world.xml"},
+    {"name": "The Independent World", "url": "https://www.independent.co.uk/news/world/rss"},
 ]
 
 LOCAL_FEEDS = [
-    {"name": "Arab News",            "url": "https://www.arabnews.com/rss.xml"},
-    {"name": "Saudi Gazette",        "url": "https://saudigazette.com.sa/feed"},
-    {"name": "Al Arabiya English",   "url": "https://english.alarabiya.net/tools/rss"},
-    {"name": "The National",         "url": "https://www.thenationalnews.com/rss"},
-    {"name": "Middle East Eye",      "url": "https://www.middleeasteye.net/rss"},
-    {"name": "Asharq Al-Awsat",      "url": "https://english.aawsat.com/feed"},
-    {"name": "Gulf News Saudi",      "url": "https://gulfnews.com/rss/world/gulf/saudi-arabia"},
-    {"name": "Al-Monitor",           "url": "https://www.al-monitor.com/rss"},
+    {"name": "Arab News",             "url": "https://www.arabnews.com/rss.xml"},
+    {"name": "Saudi Gazette",         "url": "https://saudigazette.com.sa/feed"},
+    {"name": "Al Arabiya English",    "url": "https://english.alarabiya.net/tools/rss"},
+    {"name": "The National",          "url": "https://www.thenationalnews.com/rss"},
+    {"name": "Middle East Eye",       "url": "https://www.middleeasteye.net/rss"},
+    {"name": "Asharq Al-Awsat",       "url": "https://english.aawsat.com/feed"},
+    {"name": "Gulf News Saudi",       "url": "https://gulfnews.com/rss/world/gulf/saudi-arabia"},
+    {"name": "Al-Monitor",            "url": "https://www.al-monitor.com/rss"},
 ]
 
-ARTICLES_PER_FEED = 5  # 18 feeds × 5 = up to 90 articles
-
 # ─────────────────────────────────────────────
-# CLAUDE SYSTEM PROMPT (from CLAUDE.md spec)
+# SYSTEM PROMPT
 # ─────────────────────────────────────────────
 
-SYSTEM_PROMPT = """<language>
-IMPORTANT: You must write your ENTIRE response in Arabic (العربية). All headlines, summaries, and spin analysis must be in Arabic. Do not use English in the output.
-</language>
+SYSTEM_PROMPT = """LANGUAGE DIRECTIVE: Every Arabic-language field in your JSON output must be written in Arabic (العربية). Do not use English in headline, summary, spin, category, or context fields.
 
-<role>
-You are the Sovereign News Curator, an elite, highly defensive AI reading agent. Your directive is to protect the user from cognitive exploitation while delivering a pure, verified signal.
-</role>
+You are the Sovereign News Curator — an elite defensive AI reading agent protecting the user from cognitive exploitation and delivering a pure, verified daily signal.
 
-<context>
-The user requires a finite digest of the day's events, strictly separated into two views: Global News and Local News. You will receive multiple articles covering the same events. You must extract the undeniable consensus and explicitly separate it from ideological spin.
-</context>
+YOUR TASKS:
+1. Read all provided articles under GLOBAL and SAUDI ARABIA categories.
+2. Semantically deduplicate — merge articles covering the same event into one story.
+3. Extract consensus facts only — no hallucinated quotes, dates, or URLs.
+4. Identify how different outlets framed the same story (spin detection).
+5. Assign a category and flag stories that continue from prior days using the historical context provided.
 
-<task>
-1. Categorization: Sort the provided articles into "Global News" and "Local News" based on their scope.
-2. Semantic Deduplication: Combine repetitive stories into a single event summary within their category.
-3. Consensus Extraction: Isolate the undeniable, overlapping facts reported by credible sources.
-4. Spin Identification: Briefly note the ideological framing used by specific outlets.
-5. De-sensationalization: Strip all clickbait and fear-inducing language.
-</task>
+OUTPUT FORMAT: Return ONLY a raw, valid JSON object. No markdown. No code blocks. No explanation. Just JSON.
 
-<constraints>
-- STRICT NEGATIVE CONSTRAINT: Do NOT hallucinate quotes, dates, or URLs.
-- STRICT NEGATIVE CONSTRAINT: You must output exactly two main sections: Global News and Local News.
-- ESCAPE HATCH: If the input data for a category is empty or entirely contradictory, output in Arabic: "لا أستطيع حالياً تحديد توافق حقيقي لهذه الفئة اليوم."
-</constraints>
+EXACT SCHEMA:
+{
+  "global": [
+    {
+      "headline": "Arabic — short, factual, de-sensationalized headline",
+      "summary": "Arabic — maximum 3 sentences of undeniable consensus facts",
+      "spin": "Arabic — 1 sentence on how outlets framed this story differently",
+      "sources": ["Exact source name from the articles provided"],
+      "category": "Exactly one of: سياسة | اقتصاد | أمن | صحة | تقنية | بيئة | مجتمع",
+      "is_developing": true or false,
+      "context": "Arabic — 1 sentence of historical context if developing story, or null if brand new"
+    }
+  ],
+  "local": [
+    { "same structure as global entries" }
+  ]
+}
 
-<response_format>
-Format your output in clean Markdown, fully in Arabic:
-
-# الملخص السيادي اليومي
-
-## المشهد الأول: الأخبار العالمية
-* **[عنوان منزوع الإثارة]:** [ملخص لا يتجاوز ثلاث جمل للحقائق الموثقة.]
-  * *التلاعب الإعلامي:* [جملة واحدة توضح كيف أطّرت وسائل إعلام مختلفة القصة.]
-
-## المشهد الثاني: أخبار المملكة العربية السعودية
-* **[عنوان منزوع الإثارة]:** [ملخص لا يتجاوز ثلاث جمل للحقائق المحلية الموثقة.]
-  * *التلاعب الإعلامي:* [جملة واحدة عن التأطير إن وُجد.]
-
----
-*انتهى البث. أنت الآن مطّلع.*
-</response_format>"""
+STRICT RULES:
+- If a section has no usable articles, return an empty array [].
+- context must be null for new stories, never an empty string.
+- Only include sources that actually appear in the provided articles.
+- Summaries must be factual consensus — not a single outlet's framing.
+- Output valid JSON only. Escape quotes inside strings with backslash."""
 
 # ─────────────────────────────────────────────
 # RSS FETCHING
 # ─────────────────────────────────────────────
 
 def strip_html(text: str) -> str:
-    """Remove HTML tags from a string."""
     return re.sub(r'<[^>]+>', '', text or '').strip()
 
 
 def fetch_feed(feed: dict) -> list[dict]:
-    """Fetch and parse a single RSS feed. Returns list of article dicts."""
     try:
         parsed = feedparser.parse(feed["url"])
         articles = []
@@ -111,14 +104,12 @@ def fetch_feed(feed: dict) -> list[dict]:
                 entry.get("description") or
                 (entry.get("content") or [{}])[0].get("value", "")
             )[:500].strip()
-
             if not title:
                 continue
-
             articles.append({
                 "source": feed["name"],
                 "title": title,
-                "summary": summary or "(No summary available)",
+                "summary": summary or "(No summary)",
             })
         print(f"  [OK]   {feed['name']}: {len(articles)} articles")
         return articles
@@ -128,269 +119,643 @@ def fetch_feed(feed: dict) -> list[dict]:
 
 
 def fetch_all_feeds() -> dict:
-    """Fetch all feeds in parallel. Returns {'global': [...], 'local': [...]}"""
     print(f"\n[RSS] Fetching {len(GLOBAL_FEEDS) + len(LOCAL_FEEDS)} feeds in parallel...")
-
     all_feeds = [("global", f) for f in GLOBAL_FEEDS] + [("local", f) for f in LOCAL_FEEDS]
-
     results = {"global": [], "local": []}
     with concurrent.futures.ThreadPoolExecutor(max_workers=18) as executor:
-        future_to_meta = {
-            executor.submit(fetch_feed, feed): category
-            for category, feed in all_feeds
-        }
-        for future in concurrent.futures.as_completed(future_to_meta):
-            category = future_to_meta[future]
-            results[category].extend(future.result())
-
-    print(f"\n[RSS] Total: {len(results['global'])} global articles, {len(results['local'])} local articles")
+        future_to_cat = {executor.submit(fetch_feed, f): cat for cat, f in all_feeds}
+        for future in concurrent.futures.as_completed(future_to_cat):
+            results[future_to_cat[future]].extend(future.result())
+    print(f"\n[RSS] Total: {len(results['global'])} global, {len(results['local'])} local")
     return results
 
+# ─────────────────────────────────────────────
+# ARCHIVE (Living Context Engine)
+# ─────────────────────────────────────────────
+
+def load_archive() -> str:
+    archive_dir = ROOT_DIR / "archive"
+    if not archive_dir.exists():
+        return ""
+    files = sorted(archive_dir.glob("*.json"), reverse=True)[:ARCHIVE_DAYS]
+    if not files:
+        return ""
+    lines = ["HISTORICAL CONTEXT — story headlines from the past 7 days (use this to detect developing stories and add context):"]
+    for f in reversed(files):
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            date = f.stem
+            g = " / ".join(data.get("global", [])[:6])
+            l = " / ".join(data.get("local", [])[:4])
+            lines.append(f"[{date}] Global: {g} | Saudi: {l}")
+        except Exception:
+            pass
+    return "\n".join(lines)
+
+
+def save_archive(digest: dict, date_str: str):
+    archive_dir = ROOT_DIR / "archive"
+    archive_dir.mkdir(exist_ok=True)
+    data = {
+        "global": [s.get("headline", "") for s in digest.get("global", [])],
+        "local":  [s.get("headline", "") for s in digest.get("local", [])],
+    }
+    out = archive_dir / f"{date_str}.json"
+    out.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"[Archive] Saved → {out.name}")
 
 # ─────────────────────────────────────────────
-# CLAUDE API
+# CLAUDE
 # ─────────────────────────────────────────────
 
-def format_for_claude(global_articles: list, local_articles: list) -> str:
-    """Format articles into a structured prompt for Claude."""
+def format_for_claude(global_articles: list, local_articles: list, archive_context: str) -> str:
     def section(articles, label):
         if not articles:
             return f"### {label}\n(No articles fetched from feeds)"
-        lines = [f"### {label}"]
-        for a in articles:
-            lines.append(f"**[{a['source']}]** {a['title']}\n{a['summary']}")
-        return "\n\n".join(lines)
-
-    return "\n\n---\n\n".join([
+        return f"### {label}\n" + "\n\n".join(
+            f"**[{a['source']}]** {a['title']}\n{a['summary']}" for a in articles
+        )
+    parts = []
+    if archive_context:
+        parts += [archive_context, "---"]
+    parts += [
         section(global_articles, "GLOBAL NEWS ARTICLES"),
+        "---",
         section(local_articles, "SAUDI ARABIA NEWS ARTICLES"),
-    ])
+    ]
+    return "\n\n".join(parts)
 
 
-def call_claude(articles: dict) -> str:
-    """Send articles to Claude 3.5 Sonnet and return the markdown digest."""
-    print(f"\n[Claude] Calling claude-3-5-sonnet-20241022...")
+def extract_json(text: str) -> dict:
+    text = re.sub(r'^```(?:json)?\s*', '', text.strip(), flags=re.MULTILINE)
+    text = re.sub(r'\s*```$', '', text.strip(), flags=re.MULTILINE)
+    match = re.search(r'\{[\s\S]*\}', text)
+    if match:
+        return json.loads(match.group())
+    raise ValueError("No valid JSON in Claude response")
+
+
+def call_claude(articles: dict, archive_context: str) -> dict:
+    print(f"\n[Claude] Calling {MODEL}...")
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-
-    user_content = format_for_claude(articles["global"], articles["local"])
-
+    user_content = format_for_claude(articles["global"], articles["local"], archive_context)
     message = client.messages.create(
-        model="claude-haiku-4-5-20251001",
-        max_tokens=2048,
+        model=MODEL,
+        max_tokens=8192,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_content}],
     )
-
-    digest = message.content[0].text
-    print(f"[Claude] Done. Tokens used — input: {message.usage.input_tokens}, output: {message.usage.output_tokens}")
+    raw = message.content[0].text
+    print(f"[Claude] Done. Tokens — input: {message.usage.input_tokens}, output: {message.usage.output_tokens}")
+    digest = extract_json(raw)
+    for section_key in ("global", "local"):
+        for story in digest.get(section_key, []):
+            story["source_count"] = len(story.get("sources", []))
     return digest
 
+# ─────────────────────────────────────────────
+# HTML HELPERS
+# ─────────────────────────────────────────────
+
+def ar(n: int) -> str:
+    """Convert integer to Arabic-Indic numerals."""
+    eastern = "٠١٢٣٤٥٦٧٨٩"
+    return "".join(eastern[int(d)] for d in str(n))
+
+
+def safe(text: str) -> str:
+    """HTML-escape a string for use in attributes."""
+    return html_lib.escape(str(text or ""), quote=True)
+
+
+def build_story_cards(stories: list, section_id: str) -> str:
+    if not stories:
+        return '<p class="empty-state">لا أستطيع حالياً تحديد توافق حقيقي لهذه الفئة اليوم.</p>'
+
+    max_sources = max((s.get("source_count", 0) for s in stories), default=0)
+    cards = []
+
+    for i, story in enumerate(stories):
+        headline    = story.get("headline", "")
+        summary     = story.get("summary", "")
+        spin        = story.get("spin", "")
+        sources     = story.get("sources", [])
+        category    = story.get("category", "")
+        is_dev      = story.get("is_developing", False)
+        context     = story.get("context") or ""
+        source_count = story.get("source_count", 0)
+        is_top      = source_count == max_sources and max_sources > 1
+
+        badges = ""
+        if is_top:
+            badges += '<span class="badge badge-hot">الأكثر تداولاً</span>'
+        if is_dev:
+            badges += '<span class="badge badge-dev">متطور</span>'
+
+        source_pills = "".join(f'<span class="src-pill">{safe(s)}</span>' for s in sources)
+        context_html = f'<div class="story-context">{safe(context)}</div>' if context else ""
+        spin_html = (
+            f'<div class="spin-wrap">'
+            f'<button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button>'
+            f'<div class="spin-body" hidden>'
+            f'<span class="spin-label">التلاعب الإعلامي: </span>{safe(spin)}'
+            f'</div></div>'
+        ) if spin else ""
+
+        cards.append(f"""
+<div class="story-card" data-cat="{safe(category)}" data-headline="{safe(headline)}" data-summary="{safe(summary[:150])}">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#{ar(i+1)}</span>
+      {f'<span class="cat-tag">{safe(category)}</span>' if category else ""}
+      {badges}
+    </div>
+    <h3 class="story-title">{safe(headline)}</h3>
+    {f'<div class="src-pills">{source_pills}</div>' if source_pills else ""}
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    {context_html}
+    <p class="story-summary">{safe(summary)}</p>
+    {spin_html}
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>""")
+
+    return "\n".join(cards)
+
+
+def build_toc(digest: dict) -> str:
+    lines = []
+    for section_key, label in [("global", "الأخبار العالمية"), ("local", "أخبار المملكة")]:
+        stories = digest.get(section_key, [])
+        if not stories:
+            continue
+        lines.append(f'<p class="toc-label">{label}</p>')
+        for i, s in enumerate(stories):
+            lines.append(
+                f'<a class="toc-item" data-section="{section_key}" data-index="{i}" '
+                f'onclick="jumpToStory(this);return false;" href="#">'
+                f'#{ar(i+1)} {safe(s.get("headline",""))}</a>'
+            )
+    return "\n".join(lines)
+
+
+def get_categories(digest: dict) -> list:
+    cats = set()
+    for sk in ("global", "local"):
+        for s in digest.get(sk, []):
+            if s.get("category"):
+                cats.add(s["category"])
+    return sorted(cats)
+
+
+def count_words(digest: dict) -> int:
+    words = 0
+    for sk in ("global", "local"):
+        for s in digest.get(sk, []):
+            words += len(s.get("summary", "").split())
+    return words
+
+
+def all_headlines_js(digest: dict) -> str:
+    lines = []
+    for i, s in enumerate(digest.get("global", []), 1):
+        lines.append(f"{i}. {s.get('headline','')}")
+    for i, s in enumerate(digest.get("local", []), 1):
+        lines.append(f"{i}. {s.get('headline','')}")
+    # Escape for JS template literal
+    return "\\n".join(lines).replace("`", "\\`")
 
 # ─────────────────────────────────────────────
-# HTML GENERATION
+# HTML BUILD
 # ─────────────────────────────────────────────
 
-def build_html(digest_md: str, generated_at: datetime, article_count: dict) -> str:
-    """Convert markdown digest to a full, self-contained HTML page."""
-    digest_html = md_lib.markdown(digest_md, extensions=["extra"])
+def build_html(digest: dict, generated_at: datetime, article_count: dict) -> str:
+    saudi_tz  = timezone(timedelta(hours=3))
+    saudi_now = generated_at.astimezone(saudi_tz)
+    iso       = generated_at.isoformat()
+    display   = saudi_now.strftime("%d/%m/%Y · %I:%M %p")
 
-    # Saudi time = UTC+3
-    saudi_time = generated_at.astimezone(timezone(timedelta(hours=3)))
-    time_str = saudi_time.strftime("%A, %B %d, %Y · %I:%M %p (AST)").replace(" 0", " ")
-    next_run = "غداً الساعة 9:00 صباحاً (بتوقيت السعودية)"
-    total_articles = article_count["global"] + article_count["local"]
+    global_stories = digest.get("global", [])
+    local_stories  = digest.get("local",  [])
+    g_count = len(global_stories)
+    l_count = len(local_stories)
+    total   = article_count["global"] + article_count["local"]
+
+    words   = count_words(digest)
+    read_min = max(1, round(words / 120))
+
+    global_cards = build_story_cards(global_stories, "global")
+    local_cards  = build_story_cards(local_stories,  "local")
+    toc_html     = build_toc(digest)
+    categories   = get_categories(digest)
+    headlines_js = all_headlines_js(digest)
+
+    cat_btns = '<button class="flt-btn active" data-cat="all" onclick="filterCat(this)">الكل</button>'
+    for c in categories:
+        cat_btns += f'<button class="flt-btn" data-cat="{safe(c)}" onclick="filterCat(this)">{safe(c)}</button>'
 
     return f"""<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="المنتقي السيادي" />
-  <meta name="theme-color" content="#0a0a0a" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="المنتقي"/>
+  <meta name="theme-color" content="#0a0a0a" id="theme-meta"/>
   <title>المنتقي السيادي للأخبار</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
-    *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
-
-    body {{
-      font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
-      background: #0a0a0a;
-      color: #e4e4e7;
-      min-height: 100vh;
-      padding: 0 0 60px;
-      -webkit-font-smoothing: antialiased;
-      direction: rtl;
+    :root{{
+      --bg:#0a0a0a;--bg2:#111113;--bg3:#18181b;
+      --bd:#27272a;--bd2:#1f1f23;
+      --t1:#f4f4f5;--t2:#a1a1aa;--t3:#52525b;
+      --blue:#3b82f6;--blue-d:#1d3b6e;
+      --green:#10b981;--green-d:#064e3b;
+      --amber:#f59e0b;--amber-d:#292203;
+      --r:12px;
+    }}
+    .light{{
+      --bg:#f4f4f5;--bg2:#fff;--bg3:#e4e4e7;
+      --bd:#d4d4d8;--bd2:#e4e4e7;
+      --t1:#09090b;--t2:#52525b;--t3:#a1a1aa;
+      --blue-d:#dbeafe;--green-d:#d1fae5;--amber-d:#fef3c7;
+    }}
+    *,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
+    html{{scroll-behavior:smooth}}
+    body{{
+      font-family:'Cairo','Segoe UI',Tahoma,Arial,sans-serif;
+      background:var(--bg);color:var(--t1);
+      min-height:100vh;direction:rtl;
+      -webkit-font-smoothing:antialiased;
+      transition:background .2s,color .2s;
     }}
 
-    /* ── Header ── */
-    .header {{
-      padding: 48px 20px 0;
-      max-width: 680px;
-      margin: 0 auto;
+    /* ── HEADER ── */
+    .hdr{{
+      position:sticky;top:0;z-index:100;
+      background:var(--bg);border-bottom:1px solid var(--bd2);
+      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
     }}
-    .badge {{
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      color: #52525b;
-      margin-bottom: 12px;
+    .hdr-top{{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 16px 0;max-width:700px;margin:0 auto;
     }}
-    .badge-dot {{
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #34d399;
-      animation: pulse 2s ease-in-out infinite;
+    .app-name{{font-size:17px;font-weight:800;color:var(--t1);line-height:1}}
+    .hdr-meta{{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t3);margin-top:3px}}
+    .dot{{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}}
+    .icon-btn{{
+      background:var(--bg3);border:1px solid var(--bd);color:var(--t2);
+      border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer;
+      font-family:inherit;transition:all .15s;
     }}
-    @keyframes pulse {{
-      0%, 100% {{ opacity: 1; }}
-      50% {{ opacity: 0.4; }}
-    }}
-    h1.app-title {{
-      font-size: clamp(22px, 5vw, 28px);
-      font-weight: 700;
-      color: #fafafa;
-      line-height: 1.3;
-    }}
-    .app-subtitle {{
-      color: #71717a;
-      font-size: 13px;
-      margin-top: 6px;
-    }}
+    .icon-btn:hover{{color:var(--t1);border-color:var(--t2)}}
 
-    /* ── Meta bar ── */
-    .meta-bar {{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
-      max-width: 680px;
-      margin: 24px auto 12px;
-      padding: 0 20px;
-      font-size: 11px;
-      color: #52525b;
+    /* ── TABS ── */
+    .tabs{{display:flex;gap:6px;padding:8px 16px;max-width:700px;margin:0 auto}}
+    .tab{{
+      flex:1;padding:8px;border-radius:8px;border:1px solid var(--bd);
+      background:transparent;color:var(--t2);font-family:inherit;
+      font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;
     }}
-    .meta-bar span {{ color: #71717a; }}
+    .tab.on{{background:var(--blue);border-color:var(--blue);color:#fff}}
+    .tab.on.local{{background:var(--green);border-color:var(--green)}}
 
-    /* ── Card ── */
-    .card {{
-      background: #111113;
-      border: 1px solid #1f1f23;
-      border-radius: 16px;
-      padding: 28px 24px;
-      max-width: 680px;
-      margin: 0 20px;
-    }}
-    @media (min-width: 720px) {{
-      .card {{
-        margin: 0 auto;
-        padding: 36px 40px;
-      }}
-    }}
+    /* ── CONTENT ── */
+    .main{{max-width:700px;margin:0 auto;padding:12px 16px 80px}}
 
-    /* ── Digest content ── */
-    .digest h1 {{
-      font-size: 18px;
-      font-weight: 700;
-      color: #fafafa;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #27272a;
-      margin-bottom: 24px;
+    /* ── DIGEST META ── */
+    .dmeta{{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}}
+    .dmeta-txt{{font-size:12px;color:var(--t3)}}
+    .copy-btn{{
+      font-size:11px;padding:5px 10px;background:var(--bg3);
+      border:1px solid var(--bd);color:var(--t2);border-radius:6px;
+      cursor:pointer;font-family:inherit;transition:all .15s;
     }}
-    .digest h2 {{
-      font-size: 13px;
-      font-weight: 600;
-      color: #60a5fa;
-      margin: 32px 0 16px;
-    }}
-    .digest ul {{
-      list-style: none;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }}
-    .digest li {{
-      font-size: 15px;
-      line-height: 1.9;
-      color: #d4d4d8;
-      padding-right: 14px;
-      border-right: 2px solid #27272a;
-    }}
-    .digest li ul {{
-      margin-top: 8px;
-      gap: 4px;
-    }}
-    .digest li ul li {{
-      font-size: 13px;
-      color: #71717a;
-      border-right: none;
-      padding-right: 0;
-    }}
-    .digest strong {{ color: #fafafa; font-weight: 600; }}
-    .digest em {{ color: #71717a; font-size: 13px; }}
-    .digest hr {{
-      border: none;
-      border-top: 1px solid #1f1f23;
-      margin: 32px 0;
-    }}
-    .digest p {{
-      font-size: 12px;
-      color: #3f3f46;
-      text-align: center;
-      margin-top: 24px;
-    }}
+    .copy-btn:hover{{color:var(--t1)}}
 
-    /* ── Footer ── */
-    .footer {{
-      text-align: center;
-      margin-top: 24px;
-      font-size: 11px;
-      color: #3f3f46;
-      padding: 0 20px;
+    /* ── TOC ── */
+    .toc-wrap{{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--r);margin-bottom:10px;overflow:hidden}}
+    .toc-toggle{{
+      width:100%;background:none;border:none;padding:12px 16px;
+      display:flex;align-items:center;justify-content:space-between;
+      font-family:inherit;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;
     }}
-    .footer a {{
-      color: #52525b;
-      text-decoration: none;
+    .toc-body{{padding:0 16px 12px;display:none}}
+    .toc-body.open{{display:block}}
+    .toc-label{{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin:10px 0 4px}}
+    .toc-item{{
+      display:block;font-size:13px;color:var(--t2);padding:5px 0;
+      text-decoration:none;border-bottom:1px solid var(--bd2);
+      transition:color .1s;cursor:pointer;
     }}
-    .footer a:hover {{ color: #71717a; }}
+    .toc-item:hover{{color:var(--blue)}}
+    .toc-item:last-child{{border:none}}
+
+    /* ── FILTERS ── */
+    .filters{{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}}
+    .flt-btn{{
+      padding:5px 12px;border-radius:20px;border:1px solid var(--bd);
+      background:transparent;color:var(--t2);font-size:12px;
+      font-family:inherit;cursor:pointer;transition:all .15s;
+    }}
+    .flt-btn.active{{background:var(--blue);border-color:var(--blue);color:#fff}}
+
+    /* ── SECTION ── */
+    .sec{{display:none}}.sec.on{{display:block}}
+    .sec-hdr{{display:flex;align-items:center;gap:8px;margin:16px 0 10px}}
+    .sec-dot{{width:8px;height:8px;border-radius:50%;flex-shrink:0}}
+    .sec-dot.g{{background:var(--blue)}}.sec-dot.l{{background:var(--green)}}
+    .sec-title{{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t2)}}
+    .sec-count{{font-size:11px;color:var(--t3);margin-right:auto}}
+
+    /* ── STORY CARD ── */
+    .story-card{{
+      background:var(--bg2);border:1px solid var(--bd2);
+      border-radius:var(--r);margin-bottom:8px;overflow:hidden;
+      transition:border-color .15s,opacity .3s;
+    }}
+    .story-card.read{{opacity:.55}}
+    .story-card[hidden]{{display:none!important}}
+
+    .story-hdr{{
+      padding:14px 16px;cursor:pointer;position:relative;
+      user-select:none;-webkit-user-select:none;
+    }}
+    .story-meta{{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}}
+    .story-num{{font-size:11px;color:var(--t3);font-weight:700}}
+    .cat-tag{{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--blue-d);color:var(--blue);font-weight:600}}
+    .badge{{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}}
+    .badge-hot{{background:var(--amber-d);color:var(--amber)}}
+    .badge-dev{{background:var(--green-d);color:var(--green)}}
+    .story-title{{font-size:15px;font-weight:700;color:var(--t1);line-height:1.55;margin-bottom:8px;padding-left:22px}}
+    .src-pills{{display:flex;flex-wrap:wrap;gap:4px}}
+    .src-pill{{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--t3);border:1px solid var(--bd)}}
+    .expand-icon{{position:absolute;left:14px;top:14px;font-size:20px;color:var(--t3);font-weight:300;transition:transform .2s;line-height:1}}
+    .story-hdr.open .expand-icon{{transform:rotate(45deg)}}
+
+    /* ── STORY BODY ── */
+    .story-body{{padding:0 16px 14px;border-top:1px solid var(--bd2)}}
+    .story-context{{
+      font-size:12px;color:var(--green);background:var(--green-d);
+      padding:8px 12px;border-radius:8px;margin:12px 0 10px;line-height:1.7;
+    }}
+    .story-summary{{font-size:14px;line-height:2;color:var(--t1);margin:12px 0 10px}}
+
+    /* ── SPIN ── */
+    .spin-wrap{{margin:8px 0}}
+    .spin-btn{{
+      font-size:12px;padding:6px 14px;background:transparent;
+      border:1px solid var(--amber);color:var(--amber);border-radius:6px;
+      cursor:pointer;font-family:inherit;font-weight:600;transition:all .15s;
+    }}
+    .spin-btn.open{{background:var(--amber-d)}}
+    .spin-body{{
+      margin-top:8px;padding:10px 12px;background:var(--amber-d);
+      border:1px solid var(--amber);border-radius:8px;
+      font-size:13px;color:var(--t1);line-height:1.8;
+    }}
+    .spin-label{{color:var(--amber);font-weight:700}}
+
+    /* ── ACTIONS ── */
+    .story-actions{{display:flex;gap:8px;margin-top:12px}}
+    .share-btn{{
+      font-size:12px;padding:6px 14px;background:var(--bg3);
+      border:1px solid var(--bd);color:var(--t2);border-radius:6px;
+      cursor:pointer;font-family:inherit;transition:all .15s;
+    }}
+    .share-btn:hover{{color:var(--t1)}}
+
+    /* ── EMPTY ── */
+    .empty-state{{text-align:center;color:var(--t3);font-size:14px;padding:40px 20px}}
+
+    /* ── SCROLL TOP ── */
+    #go-top{{
+      position:fixed;bottom:24px;left:16px;
+      width:40px;height:40px;border-radius:50%;
+      background:var(--bg3);border:1px solid var(--bd);
+      color:var(--t2);font-size:18px;cursor:pointer;
+      display:none;align-items:center;justify-content:center;
+      z-index:50;box-shadow:0 4px 16px rgba(0,0,0,.4);transition:all .15s;
+    }}
+    #go-top:hover{{color:var(--t1)}}
+    #go-top.on{{display:flex}}
+
+    /* ── FOOTER ── */
+    footer{{
+      text-align:center;font-size:11px;color:var(--t3);
+      padding:20px 16px 40px;max-width:700px;margin:0 auto;
+    }}
+    footer a{{color:var(--t3);text-decoration:none}}
+    footer a:hover{{color:var(--t2)}}
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="badge">
-      <span class="badge-dot"></span>
-      درع الحماية المعرفية
+<header class="hdr">
+  <div class="hdr-top">
+    <div>
+      <div class="app-name">المنتقي السيادي</div>
+      <div class="hdr-meta">
+        <span class="dot" id="fresh-dot"></span>
+        <span id="rel-time">...</span>
+        &nbsp;·&nbsp;
+        وقت القراءة: {ar(read_min)} دقائق
+      </div>
     </div>
-    <h1 class="app-title">المنتقي السيادي للأخبار</h1>
-    <p class="app-subtitle">منزوع الإثارة · مزال التكرار · محمي من التلاعب</p>
+    <button class="icon-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+  </div>
+  <div class="tabs">
+    <button class="tab on"     onclick="switchTab('g',this)">عالمي ({ar(g_count)})</button>
+    <button class="tab local"  onclick="switchTab('l',this)">السعودية ({ar(l_count)})</button>
+  </div>
+</header>
+
+<div class="main">
+
+  <div class="dmeta">
+    <span class="dmeta-txt">{ar(total)} مقال · {display}</span>
+    <button class="copy-btn" id="copy-btn" onclick="copyHeadlines()">نسخ العناوين</button>
   </div>
 
-  <div class="meta-bar">
-    <span>{time_str}</span>
-    <span>تمت معالجة {total_articles} مقالاً</span>
-  </div>
-
-  <div class="card">
-    <div class="digest">
-      {digest_html}
+  <!-- Table of Contents -->
+  <div class="toc-wrap">
+    <button class="toc-toggle" onclick="toggleToc(this)">
+      <span>فهرس القصص</span><span id="toc-arrow">▾</span>
+    </button>
+    <div class="toc-body" id="toc-body">
+      {toc_html}
     </div>
   </div>
 
-  <div class="footer" style="margin-top: 20px;">
-    التحديث القادم: {next_run}
-    &nbsp;·&nbsp;
-    <a href="https://github.com/HotSalsa10/Sovereign-News-Curator/actions" target="_blank">تشغيل يدوي ↗</a>
+  <!-- Category Filters -->
+  <div class="filters">{cat_btns}</div>
+
+  <!-- Global Section -->
+  <div class="sec on" id="sec-g">
+    <div class="sec-hdr">
+      <span class="sec-dot g"></span>
+      <span class="sec-title">الأخبار العالمية</span>
+      <span class="sec-count">{ar(g_count)} قصة</span>
+    </div>
+    {global_cards}
   </div>
 
+  <!-- Local Section -->
+  <div class="sec" id="sec-l">
+    <div class="sec-hdr">
+      <span class="sec-dot l"></span>
+      <span class="sec-title">أخبار المملكة العربية السعودية</span>
+      <span class="sec-count">{ar(l_count)} قصة</span>
+    </div>
+    {local_cards}
+  </div>
+
+</div>
+
+<button id="go-top" onclick="scrollTo({{top:0,behavior:'smooth'}})">↑</button>
+
+<footer>
+  التحديث القادم: غداً الساعة ٩:٠٠ صباحاً (توقيت السعودية)
+  &nbsp;·&nbsp;
+  <a href="https://github.com/HotSalsa10/Sovereign-News-Curator/actions" target="_blank">تحديث يدوي ↗</a>
+</footer>
+
+<script>
+const GEN = "{iso}";
+const HEADLINES = `{headlines_js}`;
+
+// ── Freshness ──
+function relTime(iso){{
+  const m = Math.floor((Date.now()-new Date(iso))/60000);
+  const h = Math.floor(m/60);
+  if(m<60) return `منذ ${{m}} دقيقة`;
+  if(h<24) return `منذ ${{h}} ساعة`;
+  return 'منذ أكثر من يوم';
+}}
+function freshColor(iso){{
+  const h=(Date.now()-new Date(iso))/3600000;
+  return h<4?'#10b981':h<12?'#3b82f6':h<24?'#f59e0b':'#ef4444';
+}}
+function updateMeta(){{
+  document.getElementById('rel-time').textContent=relTime(GEN);
+  document.getElementById('fresh-dot').style.background=freshColor(GEN);
+}}
+updateMeta(); setInterval(updateMeta,60000);
+
+// ── Theme ──
+let dark=true;
+function toggleTheme(){{
+  dark=!dark;
+  document.body.classList.toggle('light',!dark);
+  document.getElementById('theme-btn').textContent=dark?'☀️':'🌙';
+  document.getElementById('theme-meta').content=dark?'#0a0a0a':'#f4f4f5';
+  localStorage.setItem('snc-theme',dark?'dark':'light');
+}}
+if(localStorage.getItem('snc-theme')==='light') toggleTheme();
+
+// ── Tabs ──
+let curTab='g', curCat='all';
+function switchTab(id,btn){{
+  curTab=id;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.getElementById('sec-'+id).classList.add('on');
+  applyFilter();
+  scrollTo({{top:0,behavior:'smooth'}});
+}}
+
+// ── Story expand ──
+function toggleStory(hdr){{
+  const body=hdr.nextElementSibling;
+  const opening=body.hidden;
+  body.hidden=!opening;
+  hdr.classList.toggle('open',opening);
+  if(opening) hdr.closest('.story-card').classList.add('read');
+}}
+
+// ── Spin ──
+function toggleSpin(btn){{
+  const body=btn.nextElementSibling;
+  body.hidden=!body.hidden;
+  btn.classList.toggle('open',!body.hidden);
+  btn.textContent=body.hidden?'اكشف التحيز الإعلامي':'إخفاء التحيز';
+}}
+
+// ── TOC ──
+function toggleToc(btn){{
+  const body=document.getElementById('toc-body');
+  body.classList.toggle('open');
+  document.getElementById('toc-arrow').textContent=body.classList.contains('open')?'▴':'▾';
+}}
+function jumpToStory(el){{
+  const sec=el.dataset.section==='global'?'g':'l';
+  const idx=parseInt(el.dataset.index);
+  // Switch tab
+  const tabBtn=document.querySelector(sec==='g'?'.tab:not(.local)':'.tab.local');
+  switchTab(sec,tabBtn);
+  // Close TOC
+  document.getElementById('toc-body').classList.remove('open');
+  document.getElementById('toc-arrow').textContent='▾';
+  // Scroll & expand
+  setTimeout(()=>{{
+    const cards=[...document.querySelectorAll('#sec-'+sec+' .story-card')].filter(c=>!c.hidden);
+    if(cards[idx]){{
+      cards[idx].scrollIntoView({{behavior:'smooth',block:'center'}});
+      const hdr=cards[idx].querySelector('.story-hdr');
+      if(cards[idx].querySelector('.story-body').hidden) toggleStory(hdr);
+    }}
+  }},120);
+}}
+
+// ── Category filter ──
+function filterCat(btn){{
+  curCat=btn.dataset.cat;
+  document.querySelectorAll('.flt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilter();
+}}
+function applyFilter(){{
+  document.querySelectorAll('#sec-'+curTab+' .story-card').forEach(card=>{{
+    card.hidden = curCat!=='all' && card.dataset.cat!==curCat;
+  }});
+}}
+
+// ── Share ──
+async function shareStory(btn){{
+  const card=btn.closest('.story-card');
+  const headline=card.dataset.headline;
+  const summary=card.dataset.summary;
+  const text=headline+'\\n'+summary+'...\\n\\nعبر المنتقي السيادي للأخبار';
+  if(navigator.share){{
+    try{{await navigator.share({{title:headline,text}});}}catch(e){{}}
+  }}else{{
+    try{{await navigator.clipboard.writeText(text);alert('تم النسخ!');}}catch(e){{}}
+  }}
+}}
+
+// ── Copy headlines ──
+async function copyHeadlines(){{
+  try{{
+    await navigator.clipboard.writeText(HEADLINES);
+    const btn=document.getElementById('copy-btn');
+    btn.textContent='تم النسخ ✓';
+    setTimeout(()=>btn.textContent='نسخ العناوين',2500);
+  }}catch(e){{}}
+}}
+
+// ── Scroll-to-top ──
+const goTop=document.getElementById('go-top');
+window.addEventListener('scroll',()=>goTop.classList.toggle('on',scrollY>300));
+</script>
 </body>
 </html>"""
-
 
 # ─────────────────────────────────────────────
 # MAIN
@@ -398,40 +763,39 @@ def build_html(digest_md: str, generated_at: datetime, article_count: dict) -> s
 
 def main():
     if not os.environ.get("ANTHROPIC_API_KEY"):
-        print("ERROR: ANTHROPIC_API_KEY environment variable is not set.")
+        print("ERROR: ANTHROPIC_API_KEY not set.")
         sys.exit(1)
 
-    print("=" * 50)
-    print("  SOVEREIGN NEWS CURATOR — Digest Generator")
-    print("=" * 50)
+    print("=" * 52)
+    print(f"  SOVEREIGN NEWS CURATOR  |  Model: {MODEL}")
+    print("=" * 52)
 
-    # 1. Fetch RSS
     articles = fetch_all_feeds()
 
-    if not articles["global"] and not articles["local"]:
-        print("\nERROR: No articles fetched from any feed. Check your internet connection.")
-        sys.exit(1)
+    archive_context = load_archive()
+    if archive_context:
+        days = archive_context.count("\n")
+        print(f"\n[Archive] Loaded {days} days of historical context")
+    else:
+        print("\n[Archive] No historical context yet (first run)")
 
-    # 2. Call Claude
-    digest_md = call_claude(articles)
+    digest = call_claude(articles, archive_context)
 
-    # 3. Build HTML
     now = datetime.now(timezone.utc)
-    article_count = {
-        "global": len(articles["global"]),
-        "local": len(articles["local"]),
-    }
-    html = build_html(digest_md, now, article_count)
+    save_archive(digest, now.strftime("%Y-%m-%d"))
 
-    # 4. Write output
-    output_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "index.html")
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html)
+    article_count = {"global": len(articles["global"]), "local": len(articles["local"])}
+    html = build_html(digest, now, article_count)
 
-    print(f"\n[Done] Digest written to {output_path}")
-    print(f"       Global: {article_count['global']} articles")
-    print(f"       Local:  {article_count['local']} articles")
-    print("=" * 50)
+    out = ROOT_DIR / "index.html"
+    out.write_text(html, encoding="utf-8")
+
+    g = len(digest.get("global", []))
+    l = len(digest.get("local", []))
+    print(f"\n[Done] index.html written")
+    print(f"       Global stories : {g}")
+    print(f"       Local stories  : {l}")
+    print("=" * 52)
 
 
 if __name__ == "__main__":
