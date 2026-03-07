@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Sovereign News" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <title>Sovereign News Curator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0a0a;
+      color: #e4e4e7;
+      min-height: 100vh;
+      padding: 0 0 60px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ── */
+    .header {
+      padding: 48px 20px 0;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #52525b;
+      margin-bottom: 12px;
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #34d399;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    h1.app-title {
+      font-size: clamp(22px, 5vw, 28px);
+      font-weight: 700;
+      color: #fafafa;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .app-subtitle {
+      color: #71717a;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    /* ── Meta bar ── */
+    .meta-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-width: 680px;
+      margin: 24px auto 12px;
+      padding: 0 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #52525b;
+    }
+    .meta-bar span { color: #71717a; }
+
+    /* ── Card ── */
+    .card {
+      background: #111113;
+      border: 1px solid #1f1f23;
+      border-radius: 16px;
+      padding: 28px 24px;
+      max-width: 680px;
+      margin: 0 auto;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+    @media (min-width: 720px) {
+      .card {
+        margin-left: auto;
+        margin-right: auto;
+        padding: 36px 40px;
+      }
+    }
+
+    /* ── Digest content ── */
+    .digest h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fafafa;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #27272a;
+      margin-bottom: 24px;
+      letter-spacing: -0.01em;
+    }
+    .digest h2 {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #60a5fa;
+      margin: 32px 0 16px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .digest ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .digest li {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #d4d4d8;
+      padding-left: 14px;
+      border-left: 2px solid #27272a;
+    }
+    .digest li ul {
+      margin-top: 8px;
+      gap: 4px;
+    }
+    .digest li ul li {
+      font-size: 12px;
+      color: #71717a;
+      border-left: none;
+      padding-left: 0;
+      font-style: italic;
+    }
+    .digest strong { color: #fafafa; font-weight: 600; }
+    .digest em { color: #71717a; font-style: italic; font-size: 12px; }
+    .digest hr {
+      border: none;
+      border-top: 1px solid #1f1f23;
+      margin: 32px 0;
+    }
+    .digest p {
+      font-size: 11px;
+      color: #3f3f46;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 24px;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      margin-top: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #3f3f46;
+      padding: 0 20px;
+    }
+    .footer a {
+      color: #52525b;
+      text-decoration: none;
+    }
+    .footer a:hover { color: #71717a; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Epistemic Defense Shield
+    </div>
+    <h1 class="app-title">Sovereign News Curator</h1>
+    <p class="app-subtitle">De-sensationalized · Deduplicated · Defended</p>
+  </div>
+
+  <div class="meta-bar">
+    <span>Sunday, March 8, 2026 · 1:02 AM (AST)</span>
+    <span>50 articles processed</span>
+  </div>
+
+  <div class="card">
+    <div class="digest">
+      <h1>Daily Sovereign Digest</h1>
+<h2>View 1: Global News</h2>
+<ul>
+<li><strong>US-Iran War Enters Second Week with Expanding Scope:</strong> The conflict between the US, Israel, and Iran has intensified into its second week, with Trump threatening further strikes on "new areas and groups of people." Iran's President Pezeshkian apologized for attacks on neighboring Gulf states while continuing strikes on US bases in the region and Israel. At least six US service members have been killed, with Trump attending a dignified transfer ceremony at Dover Air Force Base.</li>
+<li>
+<p><em>Media Spin:</em> Western outlets (NPR, Sky News, BBC) frame this as potential regional spillover and escalation risk; Iran-aligned coverage emphasizes Pezeshkian's apology and resistance narrative; Trump's statements are presented variously as warning (independent outlets) or as reckless expansion (critical outlets).</p>
+</li>
+<li>
+<p><strong>European Division Over Middle East Conflict Response:</strong> Germany has taken a measured diplomatic stance, while Spain's Prime Minister has been openly critical of both the Trump Administration and Israel. The UK is preparing HMS Prince of Wales for possible Middle East deployment, and the Iranian ambassador warned the UK to be "very careful" about direct involvement.</p>
+</li>
+<li>
+<p><em>Media Spin:</em> Coverage emphasizes the fracturing "special relationship" between the US and UK, with Trump's dismissal of allies who "join wars after we've already won" framed as destabilizing NATO-adjacent relationships.</p>
+</li>
+<li>
+<p><strong>Regional Spillover Effects Documented:</strong> Iranian strikes have targeted US bases in Bahrain, with explosions reported over Dubai and Doha. Iraq's Kurdish region reports being caught in crossfire. Ukraine has offered drone-defense expertise to Gulf states, though Ukrainian experts cannot leave during their own conflict. Israeli operations in Lebanon have killed at least 41 people according to Lebanese health ministry.</p>
+</li>
+<li>
+<p><em>Media Spin:</em> Outlets differ on whether spillover is "containable" (some Western sources) versus "rapidly becoming global" (Sky News, Al Jazeera framing).</p>
+</li>
+<li>
+<p><strong>Tornadoes Kill Multiple People Across US Midwest:</strong> Deadly tornadoes struck Michigan and Oklahoma, killing at least 6-8 people, with rescue operations ongoing. This domestic US event received minimal ideological framing.</p>
+</li>
+<li>
+<p><em>Media Spin:</em> Straightforward reporting with minimal variation across outlets.</p>
+</li>
+<li>
+<p><strong>Trump Launches "Shield of the Americas" Coalition:</strong> Trump met with Latin American leaders to form a regional coalition focused on defeating cartels and criminal gangs, framing the region as having "tremendous potential."</p>
+</li>
+<li>
+<p><em>Media Spin:</em> DW's framing emphasizes the security/counter-narcotics angle; limited ideological divergence.</p>
+</li>
+<li>
+<p><strong>Saudi Arabia Warns Iran of Potential Retaliation:</strong> Saudi Arabia conveyed to Tehran that while favoring diplomatic settlement, continued attacks on the kingdom and its energy sector could trigger a Saudi response in kind, according to sources cited by Reuters/Al-Monitor.</p>
+</li>
+<li>
+<p><em>Media Spin:</em> Presented as a measured deterrent signal; frames Saudi Arabia as reluctant escalator rather than aggressor.</p>
+</li>
+<li>
+<p><strong>Ukraine Conflict Continues Amid Middle East Spillover:</strong> Russian missile strikes killed at least 10 people in Kharkiv, Ukraine's second-largest city. Peace negotiations have stalled amid Middle East turmoil. Ukraine is deploying armed robots on the battlefield.</p>
+</li>
+<li><em>Media Spin:</em> Coverage notes the secondary impact of the Iran war on Ukraine peace prospects; Ukraine's technological innovations framed positively.</li>
+</ul>
+<hr />
+<h2>View 2: Local News — Saudi Arabia</h2>
+<ul>
+<li><strong>Saudi Arabia Maintains Diplomatic Caution in Iran Conflict:</strong> Saudi Arabia has communicated to Iran that while preferring diplomatic resolution, continued attacks on Saudi territory and energy infrastructure will prompt a Saudi response. Iranian President Pezeshkian's Saturday apology to Gulf neighbors is understood as an attempt to de-escalate regional tensions.</li>
+<li>
+<p><em>Media Spin:</em> Al-Monitor sources frame Saudi Arabia as the responsible regional actor seeking stability; Iranian apology presented as insufficient given continued strikes.</p>
+</li>
+<li>
+<p><strong>Iraqi Kurdistan Caught in Regional Crossfire:</strong> Kurdish forces in Iraq report being positioned between Iranian and US-Israeli military operations. Retired Kurdish fighters express reluctance about the conflict, with one local noting "this war is not mine." Iranian Revolutionary Guard Corps has targeted what it describes as "separatist groups" in Iraqi Kurdistan, with reports of potential Israeli-Kurdish coordination on border operations.</p>
+</li>
+<li>
+<p><em>Media Spin:</em> Al-Monitor framing emphasizes Kurdish civilian burden; Kurdish sources express neutrality preference rather than alignment with any party.</p>
+</li>
+<li>
+<p><strong>Regional Energy Security Under Pressure:</strong> The war's spillover effects include threats to Gulf energy infrastructure, with explosions reported over multiple Gulf capitals including Dubai and Doha. The UAE's president stated the country would "emerge stronger" following the conflict.</p>
+</li>
+<li>
+<p><em>Media Spin:</em> Minimal ideological framing; presented as factual security concern.</p>
+</li>
+<li>
+<p><strong>Sri Lanka Manages Iranian Military Casualty Situation:</strong> Sri Lanka announced it will treat 32 Iranian sailors rescued from the torpedoed frigate IRIS Dena according to international law, amid reports of US pressure not to repatriate them.</p>
+</li>
+<li><em>Media Spin:</em> Framed as Sri Lanka asserting independence from external pressure while honoring international obligations.</li>
+</ul>
+<hr />
+<p><em>End of feed. You are caught up.</em></p>
+    </div>
+  </div>
+
+  <div class="footer" style="margin-top: 20px;">
+    Next update: Tomorrow at 9:00 AM Saudi Time
+    &nbsp;·&nbsp;
+    <a href="https://github.com" target="_blank">Trigger manual refresh ↗</a>
+  </div>
+
+</body>
+</html>
