@@ -1,25 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Sovereign News" />
+  <meta name="apple-mobile-web-app-title" content="المنتقي السيادي" />
   <meta name="theme-color" content="#0a0a0a" />
-  <title>Sovereign News Curator</title>
+  <title>المنتقي السيادي للأخبار</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
       background: #0a0a0a;
       color: #e4e4e7;
       min-height: 100vh;
       padding: 0 0 60px;
       -webkit-font-smoothing: antialiased;
+      direction: rtl;
     }
 
     /* ── Header ── */
@@ -32,10 +33,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
+      font-size: 11px;
       color: #52525b;
       margin-bottom: 12px;
     }
@@ -53,8 +51,7 @@
       font-size: clamp(22px, 5vw, 28px);
       font-weight: 700;
       color: #fafafa;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
+      line-height: 1.3;
     }
     .app-subtitle {
       color: #71717a;
@@ -72,7 +69,6 @@
       max-width: 680px;
       margin: 24px auto 12px;
       padding: 0 20px;
-      font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       color: #52525b;
     }
@@ -85,14 +81,11 @@
       border-radius: 16px;
       padding: 28px 24px;
       max-width: 680px;
-      margin: 0 auto;
-      margin-left: 20px;
-      margin-right: 20px;
+      margin: 0 20px;
     }
     @media (min-width: 720px) {
       .card {
-        margin-left: auto;
-        margin-right: auto;
+        margin: 0 auto;
         padding: 36px 40px;
       }
     }
@@ -105,16 +98,12 @@
       padding-bottom: 16px;
       border-bottom: 1px solid #27272a;
       margin-bottom: 24px;
-      letter-spacing: -0.01em;
     }
     .digest h2 {
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
       color: #60a5fa;
       margin: 32px 0 16px;
-      font-family: 'JetBrains Mono', monospace;
     }
     .digest ul {
       list-style: none;
@@ -124,35 +113,33 @@
       gap: 20px;
     }
     .digest li {
-      font-size: 14px;
-      line-height: 1.7;
+      font-size: 15px;
+      line-height: 1.9;
       color: #d4d4d8;
-      padding-left: 14px;
-      border-left: 2px solid #27272a;
+      padding-right: 14px;
+      border-right: 2px solid #27272a;
     }
     .digest li ul {
       margin-top: 8px;
       gap: 4px;
     }
     .digest li ul li {
-      font-size: 12px;
+      font-size: 13px;
       color: #71717a;
-      border-left: none;
-      padding-left: 0;
-      font-style: italic;
+      border-right: none;
+      padding-right: 0;
     }
     .digest strong { color: #fafafa; font-weight: 600; }
-    .digest em { color: #71717a; font-style: italic; font-size: 12px; }
+    .digest em { color: #71717a; font-size: 13px; }
     .digest hr {
       border: none;
       border-top: 1px solid #1f1f23;
       margin: 32px 0;
     }
     .digest p {
-      font-size: 11px;
+      font-size: 12px;
       color: #3f3f46;
       text-align: center;
-      font-family: 'JetBrains Mono', monospace;
       margin-top: 24px;
     }
 
@@ -160,8 +147,7 @@
     .footer {
       text-align: center;
       margin-top: 24px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 11px;
       color: #3f3f46;
       padding: 0 20px;
     }
@@ -177,100 +163,69 @@
   <div class="header">
     <div class="badge">
       <span class="badge-dot"></span>
-      Epistemic Defense Shield
+      درع الحماية المعرفية
     </div>
-    <h1 class="app-title">Sovereign News Curator</h1>
-    <p class="app-subtitle">De-sensationalized · Deduplicated · Defended</p>
+    <h1 class="app-title">المنتقي السيادي للأخبار</h1>
+    <p class="app-subtitle">منزوع الإثارة · مزال التكرار · محمي من التلاعب</p>
   </div>
 
   <div class="meta-bar">
-    <span>Sunday, March 8, 2026 · 1:12 AM (AST)</span>
-    <span>55 articles processed</span>
+    <span>Sunday, March 8, 2026 · 1:22 AM (AST)</span>
+    <span>تمت معالجة 55 مقالاً</span>
   </div>
 
   <div class="card">
     <div class="digest">
-      <h1>Daily Sovereign Digest</h1>
-<h2>View 1: Global News</h2>
+      <h1>الملخص السيادي اليومي</h1>
+<h2>المشهد الأول: الأخبار العالمية</h2>
 <ul>
-<li><strong>Iran-US-Israel War Enters Second Week with Regional Escalation:</strong> Military exchanges continue between Iran and the US-Israel coalition, with Iranian strikes reported across Gulf states (Bahrain, UAE, Qatar) and Israeli operations ongoing in Lebanon and Iran. At least six US soldiers have been killed according to Trump's attendance at Dover Air Force Base on Saturday; Iran's National Security Council claims US soldiers have been captured. Iranian President Masoud Pezeshkian apologized for attacks on neighboring countries while hardliners assert no change in war strategy.</li>
+<li><strong>التصعيد العسكري بين إيران والولايات المتحدة وإسرائيل:</strong> دخل الصراع أسبوعه الثاني مع تبادل قصف جوي ومسيرات بين الأطراف الثلاثة في منطقة الخليج والعراق. أسفرت الهجمات الإيرانية عن أضرار موثقة في قواعد عسكرية أميركية وإسرائيلية، وقتل ستة جنود أميركيين على الأقل حتى الآن. أعلن الرئيس الإيراني اعتذاره للدول المجاورة لكن الهجمات استمرت رغم ذلك.</li>
 <li>
-<p><em>Media Spin:</em> Western outlets (BBC, NPR, Sky News) emphasize regional "spillover" risks and frame Iran's apology as contradictory; Al Jazeera and France 24 provide more direct reporting of military facts; some outlets (The Independent, Sky News) use dramatically escalatory language ("going global," "chaotic and dangerous").</p>
+<p><em>التلاعب الإعلامي:</em> وسائل إعلامية غربية ركزت على "الدفاع الإسرائيلي" بينما وسائل أخرى أطّرت الأمر كـ"حرب أميركية إسرائيلية على إيران"؛ وسائل إيرانية صورت الهجمات كـ"رد دفاعي" بينما وسائل الخليج أبرزت التهديد الذي تعرضت له أراضيها.</p>
 </li>
 <li>
-<p><strong>Satellite Imagery Confirms Damage to Iranian Military Bases:</strong> Multiple Iranian military installations sustained "extensive damage" following airstrikes, according to satellite analysis reported by Al Jazeera.</p>
+<p><strong>الآثار الإنسانية في لبنان:</strong> عملية عسكرية إسرائيلية في قرية لبنانية أسفرت عن مقتل 41 شخصاً و40 مصاباً وفقاً لوزارة الصحة اللبنانية. في السياق ذاته، نزح حوالي 454,000 لبناني وسعت السلطات المحلية لفتح مراكز إيواء. قصف إسرائيلي استهدف مناطق في جنوب لبنان وضواحي بيروت مما أدى لخسائر بشرية إضافية.</p>
 </li>
 <li>
-<p><em>Media Spin:</em> Minimal ideological framing on this factual assessment; reported straightforwardly across outlets.</p>
+<p><em>التلاعب الإعلامي:</em> وسائل غربية وصفت العملية بـ"البحث عن بقايا" بينما وسائل عربية ركزت على "الغزو والقتل"؛ تباين واضح في درجة تعاطف التغطية.</p>
 </li>
 <li>
-<p><strong>Israel Conducts Overnight Raid in Lebanon Killing Dozens:</strong> An Israeli special forces operation in a Lebanese village resulted in at least 41 deaths and 40 injured according to Lebanese health ministry figures. The operation reportedly searched for remains of a missing navigator dating back 40 years.</p>
+<p><strong>موقف دول الخليج:</strong> السعودية حذرت إيران من مواصلة الهجمات على أراضيها وقطاعها الطاقوي وأشارت لإمكانية الرد في المقابل. الإمارات تعرضت لانفجارات موثقة وأعلن الرئيس الإماراتي عزم بلاده الخروج من الأزمة أقوى. بقية دول الخليج واجهت تهديداً من الطائرات بدون طيار والصواريخ الإيرانية.</p>
 </li>
 <li>
-<p><em>Media Spin:</em> BBC frames this as a search for "40-year-old remains"; Al Jazeera emphasizes civilian casualties in parallel Gaza medical narrative; minimal divergence on core facts.</p>
+<p><em>التلاعب الإعلامي:</em> تغطية متحفظة من وسائل خليجية حول موقفها الدبلوماسي؛ وسائل غربية ركزت على "ضعف الرد الدفاعي" الخليجي.</p>
 </li>
 <li>
-<p><strong>Ukraine Deploys Armed Robots; Offers Drone Defense Expertise to Gulf States:</strong> Ukraine has begun deploying armed robotic systems against Russian forces. Ukrainian officials, including President Zelenskiy, have publicly offered expertise in countering Iranian drones to Saudi Arabia and Gulf allies, though Ukrainian military personnel cannot leave to provide on-site assistance.</p>
+<p><strong>الآثار الثانوية: أوكرانيا:</strong> استمرت الضربات الروسية على مدن أوكرانية بما فيها خاركيف (ثاني أكبر مدينة) مما أسفر عن 10 قتلى على الأقل. عرضت أوكرانيا مساعدتها للدول الخليجية في الدفاع ضد الطائرات بدون طيار الإيرانية لكن الخبراء الأوكرانيين عالقون في بلادهم.</p>
 </li>
 <li>
-<p><em>Media Spin:</em> Presented as Ukraine's strategic repositioning amid Middle East conflict; framed as expertise-sharing rather than direct involvement.</p>
+<p><em>التلاعب الإعلامي:</em> وسائل غربية ربطت بين الصراعين كـ"تأثيرات عالمية" للتوتر الإقليمي؛ وسائل روسية تجاهلت الموضوع فعلياً.</p>
 </li>
 <li>
-<p><strong>Severe Weather Kills Multiple Across US:</strong> Tornadoes swept through Michigan and Oklahoma, killing at least 4 in Michigan and 2 in Oklahoma; additional reports cite 8 total deaths. Rescue operations are ongoing.</p>
+<p><strong>الكوارث الطبيعية:</strong> أعاصير في ولايات أميركية (ميشيغان وأوكلاهوما) أسفرت عن 6 قتلى على الأقل. لا تلاعب إعلامي واضح حول هذا الخبر.</p>
 </li>
 <li>
-<p><em>Media Spin:</em> Straightforward reporting; DW and NPR de-sensationalize by focusing on rescue efforts.</p>
+<p><em>التلاعب الإعلامي:</em> لا يوجد؛ الخبر موثق بشكل مباشر.</p>
 </li>
 <li>
-<p><strong>UK Increasing HMS Prince of Wales Readiness for Potential Middle East Deployment:</strong> The UK Ministry of Defence announced increased preparedness of the aircraft carrier, reducing deployment time. Trump stated via Truth Social that the UK's offered carrier support is unnecessary ("we don't need them any longer").</p>
+<p><strong>موضوعات ثانوية متنوعة:</strong> إيطاليا حققت فوزاً تاريخياً على إنجلترا في دوري الأمم الأوروبية للرجبي (23-18). دواء خسارة الوزن (سيماجلوتيد) قد يمكن إنتاجه بـ 3 دولارات شهرياً مما قد يفيد الدول الفقيرة. قادة زيمبابويين يطالبون بإعادة جماجم أسلافهم من المتاحف البريطانية. تعاملت بريطانيا العظمى مع تحذيرات إيرانية بشأن الانضمام للحرب.</p>
 </li>
-<li>
-<p><em>Media Spin:</em> Framed by independent media as strain on US-UK relations; The Independent notes Trump's dismissal; Sky News contextualizes within "special relationship" tension.</p>
-</li>
-<li>
-<p><strong>Cuban Power Plant Successfully Repaired Following Blackout:</strong> Cuba's state electrical company restored service to a major generation facility after a widespread blackout. The outage was attributed to aging infrastructure strained by US oil embargo and broader economic pressure.</p>
-</li>
-<li>
-<p><em>Media Spin:</em> Al Jazeera contextualizes the embargo; other outlets focus on technical restoration with minimal political framing.</p>
-</li>
-<li>
-<p><strong>Ukrainian and Russian Forces Continue Strikes:</strong> Russian missile attacks killed at least 10 people in Kharkiv, Ukraine's second-largest city, with strikes hitting apartment blocks. Peace negotiations remain stalled.</p>
-</li>
-<li>
-<p><em>Media Spin:</em> DW and Sky News emphasize civilian impact; NPR notes connection to Middle East conflict delaying diplomatic progress.</p>
-</li>
-<li>
-<p><strong>Italy Defeats England in Six Nations Rugby:</strong> Italy achieved a historic first victory over England in the Six Nations championship with a 23-18 result.</p>
-</li>
-<li><em>Media Spin:</em> Minimal ideological framing; sports reporting only.</li>
+<li><em>التلاعب الإعلامي:</em> أخبار منخفضة الدرامية؛ تغطية معتدلة.</li>
 </ul>
 <hr />
-<h2>View 2: Local News — Saudi Arabia</h2>
-<ul>
-<li><strong>Saudi Arabia Warns Iran of Potential Retaliation if Attacks Continue:</strong> According to four sources familiar with diplomatic communications, Saudi Arabia conveyed to Tehran that while favoring diplomatic settlement, continued Iranian attacks on the kingdom and its energy infrastructure could provoke Saudi military response. This message preceded Iranian President Pezeshkian's Saturday apology speech.</li>
-<li>
-<p><em>Media Spin:</em> Al-Monitor frames this as a deterrent signal; Middle East Eye reports Iranian Foreign Minister Araqchi's claim that Saudi officials committed to not allowing their territory to be used for attacks on Iran—suggesting competing narratives on Saudi positioning.</p>
-</li>
-<li>
-<p><strong>Saudi Crown Prince Speaks with Ukrainian President on Iran Conflict:</strong> Saudi Crown Prince Mohammed bin Salman held a conversation with Ukrainian President Zelenskiy regarding the Iran situation and Middle East developments. Zelenskiy reiterated Ukraine's offer to share drone-defense expertise gained from years of countering Iranian-designed Shahed drones.</p>
-</li>
-<li>
-<p><em>Media Spin:</em> Al-Monitor reports this as diplomatic coordination; frames Ukraine's expertise as a potential asset to regional allies.</p>
-</li>
-<li>
-<p><strong>Iranian Missiles Target Haifa Refinery; Israeli Interception Reported:</strong> Iran's Revolutionary Guards stated they struck the Haifa oil refinery with Khaibar Shekan missiles in response to targeting of Tehran's refinery. Israeli media reported interception of at least one Iranian missile aimed at southern Israel.</p>
-</li>
-<li><em>Media Spin:</em> Middle East Eye reports Iranian claim directly; Israeli interception claims come via Israeli media—asymmetric sourcing suggests competing narratives on strike success.</li>
-</ul>
+<h2>المشهد الثاني: أخبار المملكة العربية السعودية</h2>
+<p>لا أستطيع حالياً تحديد توافق حقيقي لهذه الفئة اليوم.</p>
+<p><strong>السبب:</strong> المقالات المقدمة تحت عنوان "أخبار السعودية" تتضمن أخباراً إقليمية وعالمية عريضة (إيران، لبنان، أوكرانيا، سريلانكا)، وليست متخصصة بسياسة أو أحداث داخل المملكة السعودية نفسها. الأخبار المحلية الوحيدة الموثقة هي:
+- تحذير السعودية لإيران بشأن الهجمات المستقبلة (متضمن في الأخبار العالمية أعلاه).</p>
 <hr />
-<p><em>End of feed. You are caught up.</em></p>
+<p><em>انتهى البث. أنت الآن مطّلع.</em></p>
     </div>
   </div>
 
   <div class="footer" style="margin-top: 20px;">
-    Next update: Tomorrow at 9:00 AM Saudi Time
+    التحديث القادم: غداً الساعة 9:00 صباحاً (بتوقيت السعودية)
     &nbsp;·&nbsp;
-    <a href="https://github.com" target="_blank">Trigger manual refresh ↗</a>
+    <a href="https://github.com/HotSalsa10/Sovereign-News-Curator/actions" target="_blank">تشغيل يدوي ↗</a>
   </div>
 
 </body>
