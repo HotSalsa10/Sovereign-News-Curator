@@ -7,6 +7,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="المنتقي"/>
   <meta name="theme-color" content="#0a0a0a" id="theme-meta"/>
+  <link rel="apple-touch-icon" href="icon-180.png"/>
+  <link rel="manifest" href="manifest.json"/>
   <title>المنتقي السيادي للأخبار</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
@@ -211,15 +213,15 @@
     <button class="icon-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
   </div>
   <div class="tabs">
-    <button class="tab on"     onclick="switchTab('g',this)">عالمي (١٢)</button>
-    <button class="tab local"  onclick="switchTab('l',this)">السعودية (٦)</button>
+    <button class="tab on"     onclick="switchTab('g',this)">عالمي (١٣)</button>
+    <button class="tab local"  onclick="switchTab('l',this)">السعودية (٤)</button>
   </div>
 </header>
 
 <div class="main">
 
   <div class="dmeta">
-    <span class="dmeta-txt">٥٥ مقال · 08/03/2026 · 01:55 AM</span>
+    <span class="dmeta-txt">٥٥ مقال · 08/03/2026 · 11:46 AM</span>
     <button class="copy-btn" id="copy-btn" onclick="copyHeadlines()">نسخ العناوين</button>
   </div>
 
@@ -230,285 +232,305 @@
     </button>
     <div class="toc-body" id="toc-body">
       <p class="toc-label">الأخبار العالمية</p>
-<a class="toc-item" data-section="global" data-index="0" onclick="jumpToStory(this);return false;" href="#">#١ الحرب الأمريكية الإسرائيلية الإيرانية تدخل أسبوعها الثاني وسط تصاعد الضربات وارتفاع أعداد القتلى</a>
-<a class="toc-item" data-section="global" data-index="1" onclick="jumpToStory(this);return false;" href="#">#٢ إيران تواصل ضرب دول الخليج رغم اعتذار الرئيس بزشكيان عن الهجمات</a>
-<a class="toc-item" data-section="global" data-index="2" onclick="jumpToStory(this);return false;" href="#">#٣ الحرس الثوري الإيراني يستهدف مجموعات كردية في كردستان العراق وترامب يرفض توسيع الحرب</a>
-<a class="toc-item" data-section="global" data-index="3" onclick="jumpToStory(this);return false;" href="#">#٤ العملية الإسرائيلية في لبنان تُخلّف عشرات القتلى والمصابين</a>
-<a class="toc-item" data-section="global" data-index="4" onclick="jumpToStory(this);return false;" href="#">#٥ النازحون في لبنان يتجاوزون 454 ألف شخص وسط تواصل الضربات</a>
-<a class="toc-item" data-section="global" data-index="5" onclick="jumpToStory(this);return false;" href="#">#٦ بريطانيا تعزز استعدادات حاملة الطائرات &#x27;برنس أوف ويلز&#x27; للنشر المحتمل في الشرق الأوسط</a>
-<a class="toc-item" data-section="global" data-index="6" onclick="jumpToStory(this);return false;" href="#">#٧ الروبوتات المسلحة تدخل ساحة المعركة في أوكرانيا</a>
-<a class="toc-item" data-section="global" data-index="7" onclick="jumpToStory(this);return false;" href="#">#٨ ضربات روسية تقتل عشرة أشخاص في خاركيف الأوكرانية</a>
-<a class="toc-item" data-section="global" data-index="8" onclick="jumpToStory(this);return false;" href="#">#٩ عواصف وتورنادو تقتل ستة أشخاص في ميشيغان وأوكلاهوما الأمريكيتين</a>
-<a class="toc-item" data-section="global" data-index="9" onclick="jumpToStory(this);return false;" href="#">#١٠ دراسة: إمكانية إنتاج حقن إنقاص الوزن سيماغلوتايد بثلاثة دولارات شهرياً</a>
-<a class="toc-item" data-section="global" data-index="10" onclick="jumpToStory(this);return false;" href="#">#١١ جنوب أفريقيا تنتقد سياسة ترامب في منح اللجوء للأفارينر البيض</a>
-<a class="toc-item" data-section="global" data-index="11" onclick="jumpToStory(this);return false;" href="#">#١٢ ترامب يطلق تحالف &#x27;درع الأمريكيتين&#x27; مع قادة أمريكا اللاتينية</a>
+<a class="toc-item" data-section="global" data-index="0" onclick="jumpToStory(this);return false;" href="#">#١ الحرب على إيران تدخل يومها التاسع: ضربات تطال منشآت النفط في طهران وحرائق ضخمة</a>
+<a class="toc-item" data-section="global" data-index="1" onclick="jumpToStory(this);return false;" href="#">#٢ إيران تواصل ضرب دول الخليج: طائرة مسيّرة تُتلف محطة تحلية مياه في البحرين</a>
+<a class="toc-item" data-section="global" data-index="2" onclick="jumpToStory(this);return false;" href="#">#٣ إسرائيل تضرب فندق رامادا في بيروت وتقتل أربعة أشخاص في محاولة اغتيال</a>
+<a class="toc-item" data-section="global" data-index="3" onclick="jumpToStory(this);return false;" href="#">#٤ إسرائيل تُحذّر من ملاحقة كل من يسعى لتسمية خليفة خامنئي</a>
+<a class="toc-item" data-section="global" data-index="4" onclick="jumpToStory(this);return false;" href="#">#٥ إسرائيل تشنّ عملية في قرية لبنانية وتُخلّف 41 قتيلًا و40 مصابًا</a>
+<a class="toc-item" data-section="global" data-index="5" onclick="jumpToStory(this);return false;" href="#">#٦ انفجار قرب السفارة الأمريكية في أوسلو دون وقوع إصابات</a>
+<a class="toc-item" data-section="global" data-index="6" onclick="jumpToStory(this);return false;" href="#">#٧ إمكانية تصنيع حقنة أوزمبيك للتخسيس بتكلفة 3 دولارات شهريًا</a>
+<a class="toc-item" data-section="global" data-index="7" onclick="jumpToStory(this);return false;" href="#">#٨ مستجدات حرب أوكرانيا: روسيا تستخدم سلاحًا جديدًا في هجوم على خاركيف يودي بحياة 10 أشخاص</a>
+<a class="toc-item" data-section="global" data-index="8" onclick="jumpToStory(this);return false;" href="#">#٩ استقالة مسؤولة الروبوتيات في OpenAI احتجاجًا على صفقتها مع وزارة الدفاع الأمريكية</a>
+<a class="toc-item" data-section="global" data-index="9" onclick="jumpToStory(this);return false;" href="#">#١٠ إعصار يضرب ميشيغان وأوكلاهوما ويودي بحياة ستة أشخاص من بينهم طفل</a>
+<a class="toc-item" data-section="global" data-index="10" onclick="jumpToStory(this);return false;" href="#">#١١ حزب ناشئ بقيادة مغنٍّ سابق يتجه نحو فوز ساحق في الانتخابات البرلمانية النيبالية</a>
+<a class="toc-item" data-section="global" data-index="11" onclick="jumpToStory(this);return false;" href="#">#١٢ ترامب يثني على تعاون فنزويلا ويتوعّد بـ&#x27;معالجة&#x27; الوضع في كوبا</a>
+<a class="toc-item" data-section="global" data-index="12" onclick="jumpToStory(this);return false;" href="#">#١٣ رئيس جنوب أفريقيا يصف سياسة ترامب تجاه الأفريكانيين البيض بـ&#x27;العنصرية&#x27;</a>
 <p class="toc-label">أخبار المملكة</p>
-<a class="toc-item" data-section="local" data-index="0" onclick="jumpToStory(this);return false;" href="#">#١ السعودية تحذّر إيران من تداعيات مواصلة الهجمات على أراضيها وقطاع طاقتها</a>
-<a class="toc-item" data-section="local" data-index="1" onclick="jumpToStory(this);return false;" href="#">#٢ زيلينسكي يبحث مع ولي العهد السعودي الأزمة الإيرانية وتبادل الخبرات في مواجهة الطائرات المسيّرة</a>
-<a class="toc-item" data-section="local" data-index="2" onclick="jumpToStory(this);return false;" href="#">#٣ لبنان يرفض الارتباط بمصالح إيران وسط التصعيد الإقليمي</a>
-<a class="toc-item" data-section="local" data-index="3" onclick="jumpToStory(this);return false;" href="#">#٤ ضربة تستهدف قاعدة للحشد الشعبي العراقي قرب الموصل</a>
-<a class="toc-item" data-section="local" data-index="4" onclick="jumpToStory(this);return false;" href="#">#٥ سريلانكا تتعهد بمعاملة بحارة إيرانيين وفق القانون الدولي رغم الضغوط الأمريكية</a>
-<a class="toc-item" data-section="local" data-index="5" onclick="jumpToStory(this);return false;" href="#">#٦ العراق يجد نفسه في دوامة الصراع رغم رفض الانجرار إليه</a>
+<a class="toc-item" data-section="local" data-index="0" onclick="jumpToStory(this);return false;" href="#">#١ السعودية تعترض طائرات مسيّرة إيرانية تستهدف الرياض وسط استمرار الهجمات على دول الخليج</a>
+<a class="toc-item" data-section="local" data-index="1" onclick="jumpToStory(this);return false;" href="#">#٢ شبه توافق في مجلس خبراء القيادة الإيراني على اختيار المرشد الجديد</a>
+<a class="toc-item" data-section="local" data-index="2" onclick="jumpToStory(this);return false;" href="#">#٣ تساؤلات حول مستقبل رؤية 2030 السعودية في ظل استمرار الحرب الإقليمية</a>
+<a class="toc-item" data-section="local" data-index="3" onclick="jumpToStory(this);return false;" href="#">#٤ مقتل ثلاثة فلسطينيين في هجوم لمستوطنين إسرائيليين في الضفة الغربية</a>
     </div>
   </div>
 
   <!-- Category Filters -->
-  <div class="filters"><button class="flt-btn active" data-cat="all" onclick="filterCat(this)">الكل</button><button class="flt-btn" data-cat="أمن" onclick="filterCat(this)">أمن</button><button class="flt-btn" data-cat="بيئة" onclick="filterCat(this)">بيئة</button><button class="flt-btn" data-cat="تقنية" onclick="filterCat(this)">تقنية</button><button class="flt-btn" data-cat="سياسة" onclick="filterCat(this)">سياسة</button><button class="flt-btn" data-cat="صحة" onclick="filterCat(this)">صحة</button><button class="flt-btn" data-cat="مجتمع" onclick="filterCat(this)">مجتمع</button></div>
+  <div class="filters"><button class="flt-btn active" data-cat="all" onclick="filterCat(this)">الكل</button><button class="flt-btn" data-cat="أمن" onclick="filterCat(this)">أمن</button><button class="flt-btn" data-cat="اقتصاد" onclick="filterCat(this)">اقتصاد</button><button class="flt-btn" data-cat="بيئة" onclick="filterCat(this)">بيئة</button><button class="flt-btn" data-cat="تقنية" onclick="filterCat(this)">تقنية</button><button class="flt-btn" data-cat="سياسة" onclick="filterCat(this)">سياسة</button><button class="flt-btn" data-cat="صحة" onclick="filterCat(this)">صحة</button></div>
 
   <!-- Global Section -->
   <div class="sec on" id="sec-g">
     <div class="sec-hdr">
       <span class="sec-dot g"></span>
       <span class="sec-title">الأخبار العالمية</span>
-      <span class="sec-count">١٢ قصة</span>
+      <span class="sec-count">١٣ قصة</span>
     </div>
     
-<div class="story-card" data-cat="أمن" data-headline="الحرب الأمريكية الإسرائيلية الإيرانية تدخل أسبوعها الثاني وسط تصاعد الضربات وارتفاع أعداد القتلى" data-summary="دخل النزاع العسكري بين الولايات المتحدة وإسرائيل من جهة وإيران من جهة أخرى أسبوعه الثاني، وسط تبادل مستمر للضربات الصاروخية والطائرات المسيّرة عبر منط">
+<div class="story-card" data-cat="أمن" data-headline="الحرب على إيران تدخل يومها التاسع: ضربات تطال منشآت النفط في طهران وحرائق ضخمة" data-summary="شنّت الولايات المتحدة وإسرائيل ضربات على منشآت تخزين النفط وتكريره في طهران ومنطقة البرز، مما أشعل حرائق ضخمة وأثار مخاوف بيئية. حذّر الهلال الأحمر ال">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#١</span>
       <span class="cat-tag">أمن</span>
       <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">الحرب الأمريكية الإسرائيلية الإيرانية تدخل أسبوعها الثاني وسط تصاعد الضربات وارتفاع أعداد القتلى</h3>
-    <div class="src-pills"><span class="src-pill">NPR World</span><span class="src-pill">Al Jazeera English</span><span class="src-pill">Sky News World</span><span class="src-pill">France 24 English</span><span class="src-pill">BBC World News</span><span class="src-pill">Al-Monitor</span></div>
+    <h3 class="story-title">الحرب على إيران تدخل يومها التاسع: ضربات تطال منشآت النفط في طهران وحرائق ضخمة</h3>
+    <div class="src-pills"><span class="src-pill">Al Jazeera English</span><span class="src-pill">France 24 English</span><span class="src-pill">The Independent World</span><span class="src-pill">Al-Monitor</span><span class="src-pill">Middle East Eye</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">الحرب بين إيران وأمريكا وإسرائيل اندلعت قبل أسبوع وشهدت توسعاً إقليمياً متسارعاً مع استهداف إيران لدول خليجية عدة وقواعد أمريكية في المنطقة.</div>
-    <p class="story-summary">دخل النزاع العسكري بين الولايات المتحدة وإسرائيل من جهة وإيران من جهة أخرى أسبوعه الثاني، وسط تبادل مستمر للضربات الصاروخية والطائرات المسيّرة عبر منطقة الشرق الأوسط. حضر الرئيس ترامب مراسم استقبال رفات ستة جنود أمريكيين قُتلوا في ضربة إيرانية بالطائرات المسيّرة في قاعدة دوفر الجوية. وأكد المركزي الأمريكي نفيه التام لادعاءات إيرانية بأسر جنود أمريكيين.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>وصفت وسائل الإعلام الغربية الحرب بأنها باتت &#x27;عالمية وفوضوية&#x27;، بينما ركّزت وسائل الإعلام المقرّبة من إيران على حق الدفاع عن النفس ومحاولة تصوير الحرس الثوري على أنه يستهدف &#x27;جماعات انفصالية&#x27; فحسب.</div></div>
+    <div class="story-context">الحرب الأمريكية الإسرائيلية على إيران مستمرة منذ أكثر من أسبوع وسط تصاعد الضربات وارتفاع أعداد الضحايا.</div>
+    <p class="story-summary">شنّت الولايات المتحدة وإسرائيل ضربات على منشآت تخزين النفط وتكريره في طهران ومنطقة البرز، مما أشعل حرائق ضخمة وأثار مخاوف بيئية. حذّر الهلال الأحمر الإيراني من احتمال تحوّل الأمطار إلى مطر سام جراء الانفجارات، محذّرًا المدنيين من الخروج أثناء هطول الأمطار. أعلن الحرس الثوري الإيراني أن بإمكان قواته خوض حرب مكثفة لمدة ستة أشهر على الأقل.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تركّز وسائل الإعلام الغربية على الأضرار التي لحقت بالبنية التحتية النفطية الإيرانية وانعكاساتها على أسواق الطاقة، فيما تبرز وسائل الإعلام المقربة من إيران التحذيرات البيئية والإنسانية.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="أمن" data-headline="إيران تواصل ضرب دول الخليج رغم اعتذار الرئيس بزشكيان عن الهجمات" data-summary="اعتذر الرئيس الإيراني مسعود بزشكيان عن الهجمات التي طالت الدول المجاورة، إلا أن الضربات الإيرانية تواصلت على الإمارات والبحرين وقطر. استهدف الحرس الثو">
+<div class="story-card" data-cat="أمن" data-headline="إيران تواصل ضرب دول الخليج: طائرة مسيّرة تُتلف محطة تحلية مياه في البحرين" data-summary="أعلنت البحرين أن طائرة مسيّرة إيرانية ألحقت أضرارًا بمحطة تحلية للمياه، في سابقة تُعدّ الأولى من نوعها خلال هذه الحرب. كما شنّت إيران هجمات بالطائرات ">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٢</span>
       <span class="cat-tag">أمن</span>
       <span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">إيران تواصل ضرب دول الخليج رغم اعتذار الرئيس بزشكيان عن الهجمات</h3>
-    <div class="src-pills"><span class="src-pill">France 24 English</span><span class="src-pill">NPR World</span><span class="src-pill">Al Jazeera English</span></div>
+    <h3 class="story-title">إيران تواصل ضرب دول الخليج: طائرة مسيّرة تُتلف محطة تحلية مياه في البحرين</h3>
+    <div class="src-pills"><span class="src-pill">France 24 English</span><span class="src-pill">Al-Monitor</span><span class="src-pill">Asharq Al-Awsat</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">الإمارات تلقّت النصيب الأكبر من الضربات الإيرانية في المنطقة منذ اندلاع الحرب قبل أسبوع.</div>
-    <p class="story-summary">اعتذر الرئيس الإيراني مسعود بزشكيان عن الهجمات التي طالت الدول المجاورة، إلا أن الضربات الإيرانية تواصلت على الإمارات والبحرين وقطر. استهدف الحرس الثوري الإيراني قاعدة الدعم البحري الأمريكية في البحرين، وأُفيد بسماع انفجارات فوق دبي والدوحة. أكد رئيس الإمارات أن بلاده ستخرج أقوى من هذه الأزمة.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>صوّرت بعض وسائل الإعلام اعتذار بزشكيان على أنه خطوة دبلوماسية، في حين اعتبرته وسائل أخرى مجرد استعراض لا قيمة له في ظل استمرار الضربات الفعلية.</div></div>
+    <div class="story-context">إيران تواصل ضرب دول الخليج رغم اعتذار الرئيس بزشكيان عن الهجمات على الدول المجاورة.</div>
+    <p class="story-summary">أعلنت البحرين أن طائرة مسيّرة إيرانية ألحقت أضرارًا بمحطة تحلية للمياه، في سابقة تُعدّ الأولى من نوعها خلال هذه الحرب. كما شنّت إيران هجمات بالطائرات المسيّرة على دول خليجية عدة من بينها السعودية والإمارات والكويت وقطر. أكد الهجوم على البحرين توسّع نطاق العمليات الإيرانية لتطال البنية التحتية الحيوية.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُقدّم وسائل الإعلام الغربية هذه الهجمات باعتبارها تصعيدًا إيرانيًا خطيرًا، فيما تصفها إيران بأنها رد دفاعي مشروع.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="أمن" data-headline="الحرس الثوري الإيراني يستهدف مجموعات كردية في كردستان العراق وترامب يرفض توسيع الحرب" data-summary="أعلن الحرس الثوري الإيراني استهداف ما وصفه بـ&#x27;الجماعات الانفصالية&#x27; في إقليم كردستان العراق، في ظل تقارير تتحدث عن تشكيل قوات كردية مسلحة يُحتمل أن تُد">
+<div class="story-card" data-cat="أمن" data-headline="إسرائيل تضرب فندق رامادا في بيروت وتقتل أربعة أشخاص في محاولة اغتيال" data-summary="شنّت إسرائيل ضربة جوية على فندق رامادا في وسط بيروت، ما أسفر عن مقتل أربعة أشخاص على الأقل وفق وزارة الصحة اللبنانية. أعلنت إسرائيل أنها استهدفت قادة ">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٣</span>
       <span class="cat-tag">أمن</span>
       <span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">الحرس الثوري الإيراني يستهدف مجموعات كردية في كردستان العراق وترامب يرفض توسيع الحرب</h3>
-    <div class="src-pills"><span class="src-pill">France 24 English</span><span class="src-pill">Middle East Eye</span><span class="src-pill">Al-Monitor</span></div>
+    <h3 class="story-title">إسرائيل تضرب فندق رامادا في بيروت وتقتل أربعة أشخاص في محاولة اغتيال</h3>
+    <div class="src-pills"><span class="src-pill">Al Jazeera English</span><span class="src-pill">France 24 English</span><span class="src-pill">Al-Monitor</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">الحرس الثوري الإيراني استهدف مجموعات كردية في كردستان العراق منذ الأيام الأولى للحرب.</div>
-    <p class="story-summary">أعلن الحرس الثوري الإيراني استهداف ما وصفه بـ&#x27;الجماعات الانفصالية&#x27; في إقليم كردستان العراق، في ظل تقارير تتحدث عن تشكيل قوات كردية مسلحة يُحتمل أن تُدخَل إلى الأراضي الإيرانية. قال الرئيس ترامب على متن طائرة إير فورس ون إنه لا يريد أن يشنّ الأكراد هجوماً على إيران حتى لا تتعقّد الحرب أكثر. وأشارت تقارير إلى أن إسرائيل تدعم الخطط الكردية لضم مناطق حدودية.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>ركّزت وسائل الإعلام الغربية على تصريح ترامب الرافض للهجوم الكردي بوصفه محاولة لضبط النطاق الجغرافي للحرب، بينما أبرزت وسائل أخرى الدور الإسرائيلي المزعوم في دعم الفصائل الكردية.</div></div>
+    <div class="story-context">العمليات الإسرائيلية في لبنان مستمرة منذ اندلاع الحرب وخلّفت عشرات القتلى والمصابين.</div>
+    <p class="story-summary">شنّت إسرائيل ضربة جوية على فندق رامادا في وسط بيروت، ما أسفر عن مقتل أربعة أشخاص على الأقل وفق وزارة الصحة اللبنانية. أعلنت إسرائيل أنها استهدفت قادة من الحرس الثوري الإيراني دون الكشف عن هوياتهم. جاءت الضربة في سياق تصاعد القتال عقب هجمات حزب الله على إسرائيل.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُقدّم إسرائيل الضربة باعتبارها عملية استهداف دقيقة لقيادات عسكرية، فيما يُركّز الإعلام اللبناني على الخسائر المدنية والدمار.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="أمن" data-headline="العملية الإسرائيلية في لبنان تُخلّف عشرات القتلى والمصابين" data-summary="شنّت قوات خاصة إسرائيلية عملية ليلية في قرية لبنانية بهدف البحث عن رفات طيار إسرائيلي اختفى قبل أربعين عاماً، ما أسفر عن مقتل 41 شخصاً وإصابة 40 آخرين">
+<div class="story-card" data-cat="سياسة" data-headline="إسرائيل تُحذّر من ملاحقة كل من يسعى لتسمية خليفة خامنئي" data-summary="أعلن الجيش الإسرائيلي عبر منصة إكس باللغة الفارسية أنه سيلاحق كل خليفة محتمل لخامنئي، بل وكل من يسعى لتسميته. في المقابل، أفاد عضو في مجلس خبراء القيا">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٤</span>
-      <span class="cat-tag">أمن</span>
+      <span class="cat-tag">سياسة</span>
       <span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">العملية الإسرائيلية في لبنان تُخلّف عشرات القتلى والمصابين</h3>
-    <div class="src-pills"><span class="src-pill">BBC World News</span><span class="src-pill">Sky News World</span><span class="src-pill">Middle East Eye</span><span class="src-pill">Asharq Al-Awsat</span></div>
+    <h3 class="story-title">إسرائيل تُحذّر من ملاحقة كل من يسعى لتسمية خليفة خامنئي</h3>
+    <div class="src-pills"><span class="src-pill">Al-Monitor</span><span class="src-pill">Middle East Eye</span><span class="src-pill">Asharq Al-Awsat</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">إسرائيل شنّت عملية خاصة في لبنان في الأسبوع الماضي أسفرت عن 41 قتيلاً، وتتواصل الضربات الجوية على جنوب لبنان والضاحية.</div>
-    <p class="story-summary">شنّت قوات خاصة إسرائيلية عملية ليلية في قرية لبنانية بهدف البحث عن رفات طيار إسرائيلي اختفى قبل أربعين عاماً، ما أسفر عن مقتل 41 شخصاً وإصابة 40 آخرين وفق وزارة الصحة اللبنانية. ونفّذ الجيش الإسرائيلي أيضاً ضربات جوية استهدفت أكثر من 20 بلدة وقرية في جنوب لبنان أسفرت عن ثمانية قتلى على الأقل. وطالب الجيش الإسرائيلي السكان المتبقين في الضاحية الجنوبية لبيروت بالإخلاء الفوري.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>وصفت وسائل الإعلام الإسرائيلية العملية بأنها مهمة إنسانية لاسترداد رفات جندي، في حين ركّزت وسائل الإعلام اللبنانية وعدد من المنافذ الدولية على الخسائر البشرية الكبيرة في صفوف المدنيين.</div></div>
+    <div class="story-context">تتواصل الحرب الأمريكية الإسرائيلية على إيران التي أسفرت وفق التقارير عن مقتل المرشد الأعلى علي خامنئي.</div>
+    <p class="story-summary">أعلن الجيش الإسرائيلي عبر منصة إكس باللغة الفارسية أنه سيلاحق كل خليفة محتمل لخامنئي، بل وكل من يسعى لتسميته. في المقابل، أفاد عضو في مجلس خبراء القيادة الإيراني بأن المجلس توصّل إلى شبه توافق على اختيار المرشد الجديد مع وجود بعض العقبات. تشير التقارير إلى أن المجلس سيجتمع في غضون يوم واحد للبتّ في الأمر.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُقدّم وسائل الإعلام الإسرائيلية والغربية التحذير باعتباره ضغطًا استراتيجيًا، فيما تؤكد وسائل الإعلام الإيرانية أن عملية الخلافة تسير بشكل طبيعي رغم التهديدات.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="مجتمع" data-headline="النازحون في لبنان يتجاوزون 454 ألف شخص وسط تواصل الضربات" data-summary="أعلنت وزيرة الشؤون الاجتماعية اللبنانية أن نحو 454 ألف لبناني سجّلوا أنفسهم نازحين جراء الضربات الإسرائيلية المتواصلة. وجرى افتتاح ملجأ جديد في مدينة ">
+<div class="story-card" data-cat="أمن" data-headline="إسرائيل تشنّ عملية في قرية لبنانية وتُخلّف 41 قتيلًا و40 مصابًا" data-summary="أسفرت عملية لقوات الكوماندوز الإسرائيلية في قرية لبنانية عن مقتل 41 شخصًا وإصابة 40 آخرين وفق وزارة الصحة اللبنانية. وصفت إسرائيل العملية بأنها تستهدف">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٥</span>
-      <span class="cat-tag">مجتمع</span>
+      <span class="cat-tag">أمن</span>
       <span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">النازحون في لبنان يتجاوزون 454 ألف شخص وسط تواصل الضربات</h3>
-    <div class="src-pills"><span class="src-pill">Middle East Eye</span></div>
+    <h3 class="story-title">إسرائيل تشنّ عملية في قرية لبنانية وتُخلّف 41 قتيلًا و40 مصابًا</h3>
+    <div class="src-pills"><span class="src-pill">BBC World News</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">لبنان يرفض ربط مصيره بمصالح إيران وسط التصعيد الإقليمي المتواصل منذ الأسبوع الماضي.</div>
-    <p class="story-summary">أعلنت وزيرة الشؤون الاجتماعية اللبنانية أن نحو 454 ألف لبناني سجّلوا أنفسهم نازحين جراء الضربات الإسرائيلية المتواصلة. وجرى افتتاح ملجأ جديد في مدينة الرياضة ببيروت لاستيعاب الأسر النازحة. ويستمر التصعيد الإسرائيلي على جنوب لبنان والضاحية الجنوبية لبيروت.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>أبرزت وسائل الإعلام العربية الأعداد الكبيرة للنازحين والأثر الإنساني، في حين تناولت وسائل الإعلام الإسرائيلية العمليات العسكرية من منظور أمني.</div></div>
+    <div class="story-context">العمليات العسكرية الإسرائيلية في لبنان أسفرت عن نزوح أكثر من 454 ألف شخص وعشرات الضحايا.</div>
+    <p class="story-summary">أسفرت عملية لقوات الكوماندوز الإسرائيلية في قرية لبنانية عن مقتل 41 شخصًا وإصابة 40 آخرين وفق وزارة الصحة اللبنانية. وصفت إسرائيل العملية بأنها تستهدف البحث عن رفات يعود إلى أربعة عقود. تأتي هذه العملية في سياق التصعيد العسكري الإسرائيلي المتواصل في لبنان.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُبرر إسرائيل العملية بأغراض إنسانية تتعلق باسترداد رفات رهائن، فيما يصفها الإعلام اللبناني وجماعات حقوق الإنسان بأنها مجزرة.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="أمن" data-headline="بريطانيا تعزز استعدادات حاملة الطائرات &#x27;برنس أوف ويلز&#x27; للنشر المحتمل في الشرق الأوسط" data-summary="كشفت وزارة الدفاع البريطانية أنها ترفع مستوى جاهزية حاملة الطائرات HMS Prince of Wales لتقليص الوقت اللازم لنشرها في منطقة الشرق الأوسط. وحذّر السفير ">
+<div class="story-card" data-cat="أمن" data-headline="انفجار قرب السفارة الأمريكية في أوسلو دون وقوع إصابات" data-summary="أفادت الشرطة النرويجية بوقوع انفجار في محيط السفارة الأمريكية في أوسلو في الساعات الأولى من صباح الأحد. لم تُسجَّل أي إصابات، غير أن الانفجار تسبّب في">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٦</span>
       <span class="cat-tag">أمن</span>
-      <span class="badge badge-dev">متطور</span>
-    </div>
-    <h3 class="story-title">بريطانيا تعزز استعدادات حاملة الطائرات &#x27;برنس أوف ويلز&#x27; للنشر المحتمل في الشرق الأوسط</h3>
-    <div class="src-pills"><span class="src-pill">The Independent World</span><span class="src-pill">BBC World News</span></div>
-    <span class="expand-icon" aria-hidden="true">+</span>
-  </div>
-  <div class="story-body" hidden>
-    <div class="story-context">العلاقات الأمريكية البريطانية تتعرض لضغوط متزايدة إزاء مستوى الانخراط البريطاني في الحرب مع إيران.</div>
-    <p class="story-summary">كشفت وزارة الدفاع البريطانية أنها ترفع مستوى جاهزية حاملة الطائرات HMS Prince of Wales لتقليص الوقت اللازم لنشرها في منطقة الشرق الأوسط. وحذّر السفير الإيراني لدى لندن المملكة المتحدة من التورط المباشر في الحرب، مؤكداً حق إيران في الدفاع عن النفس. وكشف ترامب لرئيس الوزراء ستارمر أن أمريكا &#x27;لا تحتاج لمن ينضم بعد أن نكون قد فزنا&#x27;.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>قدّمت وسائل الإعلام البريطانية الخطوة باعتبارها تحسباً دفاعياً احترازياً، في حين رأى فيها المنتقدون تصعيداً للتدخل الغربي في الصراع.</div></div>
-    <div class="story-actions">
-      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
-    </div>
-  </div>
-</div>
-
-<div class="story-card" data-cat="تقنية" data-headline="الروبوتات المسلحة تدخل ساحة المعركة في أوكرانيا" data-summary="أطلقت أوكرانيا برنامجاً لنشر روبوتات مسلحة في مواجهة القوات الروسية على خط الجبهة. ويأتي هذا التطور في سياق البحث عن وسائل غير تقليدية لتعزيز القدرات ">
-  <div class="story-hdr" onclick="toggleStory(this)">
-    <div class="story-meta">
-      <span class="story-num">#٧</span>
-      <span class="cat-tag">تقنية</span>
       
     </div>
-    <h3 class="story-title">الروبوتات المسلحة تدخل ساحة المعركة في أوكرانيا</h3>
+    <h3 class="story-title">انفجار قرب السفارة الأمريكية في أوسلو دون وقوع إصابات</h3>
     <div class="src-pills"><span class="src-pill">BBC World News</span><span class="src-pill">DW World</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
     
-    <p class="story-summary">أطلقت أوكرانيا برنامجاً لنشر روبوتات مسلحة في مواجهة القوات الروسية على خط الجبهة. ويأتي هذا التطور في سياق البحث عن وسائل غير تقليدية لتعزيز القدرات القتالية. وتتواصل مباحثات دبلوماسية بشأن تبادل خبرات أوكرانيا في التصدي للطائرات المسيّرة الإيرانية مع دول الخليج.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>ركّزت وسائل الإعلام الغربية على الجانب التقني والابتكاري لهذه الخطوة، بينما اعتبرها بعض المحللين مؤشراً على ضائقة بشرية تعاني منها أوكرانيا.</div></div>
+    <p class="story-summary">أفادت الشرطة النرويجية بوقوع انفجار في محيط السفارة الأمريكية في أوسلو في الساعات الأولى من صباح الأحد. لم تُسجَّل أي إصابات، غير أن الانفجار تسبّب في أضرار مادية طفيفة. لم تُحدَّد هوية المسؤولين عن الحادثة حتى الآن وفق التقارير المتاحة.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>أبدت وسائل الإعلام الغربية قلقها إزاء احتمال ارتباط الحادثة بتنامي التوترات المرتبطة بالحرب في الشرق الأوسط، دون التثبت من أي صلة مؤكدة.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="أمن" data-headline="ضربات روسية تقتل عشرة أشخاص في خاركيف الأوكرانية" data-summary="أسفرت ضربات صاروخية وبطائرات مسيّرة روسية ليلية عن مقتل عشرة أشخاص على الأقل وجرح أكثر من اثني عشر آخرين بينهم أطفال في مدينة خاركيف ثاني أكبر المدن ا">
+<div class="story-card" data-cat="صحة" data-headline="إمكانية تصنيع حقنة أوزمبيك للتخسيس بتكلفة 3 دولارات شهريًا" data-summary="كشفت دراسة جديدة أن عقار سيماغلوتيد، المادة الفعالة في أوزمبيك وويغوفي، يمكن تصنيعه بتكلفة لا تتجاوز 3 دولارات شهريًا. قد يُتيح ذلك علاج الملايين المص">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٧</span>
+      <span class="cat-tag">صحة</span>
+      
+    </div>
+    <h3 class="story-title">إمكانية تصنيع حقنة أوزمبيك للتخسيس بتكلفة 3 دولارات شهريًا</h3>
+    <div class="src-pills"><span class="src-pill">The Guardian World</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    
+    <p class="story-summary">كشفت دراسة جديدة أن عقار سيماغلوتيد، المادة الفعالة في أوزمبيك وويغوفي، يمكن تصنيعه بتكلفة لا تتجاوز 3 دولارات شهريًا. قد يُتيح ذلك علاج الملايين المصابين بالسمنة والسكري في الدول الفقيرة مع انتهاء صلاحية براءات الاختراع. يُعاني أكثر من مليار شخص في العالم من السمنة، مع تصاعد ملحوظ في الدول منخفضة الدخل.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>يُبرز الإعلام الصحي الإمكانات العلاجية لهذا الاكتشاف، فيما يرصد المحللون الاقتصاديون تداعياته على شركات الأدوية الكبرى.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="أمن" data-headline="مستجدات حرب أوكرانيا: روسيا تستخدم سلاحًا جديدًا في هجوم على خاركيف يودي بحياة 10 أشخاص" data-summary="أعلنت أوكرانيا أن روسيا استخدمت سلاحًا جديدًا في ضربة على مدينة خاركيف راح ضحيتها 10 أشخاص من بينهم طفلان، فضلًا عن إصابة 16 آخرين. لم تُفصح أوكرانيا ">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٨</span>
       <span class="cat-tag">أمن</span>
       <span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">ضربات روسية تقتل عشرة أشخاص في خاركيف الأوكرانية</h3>
-    <div class="src-pills"><span class="src-pill">DW World</span><span class="src-pill">Sky News World</span></div>
+    <h3 class="story-title">مستجدات حرب أوكرانيا: روسيا تستخدم سلاحًا جديدًا في هجوم على خاركيف يودي بحياة 10 أشخاص</h3>
+    <div class="src-pills"><span class="src-pill">The Independent World</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">الحرب الروسية الأوكرانية تتواصل وسط انشغال دولي بالأزمة الإيرانية التي تستأثر باهتمام واسع.</div>
-    <p class="story-summary">أسفرت ضربات صاروخية وبطائرات مسيّرة روسية ليلية عن مقتل عشرة أشخاص على الأقل وجرح أكثر من اثني عشر آخرين بينهم أطفال في مدينة خاركيف ثاني أكبر المدن الأوكرانية. وتشير التقارير إلى أن مفاوضات السلام قد توقفت في ظل الاضطرابات المتصاعدة في الشرق الأوسط.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>وصفت وسائل الإعلام الغربية الضربات بأنها استهدفت مناطق سكنية، في حين لم تُعلّق موسكو رسمياً على التفاصيل.</div></div>
+    <div class="story-context">الحرب الروسية الأوكرانية مستمرة منذ أكثر من ثلاث سنوات وسط تبادل مستمر للضربات على البنية التحتية والمدن.</div>
+    <p class="story-summary">أعلنت أوكرانيا أن روسيا استخدمت سلاحًا جديدًا في ضربة على مدينة خاركيف راح ضحيتها 10 أشخاص من بينهم طفلان، فضلًا عن إصابة 16 آخرين. لم تُفصح أوكرانيا عن تفاصيل السلاح المستخدم. يأتي الهجوم في خضم استمرار القتال على الجبهات الأوكرانية.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>يُركّز الإعلام الأوكراني الغربي على التصعيد الروسي وضحاياه المدنيين، فيما لا يُشير الإعلام الروسي إلى هذه الهجمات.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="بيئة" data-headline="عواصف وتورنادو تقتل ستة أشخاص في ميشيغان وأوكلاهوما الأمريكيتين" data-summary="اجتاحت عواصف شديدة مصحوبة بإعصار تورنادو ولايتي ميشيغان وأوكلاهوما الأمريكيتين، ما أسفر عن مقتل أربعة أشخاص في ميشيغان واثنين في أوكلاهوما. وتواصل فرق">
+<div class="story-card" data-cat="تقنية" data-headline="استقالة مسؤولة الروبوتيات في OpenAI احتجاجًا على صفقتها مع وزارة الدفاع الأمريكية" data-summary="أعلنت المديرة التنفيذية للروبوتيات في شركة OpenAI استقالتها اعتراضًا على صفقة الشركة مع وزارة الدفاع الأمريكية التي تُتيح توظيف الذكاء الاصطناعي في ال">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٩</span>
-      <span class="cat-tag">بيئة</span>
+      <span class="cat-tag">تقنية</span>
       
     </div>
-    <h3 class="story-title">عواصف وتورنادو تقتل ستة أشخاص في ميشيغان وأوكلاهوما الأمريكيتين</h3>
-    <div class="src-pills"><span class="src-pill">BBC World News</span><span class="src-pill">DW World</span><span class="src-pill">Asharq Al-Awsat</span></div>
+    <h3 class="story-title">استقالة مسؤولة الروبوتيات في OpenAI احتجاجًا على صفقتها مع وزارة الدفاع الأمريكية</h3>
+    <div class="src-pills"><span class="src-pill">France 24 English</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
     
-    <p class="story-summary">اجتاحت عواصف شديدة مصحوبة بإعصار تورنادو ولايتي ميشيغان وأوكلاهوما الأمريكيتين، ما أسفر عن مقتل أربعة أشخاص في ميشيغان واثنين في أوكلاهوما. وتواصل فرق الإنقاذ عمليات البحث عن ناجين وتقديم الدعم للمتضررين.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>أغلب وسائل الإعلام تناولت الخبر بصورة موضوعية، غير أن بعضها ربطه بأنماط المناخ المتطرف المتصاعدة.</div></div>
+    <p class="story-summary">أعلنت المديرة التنفيذية للروبوتيات في شركة OpenAI استقالتها اعتراضًا على صفقة الشركة مع وزارة الدفاع الأمريكية التي تُتيح توظيف الذكاء الاصطناعي في العمليات العسكرية والمراقبة المحتملة داخل الولايات المتحدة. وصفت الاستقالة الصفقة بأنها تتعارض مع قيمها الشخصية والأخلاقية. تُثير الحادثة تساؤلات جدية حول الحدود الأخلاقية لتطبيقات الذكاء الاصطناعي العسكري.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُقدّم وسائل الإعلام التقنية الاستقالة باعتبارها مؤشرًا على أزمة قيم داخل شركات الذكاء الاصطناعي الكبرى، فيما يراها آخرون خطوة فردية لا تعكس موقف المؤسسة.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="صحة" data-headline="دراسة: إمكانية إنتاج حقن إنقاص الوزن سيماغلوتايد بثلاثة دولارات شهرياً" data-summary="كشفت دراسة جديدة أن عقار سيماغلوتايد المستخدم في حقن أوزمبيك وويغوفي لإنقاص الوزن يمكن إنتاجه بتكلفة لا تتجاوز ثلاثة دولارات شهرياً. وقد يُسهم ذلك في ">
+<div class="story-card" data-cat="بيئة" data-headline="إعصار يضرب ميشيغان وأوكلاهوما ويودي بحياة ستة أشخاص من بينهم طفل" data-summary="اجتاحت إعصارات قاتلة ولايتي ميشيغان وأوكلاهوما الأمريكيتين، ما أسفر عن مقتل ستة أشخاص من بينهم طفل في الثانية عشرة من عمره. خلّفت العواصف دمارًا واسعً">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#١٠</span>
-      <span class="cat-tag">صحة</span>
+      <span class="cat-tag">بيئة</span>
       
     </div>
-    <h3 class="story-title">دراسة: إمكانية إنتاج حقن إنقاص الوزن سيماغلوتايد بثلاثة دولارات شهرياً</h3>
-    <div class="src-pills"><span class="src-pill">The Guardian World</span></div>
+    <h3 class="story-title">إعصار يضرب ميشيغان وأوكلاهوما ويودي بحياة ستة أشخاص من بينهم طفل</h3>
+    <div class="src-pills"><span class="src-pill">BBC World News</span><span class="src-pill">DW World</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
     
-    <p class="story-summary">كشفت دراسة جديدة أن عقار سيماغلوتايد المستخدم في حقن أوزمبيك وويغوفي لإنقاص الوزن يمكن إنتاجه بتكلفة لا تتجاوز ثلاثة دولارات شهرياً. وقد يُسهم ذلك في إتاحة العلاج لملايين المرضى في الدول الفقيرة البالغ عددها 160 دولة عند انتهاء براءات الاختراع. ويُعاني أكثر من مليار شخص حول العالم من السمنة مع تصاعد معدلاتها في الدول منخفضة الدخل.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>أبرزت وسائل إعلام عدة الجانب الإيجابي المتعلق بإمكانية الوصول للعلاج، في حين أشار بعض المحللين إلى عقبات تتعلق ببراءات الاختراع وسلاسل التوزيع.</div></div>
+    <p class="story-summary">اجتاحت إعصارات قاتلة ولايتي ميشيغان وأوكلاهوما الأمريكيتين، ما أسفر عن مقتل ستة أشخاص من بينهم طفل في الثانية عشرة من عمره. خلّفت العواصف دمارًا واسعًا شمل اقتلاع أشجار وانقطاع خطوط الكهرباء وتضرر مبانٍ عدة. يواصل فرق الإنقاذ عمليات البحث عن ناجين وتقديم المساعدة للمتضررين.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُبرز وسائل الإعلام الأمريكية الخسائر البشرية والأضرار المادية، مع بعض الإشارات إلى الجدل المتجدد حول تغير المناخ.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="سياسة" data-headline="جنوب أفريقيا تنتقد سياسة ترامب في منح اللجوء للأفارينر البيض" data-summary="وصف الرئيس جنوب الأفريقي سيريل رامافوزا سياسة ترامب الرامية إلى منح حق اللجوء للأفارينر البيض بأنها &#x27;عنصرية&#x27;، مؤكداً أن ترامب &#x27;جاهل تماماً&#x27; بواقع بلاد">
+<div class="story-card" data-cat="سياسة" data-headline="حزب ناشئ بقيادة مغنٍّ سابق يتجه نحو فوز ساحق في الانتخابات البرلمانية النيبالية" data-summary="يُتوقّع أن يحقق حزب سياسي جديد في نيبال فوزًا ساحقًا في أول انتخابات برلمانية في البلاد منذ احتجاجات جيل زي التي أطاحت بالقيادة القديمة. يتزعم الحزب م">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#١١</span>
       <span class="cat-tag">سياسة</span>
       
     </div>
-    <h3 class="story-title">جنوب أفريقيا تنتقد سياسة ترامب في منح اللجوء للأفارينر البيض</h3>
-    <div class="src-pills"><span class="src-pill">The Guardian World</span></div>
+    <h3 class="story-title">حزب ناشئ بقيادة مغنٍّ سابق يتجه نحو فوز ساحق في الانتخابات البرلمانية النيبالية</h3>
+    <div class="src-pills"><span class="src-pill">NPR World</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
     
-    <p class="story-summary">وصف الرئيس جنوب الأفريقي سيريل رامافوزا سياسة ترامب الرامية إلى منح حق اللجوء للأفارينر البيض بأنها &#x27;عنصرية&#x27;، مؤكداً أن ترامب &#x27;جاهل تماماً&#x27; بواقع بلاده. وأدلى رامافوزا بهذه التصريحات في مقابلة مع صحيفة نيويورك تايمز.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>قدّمت وسائل الإعلام الأمريكية المحافظة ادعاءات &#x27;الإبادة البيضاء&#x27; التي يروّج لها ترامب، بينما رفضتها وسائل الإعلام الدولية والجنوب أفريقية جملةً وتفصيلاً.</div></div>
+    <p class="story-summary">يُتوقّع أن يحقق حزب سياسي جديد في نيبال فوزًا ساحقًا في أول انتخابات برلمانية في البلاد منذ احتجاجات جيل زي التي أطاحت بالقيادة القديمة. يتزعم الحزب مغنٍّ سابق من جيل الشباب. تمثّل هذه الانتخابات منعطفًا سياسيًا بارزًا في تاريخ النيبال.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُركّز وسائل الإعلام الدولية على الطابع الشبابي والثوري للتغيير السياسي في نيبال وانعكاساته على الديمقراطية في جنوب آسيا.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="سياسة" data-headline="ترامب يطلق تحالف &#x27;درع الأمريكيتين&#x27; مع قادة أمريكا اللاتينية" data-summary="أعلن الرئيس ترامب عن إطلاق تحالف إقليمي أطلق عليه اسم &#x27;درع الأمريكيتين&#x27; خلال اجتماع مع قادة دول أمريكا اللاتينية. وأكد ترامب أن المنطقة تمتلك إمكانات ">
+<div class="story-card" data-cat="سياسة" data-headline="ترامب يثني على تعاون فنزويلا ويتوعّد بـ&#x27;معالجة&#x27; الوضع في كوبا" data-summary="أعلن الرئيس الأمريكي دونالد ترامب خلال قمة لقادة أمريكا اللاتينية عزمه &#x27;التعامل مع كوبا&#x27;، وأثنى على تعاون فنزويلا مع الولايات المتحدة. لم تُحدَّد طبيع">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#١٢</span>
       <span class="cat-tag">سياسة</span>
       
     </div>
-    <h3 class="story-title">ترامب يطلق تحالف &#x27;درع الأمريكيتين&#x27; مع قادة أمريكا اللاتينية</h3>
-    <div class="src-pills"><span class="src-pill">DW World</span></div>
+    <h3 class="story-title">ترامب يثني على تعاون فنزويلا ويتوعّد بـ&#x27;معالجة&#x27; الوضع في كوبا</h3>
+    <div class="src-pills"><span class="src-pill">NPR World</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
     
-    <p class="story-summary">أعلن الرئيس ترامب عن إطلاق تحالف إقليمي أطلق عليه اسم &#x27;درع الأمريكيتين&#x27; خلال اجتماع مع قادة دول أمريكا اللاتينية. وأكد ترامب أن المنطقة تمتلك إمكانات هائلة لا يمكن تحقيقها إلا بالقضاء على عصابات المخدرات والجريمة المنظمة.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>صوّر مؤيدو ترامب التحالف على أنه مبادرة أمنية إيجابية، في حين رأى المنتقدون فيه امتداداً للسياسات الأمريكية التدخلية في المنطقة.</div></div>
+    <p class="story-summary">أعلن الرئيس الأمريكي دونالد ترامب خلال قمة لقادة أمريكا اللاتينية عزمه &#x27;التعامل مع كوبا&#x27;، وأثنى على تعاون فنزويلا مع الولايات المتحدة. لم تُحدَّد طبيعة الخطوات المزمع اتخاذها حيال كوبا. جاءت التصريحات في سياق مساعي ترامب لتعزيز نفوذ واشنطن في المنطقة.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>يُقدّم الإعلام الأمريكي الموالي للإدارة التصريحات باعتبارها قوة دبلوماسية، فيما ينتقدها الإعلام اللاتيني الأمريكي باعتبارها تدخلًا صريحًا في الشؤون الداخلية.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="سياسة" data-headline="رئيس جنوب أفريقيا يصف سياسة ترامب تجاه الأفريكانيين البيض بـ&#x27;العنصرية&#x27;" data-summary="وصف الرئيس سيريل رامافوزا سياسة ترامب القاضية بمنح الأفريكانيين البيض حق اللجوء إلى الولايات المتحدة بأنها &#x27;عنصرية&#x27;، مؤكدًا أن الرئيس الأمريكي &#x27;جاهل ح">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#١٣</span>
+      <span class="cat-tag">سياسة</span>
+      
+    </div>
+    <h3 class="story-title">رئيس جنوب أفريقيا يصف سياسة ترامب تجاه الأفريكانيين البيض بـ&#x27;العنصرية&#x27;</h3>
+    <div class="src-pills"><span class="src-pill">The Guardian World</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    
+    <p class="story-summary">وصف الرئيس سيريل رامافوزا سياسة ترامب القاضية بمنح الأفريكانيين البيض حق اللجوء إلى الولايات المتحدة بأنها &#x27;عنصرية&#x27;، مؤكدًا أن الرئيس الأمريكي &#x27;جاهل حقًا&#x27; بالأوضاع في جنوب أفريقيا. ونفى رامافوزا صحة ادعاءات &#x27;إبادة البيض&#x27; التي يُروّج لها ترامب. جاءت التصريحات في مقابلة نشرتها صحيفة نيويورك تايمز.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>يُقدّم الإعلام الأمريكي المحافظ ادعاءات ترامب بوصفها دفاعًا عن الأقلية المضطهدة، فيما يرفضها الإعلام الجنوب أفريقي والمؤسسات الدولية باعتبارها مضللة.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
@@ -521,129 +543,87 @@
     <div class="sec-hdr">
       <span class="sec-dot l"></span>
       <span class="sec-title">أخبار المملكة العربية السعودية</span>
-      <span class="sec-count">٦ قصة</span>
+      <span class="sec-count">٤ قصة</span>
     </div>
     
-<div class="story-card" data-cat="سياسة" data-headline="السعودية تحذّر إيران من تداعيات مواصلة الهجمات على أراضيها وقطاع طاقتها" data-summary="أبلغت المملكة العربية السعودية طهران بأنها تفضّل الحل الدبلوماسي، إلا أن استمرار الضربات الإيرانية على المملكة وقطاع الطاقة السعودي قد يدفع الرياض إلى">
+<div class="story-card" data-cat="أمن" data-headline="السعودية تعترض طائرات مسيّرة إيرانية تستهدف الرياض وسط استمرار الهجمات على دول الخليج" data-summary="اعترضت السعودية موجة من الطائرات المسيّرة الإيرانية كانت تتجه نحو الحي الدبلوماسي في الرياض. وأفادت دول خليجية عدة من بينها الكويت والبحرين والإمارات ">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#١</span>
-      <span class="cat-tag">سياسة</span>
-      <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
+      <span class="cat-tag">أمن</span>
+      <span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">السعودية تحذّر إيران من تداعيات مواصلة الهجمات على أراضيها وقطاع طاقتها</h3>
-    <div class="src-pills"><span class="src-pill">Al-Monitor</span><span class="src-pill">Asharq Al-Awsat</span></div>
+    <h3 class="story-title">السعودية تعترض طائرات مسيّرة إيرانية تستهدف الرياض وسط استمرار الهجمات على دول الخليج</h3>
+    <div class="src-pills"><span class="src-pill">Al-Monitor</span><span class="src-pill">France 24 English</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">السعودية حذّرت إيران من مغبة مواصلة ضرب أراضيها وقطاع طاقتها منذ الأسبوع الماضي وسط تصاعد حدة الصراع الإقليمي.</div>
-    <p class="story-summary">أبلغت المملكة العربية السعودية طهران بأنها تفضّل الحل الدبلوماسي، إلا أن استمرار الضربات الإيرانية على المملكة وقطاع الطاقة السعودي قد يدفع الرياض إلى الرد بالمثل، وفقاً لأربعة مصادر مطلعة. وجاء هذا التحذير قبيل خطاب الرئيس الإيراني بزشكيان الذي اعتذر فيه لدول الخليج المجاورة. وتؤكد المصادر أن المملكة لا تزال تراهن على الدبلوماسية مع الإبقاء على خيار الرد.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>وصفت وسائل الإعلام الغربية الموقف السعودي بأنه توازن دقيق بين الضغط والاحتواء، في حين رأى بعض المحللين أن الرياض تستغل الأزمة لتعزيز موقفها التفاوضي.</div></div>
+    <div class="story-context">السعودية حذّرت إيران من تداعيات مواصلة الهجمات على أراضيها وقطاع طاقتها منذ اندلاع الحرب.</div>
+    <p class="story-summary">اعترضت السعودية موجة من الطائرات المسيّرة الإيرانية كانت تتجه نحو الحي الدبلوماسي في الرياض. وأفادت دول خليجية عدة من بينها الكويت والبحرين والإمارات وقطر بتعرّضها لهجمات إيرانية متجددة. تتواصل هذه الهجمات على الرغم من اعتذار الرئيس الإيراني عن الاعتداءات على الدول المجاورة.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُبرز وسائل الإعلام الخليجية التهديد الإيراني المتصاعد وصمود منظومات الدفاع الجوي، فيما يُركّز الإعلام الإيراني على الطابع الدفاعي لعملياته.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="سياسة" data-headline="زيلينسكي يبحث مع ولي العهد السعودي الأزمة الإيرانية وتبادل الخبرات في مواجهة الطائرات المسيّرة" data-summary="أعلن الرئيس الأوكراني زيلينسكي أنه أجرى محادثة مع ولي العهد السعودي الأمير محمد بن سلمان تناولت الوضع في إيران والشرق الأوسط. وأعاد زيلينسكي التأكيد ع">
+<div class="story-card" data-cat="سياسة" data-headline="شبه توافق في مجلس خبراء القيادة الإيراني على اختيار المرشد الجديد" data-summary="أعلن عضو في مجلس خبراء القيادة الإيراني أن المجلس توصّل إلى شبه توافق على اختيار خليفة لخامنئي، مع الإشارة إلى وجود بعض العقبات التي لا تزال تحتاج إلى">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٢</span>
       <span class="cat-tag">سياسة</span>
-      <span class="badge badge-dev">متطور</span>
+      <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">زيلينسكي يبحث مع ولي العهد السعودي الأزمة الإيرانية وتبادل الخبرات في مواجهة الطائرات المسيّرة</h3>
-    <div class="src-pills"><span class="src-pill">Al-Monitor</span></div>
+    <h3 class="story-title">شبه توافق في مجلس خبراء القيادة الإيراني على اختيار المرشد الجديد</h3>
+    <div class="src-pills"><span class="src-pill">Al-Monitor</span><span class="src-pill">Middle East Eye</span><span class="src-pill">Asharq Al-Awsat</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">زيلينسكي بحث مع ولي العهد السعودي الأزمة الإيرانية وعرض خبرات أوكرانيا في التصدي للطائرات المسيّرة منذ الأسبوع الماضي.</div>
-    <p class="story-summary">أعلن الرئيس الأوكراني زيلينسكي أنه أجرى محادثة مع ولي العهد السعودي الأمير محمد بن سلمان تناولت الوضع في إيران والشرق الأوسط. وأعاد زيلينسكي التأكيد على عرض أوكرانيا تقديم خبراتها في التصدي لطائرات شاهد الإيرانية المسيّرة لدول المنطقة. وأكد أن بلاده تتصدى لهذه الطائرات منذ سنوات وتمتلك خبرة لا مثيل لها في هذا المجال.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>قدّمت وسائل الإعلام الأوكرانية العرض على أنه مبادرة تضامن وشراكة استراتيجية، في حين نظر إليه بعض المحللين من زاوية الحاجة الأوكرانية إلى الدعم الدبلوماسي والمالي الخليجي.</div></div>
+    <div class="story-context">أفادت تقارير بمقتل المرشد الأعلى الإيراني علي خامنئي في ضربات أمريكية إسرائيلية مما أطلق عملية اختيار خليفة له.</div>
+    <p class="story-summary">أعلن عضو في مجلس خبراء القيادة الإيراني أن المجلس توصّل إلى شبه توافق على اختيار خليفة لخامنئي، مع الإشارة إلى وجود بعض العقبات التي لا تزال تحتاج إلى حل. أشارت التقارير إلى أن اجتماعًا للمجلس سيُعقد في غضون يوم واحد للبتّ في الاختيار النهائي. في المقابل، حذّرت إسرائيل من أنها ستلاحق كل شخص يُشارك في تسمية المرشد الجديد.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>يُقدّم الإعلام الإيراني مسار اختيار المرشد بوصفه إجراءً دستوريًا سلسًا، فيما يُصوّره الإعلام الإسرائيلي والغربي باعتباره فرصة للضغط على إيران.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="سياسة" data-headline="لبنان يرفض الارتباط بمصالح إيران وسط التصعيد الإقليمي" data-summary="أكد رئيس الحكومة اللبنانية نواف سلام في تصريحات لصحيفة الشرق الأوسط أن لبنان يرفض ربط مصيره بمصالح إيران في المنطقة. ويسعى لبنان إلى التمايز عن محور إ">
+<div class="story-card" data-cat="اقتصاد" data-headline="تساؤلات حول مستقبل رؤية 2030 السعودية في ظل استمرار الحرب الإقليمية" data-summary="يُثير استمرار الحرب في الشرق الأوسط تساؤلات جدية حول مستقبل طموحات ولي العهد السعودي الأمير محمد بن سلمان في تحويل المملكة إلى مركز أعمال إقليمي منافس">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٣</span>
-      <span class="cat-tag">سياسة</span>
-      <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
+      <span class="cat-tag">اقتصاد</span>
+      <span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">لبنان يرفض الارتباط بمصالح إيران وسط التصعيد الإقليمي</h3>
-    <div class="src-pills"><span class="src-pill">Asharq Al-Awsat</span><span class="src-pill">Middle East Eye</span></div>
+    <h3 class="story-title">تساؤلات حول مستقبل رؤية 2030 السعودية في ظل استمرار الحرب الإقليمية</h3>
+    <div class="src-pills"><span class="src-pill">The Independent World</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">لبنان أعلن رفضه ربط مصيره بمصالح إيران منذ الأسبوع الماضي وسط التصعيد الإقليمي.</div>
-    <p class="story-summary">أكد رئيس الحكومة اللبنانية نواف سلام في تصريحات لصحيفة الشرق الأوسط أن لبنان يرفض ربط مصيره بمصالح إيران في المنطقة. ويسعى لبنان إلى التمايز عن محور إيران في ظل الضربات الإسرائيلية المتواصلة وتزايد أعداد النازحين الذين تجاوزوا 454 ألف شخص.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>اعتبرت وسائل الإعلام اللبنانية والعربية المعتدلة الموقف اللبناني خطوة نحو الاستقلالية السياسية، في حين رأى آخرون أنه يعكس الضغط الدولي على بيروت.</div></div>
+    <div class="story-context">السعودية تسعى لتنويع اقتصادها وتقليص اعتمادها على النفط في إطار رؤية 2030 في ظل تصاعد التوترات الإقليمية.</div>
+    <p class="story-summary">يُثير استمرار الحرب في الشرق الأوسط تساؤلات جدية حول مستقبل طموحات ولي العهد السعودي الأمير محمد بن سلمان في تحويل المملكة إلى مركز أعمال إقليمي منافس للإمارات. يرى خبراء أن استمرار النزاع يُهدد مسيرة التنويع الاقتصادي وجذب الاستثمارات الأجنبية. كانت المملكة قد سعت إلى تقديم نفسها ملاذًا آمنًا للأعمال في المنطقة.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>يُركّز الإعلام الاقتصادي الغربي على مخاطر الاستثمار وتراجع جاذبية المملكة، فيما يُبرز الإعلام السعودي قدرة المملكة على الصمود وحمايتها لمصالحها.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="أمن" data-headline="ضربة تستهدف قاعدة للحشد الشعبي العراقي قرب الموصل" data-summary="استُهدفت قاعدة تابعة لقوات الحشد الشعبي العراقي في محيط الموصل بضربة لم يُعلَن عن مصدرها رسمياً. وتأتي هذه الضربة في سياق التصعيد الإقليمي المرتبط بال">
+<div class="story-card" data-cat="أمن" data-headline="مقتل ثلاثة فلسطينيين في هجوم لمستوطنين إسرائيليين في الضفة الغربية" data-summary="أسفر هجوم شنّه مستوطنون إسرائيليون في الضفة الغربية عن مقتل ثلاثة فلسطينيين. جاء الهجوم في سياق تصاعد أعمال العنف في الضفة الغربية المحتلة. لم تتوفر ت">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٤</span>
       <span class="cat-tag">أمن</span>
-      <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
-    </div>
-    <h3 class="story-title">ضربة تستهدف قاعدة للحشد الشعبي العراقي قرب الموصل</h3>
-    <div class="src-pills"><span class="src-pill">Asharq Al-Awsat</span><span class="src-pill">Al-Monitor</span></div>
-    <span class="expand-icon" aria-hidden="true">+</span>
-  </div>
-  <div class="story-body" hidden>
-    <div class="story-context">ضربة استهدفت قاعدة للحشد الشعبي العراقي قرب الموصل وردت في سياق التصعيد الإقليمي منذ الأسبوع الماضي.</div>
-    <p class="story-summary">استُهدفت قاعدة تابعة لقوات الحشد الشعبي العراقي في محيط الموصل بضربة لم يُعلَن عن مصدرها رسمياً. وتأتي هذه الضربة في سياق التصعيد الإقليمي المرتبط بالصراع الأمريكي الإسرائيلي الإيراني. ويجد العراق نفسه متورطاً في الصراع رغم تصريحات مسؤوليه برفض الانجرار إلى الحرب.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>لم تُحدّد معظم وسائل الإعلام المسؤول عن الضربة، إذ تتباين الروايات بين من يُلمّح إلى ضربة أمريكية إسرائيلية ومن يُشير إلى أطراف أخرى.</div></div>
-    <div class="story-actions">
-      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
-    </div>
-  </div>
-</div>
-
-<div class="story-card" data-cat="سياسة" data-headline="سريلانكا تتعهد بمعاملة بحارة إيرانيين وفق القانون الدولي رغم الضغوط الأمريكية" data-summary="أكد وزير الخارجية السريلانكي أن بلاده ستعامل 32 بحاراً إيرانياً أُنقذوا من الفرقاطة IRIS Dena التي أغرقتها غواصة أمريكية وفق الالتزامات الدولية. وأشار">
-  <div class="story-hdr" onclick="toggleStory(this)">
-    <div class="story-meta">
-      <span class="story-num">#٥</span>
-      <span class="cat-tag">سياسة</span>
       <span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">سريلانكا تتعهد بمعاملة بحارة إيرانيين وفق القانون الدولي رغم الضغوط الأمريكية</h3>
-    <div class="src-pills"><span class="src-pill">Al-Monitor</span></div>
+    <h3 class="story-title">مقتل ثلاثة فلسطينيين في هجوم لمستوطنين إسرائيليين في الضفة الغربية</h3>
+    <div class="src-pills"><span class="src-pill">Asharq Al-Awsat</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">الحرب الأمريكية الإيرانية تتوسع لتشمل مناطق بعيدة عن الشرق الأوسط بما فيها المحيط الهندي.</div>
-    <p class="story-summary">أكد وزير الخارجية السريلانكي أن بلاده ستعامل 32 بحاراً إيرانياً أُنقذوا من الفرقاطة IRIS Dena التي أغرقتها غواصة أمريكية وفق الالتزامات الدولية. وأشارت تقارير إلى أن واشنطن تضغط على كولومبو لعدم إعادة البحارة إلى بلادهم. وجاءت إغراق الفرقاطة الإيرانية قبالة الساحل الجنوبي لسريلانكا يوم الأربعاء الماضي.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>أبرزت وسائل الإعلام الإيرانية والمتعاطفة معها الضغوط الأمريكية بوصفها انتهاكاً للقانون الدولي، في حين ركّزت وسائل الإعلام الغربية على حجم التداعيات الإقليمية للصراع.</div></div>
-    <div class="story-actions">
-      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
-    </div>
-  </div>
-</div>
-
-<div class="story-card" data-cat="أمن" data-headline="العراق يجد نفسه في دوامة الصراع رغم رفض الانجرار إليه" data-summary="تعرّضت السفارة الأمريكية في بغداد لهجوم وسط تصاعد التوترات الإقليمية الناجمة عن الحرب الأمريكية الإسرائيلية الإيرانية. وتواصل قوات الحشد الشعبي المرتب">
-  <div class="story-hdr" onclick="toggleStory(this)">
-    <div class="story-meta">
-      <span class="story-num">#٦</span>
-      <span class="cat-tag">أمن</span>
-      <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
-    </div>
-    <h3 class="story-title">العراق يجد نفسه في دوامة الصراع رغم رفض الانجرار إليه</h3>
-    <div class="src-pills"><span class="src-pill">Al Jazeera English</span><span class="src-pill">Al-Monitor</span></div>
-    <span class="expand-icon" aria-hidden="true">+</span>
-  </div>
-  <div class="story-body" hidden>
-    <div class="story-context">العراق يرفض الانجرار إلى الحرب بينما تستخدم إيران أراضيه لشنّ هجمات على المصالح الأمريكية.</div>
-    <p class="story-summary">تعرّضت السفارة الأمريكية في بغداد لهجوم وسط تصاعد التوترات الإقليمية الناجمة عن الحرب الأمريكية الإسرائيلية الإيرانية. وتواصل قوات الحشد الشعبي المرتبطة بإيران شنّ هجمات على المواقع الأمريكية في العراق. ويقف الأكراد العراقيون في موقف حرج بين ولاءاتهم المتعددة وخطر الانجرار إلى حرب لا يريدونها.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>قدّمت وسائل الإعلام الأمريكية الهجمات على السفارة دليلاً على التمدد الإيراني، في حين ركّزت وسائل إعلام عربية على معاناة المدنيين العراقيين العالقين بين طرفي الصراع.</div></div>
+    <div class="story-context">أعمال العنف في الضفة الغربية تتصاعد في ظل الحرب الإقليمية المستمرة.</div>
+    <p class="story-summary">أسفر هجوم شنّه مستوطنون إسرائيليون في الضفة الغربية عن مقتل ثلاثة فلسطينيين. جاء الهجوم في سياق تصاعد أعمال العنف في الضفة الغربية المحتلة. لم تتوفر تفاصيل إضافية حول ملابسات الحادثة في التقارير المتاحة.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>يُصنّف الإعلام الفلسطيني والعربي الحادثة باعتبارها جريمة منظمة في إطار سياسة ممنهجة، فيما يُقدّمها بعض وسائل الإعلام الإسرائيلية في سياق التوترات الأمنية المتبادلة.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
@@ -662,8 +642,8 @@
 </footer>
 
 <script>
-const GEN = "2026-03-07T22:55:46.392860+00:00";
-const HEADLINES = `1. الحرب الأمريكية الإسرائيلية الإيرانية تدخل أسبوعها الثاني وسط تصاعد الضربات وارتفاع أعداد القتلى\n2. إيران تواصل ضرب دول الخليج رغم اعتذار الرئيس بزشكيان عن الهجمات\n3. الحرس الثوري الإيراني يستهدف مجموعات كردية في كردستان العراق وترامب يرفض توسيع الحرب\n4. العملية الإسرائيلية في لبنان تُخلّف عشرات القتلى والمصابين\n5. النازحون في لبنان يتجاوزون 454 ألف شخص وسط تواصل الضربات\n6. بريطانيا تعزز استعدادات حاملة الطائرات 'برنس أوف ويلز' للنشر المحتمل في الشرق الأوسط\n7. الروبوتات المسلحة تدخل ساحة المعركة في أوكرانيا\n8. ضربات روسية تقتل عشرة أشخاص في خاركيف الأوكرانية\n9. عواصف وتورنادو تقتل ستة أشخاص في ميشيغان وأوكلاهوما الأمريكيتين\n10. دراسة: إمكانية إنتاج حقن إنقاص الوزن سيماغلوتايد بثلاثة دولارات شهرياً\n11. جنوب أفريقيا تنتقد سياسة ترامب في منح اللجوء للأفارينر البيض\n12. ترامب يطلق تحالف 'درع الأمريكيتين' مع قادة أمريكا اللاتينية\n1. السعودية تحذّر إيران من تداعيات مواصلة الهجمات على أراضيها وقطاع طاقتها\n2. زيلينسكي يبحث مع ولي العهد السعودي الأزمة الإيرانية وتبادل الخبرات في مواجهة الطائرات المسيّرة\n3. لبنان يرفض الارتباط بمصالح إيران وسط التصعيد الإقليمي\n4. ضربة تستهدف قاعدة للحشد الشعبي العراقي قرب الموصل\n5. سريلانكا تتعهد بمعاملة بحارة إيرانيين وفق القانون الدولي رغم الضغوط الأمريكية\n6. العراق يجد نفسه في دوامة الصراع رغم رفض الانجرار إليه`;
+const GEN = "2026-03-08T08:46:23.995720+00:00";
+const HEADLINES = `1. الحرب على إيران تدخل يومها التاسع: ضربات تطال منشآت النفط في طهران وحرائق ضخمة\n2. إيران تواصل ضرب دول الخليج: طائرة مسيّرة تُتلف محطة تحلية مياه في البحرين\n3. إسرائيل تضرب فندق رامادا في بيروت وتقتل أربعة أشخاص في محاولة اغتيال\n4. إسرائيل تُحذّر من ملاحقة كل من يسعى لتسمية خليفة خامنئي\n5. إسرائيل تشنّ عملية في قرية لبنانية وتُخلّف 41 قتيلًا و40 مصابًا\n6. انفجار قرب السفارة الأمريكية في أوسلو دون وقوع إصابات\n7. إمكانية تصنيع حقنة أوزمبيك للتخسيس بتكلفة 3 دولارات شهريًا\n8. مستجدات حرب أوكرانيا: روسيا تستخدم سلاحًا جديدًا في هجوم على خاركيف يودي بحياة 10 أشخاص\n9. استقالة مسؤولة الروبوتيات في OpenAI احتجاجًا على صفقتها مع وزارة الدفاع الأمريكية\n10. إعصار يضرب ميشيغان وأوكلاهوما ويودي بحياة ستة أشخاص من بينهم طفل\n11. حزب ناشئ بقيادة مغنٍّ سابق يتجه نحو فوز ساحق في الانتخابات البرلمانية النيبالية\n12. ترامب يثني على تعاون فنزويلا ويتوعّد بـ'معالجة' الوضع في كوبا\n13. رئيس جنوب أفريقيا يصف سياسة ترامب تجاه الأفريكانيين البيض بـ'العنصرية'\n1. السعودية تعترض طائرات مسيّرة إيرانية تستهدف الرياض وسط استمرار الهجمات على دول الخليج\n2. شبه توافق في مجلس خبراء القيادة الإيراني على اختيار المرشد الجديد\n3. تساؤلات حول مستقبل رؤية 2030 السعودية في ظل استمرار الحرب الإقليمية\n4. مقتل ثلاثة فلسطينيين في هجوم لمستوطنين إسرائيليين في الضفة الغربية`;
 
 // ── Freshness ──
 function relTime(iso){
