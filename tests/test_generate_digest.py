@@ -7,6 +7,8 @@ Target: 80%+ coverage of scripts/generate_digest.py
 import json
 import pytest
 import tempfile
+import anthropic
+import httpx
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 
@@ -1005,6 +1007,78 @@ def test_main_continues_when_enough_articles(mocker, tmp_path):
     mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
     mocker.patch("scripts.main.fetch_all_feeds", return_value=articles)
     mocker.patch("scripts.main.load_archive", return_value="")
+    mocker.patch("scripts.main.call_claude", return_value=digest)
+    mocker.patch("scripts.main.save_archive")
+    mocker.patch("scripts.main.ROOT_DIR", tmp_path)
+
+    main()  # should not raise
+    assert (tmp_path / "index.html").exists()
+
+
+# ────────────────────────────────────────────────────────────────
+# Tests: coverage gap — uncovered exception paths
+# ────────────────────────────────────────────────────────────────
+
+def test_load_archive_empty_archive_subdir():
+    """Archive dir exists but has no JSON files → should return empty string (line 27)."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmppath = Path(tmpdir)
+        archive_dir = tmppath / "archive"
+        archive_dir.mkdir()  # subdir exists but no files inside
+        with patch("scripts.archive.ROOT_DIR", tmppath):
+            result = load_archive()
+            assert result == ""
+
+
+def test_fetch_feed_returns_empty_on_os_error(mocker):
+    """fetch_feed should return [] and log warning if feedparser raises OSError (line 83-84)."""
+    mocker.patch("feedparser.parse", side_effect=OSError("connection refused"))
+    feed = {"url": "http://example.com/rss", "name": "TestFeed"}
+    result = fetch_feed(feed)
+    assert result == []
+
+
+def test_call_claude_reraises_keyboard_interrupt(mocker):
+    """call_claude should let KeyboardInterrupt propagate (line 147)."""
+    mock_client = Mock()
+    mock_client.messages.create.side_effect = KeyboardInterrupt()
+    mocker.patch("anthropic.Anthropic", return_value=mock_client)
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+
+    with pytest.raises(KeyboardInterrupt):
+        call_claude({"global": [], "local": []}, "")
+
+
+def test_call_claude_retries_on_api_error(mocker):
+    """call_claude should retry and succeed after anthropic.APIError (lines 149-153)."""
+    good_message = Mock()
+    good_message.content = [Mock(text=json.dumps({"global": [_valid_story()], "local": []}))]
+    good_message.usage = Mock(input_tokens=100, output_tokens=50)
+
+    request = httpx.Request("POST", "https://api.anthropic.com/v1/messages")
+    api_error = anthropic.APIConnectionError(message="temporary failure", request=request)
+
+    mock_client = Mock()
+    mock_client.messages.create.side_effect = [api_error, good_message]
+
+    mocker.patch("anthropic.Anthropic", return_value=mock_client)
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+    mocker.patch("time.sleep")
+
+    result = call_claude({"global": [], "local": []}, "")
+    assert mock_client.messages.create.call_count == 2
+    assert "global" in result
+
+
+def test_main_logs_archive_context_when_available(mocker, tmp_path):
+    """main() should log days count when archive context is non-empty (lines 54-55)."""
+    articles = {"global": [{"source": "BBC", "title": f"T{i}", "summary": "S"} for i in range(4)],
+                "local":  [{"source": "SPA", "title": f"L{i}", "summary": "S"} for i in range(2)]}
+    digest = _sample_digest()
+
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+    mocker.patch("scripts.main.fetch_all_feeds", return_value=articles)
+    mocker.patch("scripts.main.load_archive", return_value="line1\nline2\nline3")
     mocker.patch("scripts.main.call_claude", return_value=digest)
     mocker.patch("scripts.main.save_archive")
     mocker.patch("scripts.main.ROOT_DIR", tmp_path)
