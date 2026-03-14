@@ -856,6 +856,14 @@ def test_build_html_category_buttons():
     assert "اقتصاد" in result
 
 
+def test_build_html_focus_visible_on_buttons():
+    """All interactive buttons should have :focus-visible outlines for keyboard accessibility."""
+    digest = _sample_digest()
+    now = datetime.now(timezone.utc)
+    result = build_html(digest, now, {"global": 10, "local": 5})
+    assert ":focus-visible" in result
+
+
 # ────────────────────────────────────────────────────────────────
 # Tests: main()
 # ────────────────────────────────────────────────────────────────

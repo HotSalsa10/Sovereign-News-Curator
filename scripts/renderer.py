@@ -351,6 +351,13 @@ def build_html(
     #go-top:hover{{color:var(--t1)}}
     #go-top.on{{display:flex}}
 
+    /* ── ACCESSIBILITY: keyboard focus ── */
+    .icon-btn:focus-visible,.tab:focus-visible,.copy-btn:focus-visible,
+    .toc-toggle:focus-visible,.toc-item:focus-visible,.flt-btn:focus-visible,
+    .spin-btn:focus-visible,.share-btn:focus-visible,#go-top:focus-visible{{
+      outline:2px solid var(--blue);outline-offset:2px;
+    }}
+
     /* ── FOOTER ── */
     footer{{
       text-align:center;font-size:11px;color:var(--t3);
