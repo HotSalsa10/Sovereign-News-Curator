@@ -90,7 +90,7 @@ def format_for_claude(
     parts += [
         section(global_articles, "GLOBAL NEWS ARTICLES"),
         "---",
-        section(local_articles, "SAUDI ARABIA NEWS ARTICLES"),
+        section(local_articles, "SAUDI ARABIA NEWS ARTICLES (Arabic-language Saudi sources — include only stories about Saudi Arabia or directly affecting Saudi Arabia)"),
     ]
     return "\n\n".join(parts)
 

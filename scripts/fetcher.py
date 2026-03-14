@@ -36,14 +36,10 @@ GLOBAL_FEEDS = [
 ]
 
 LOCAL_FEEDS = [
-    {"name": "Arab News",             "url": "https://www.arabnews.com/rss.xml"},
-    {"name": "Saudi Gazette",         "url": "https://saudigazette.com.sa/feed"},
-    {"name": "Al Arabiya English",    "url": "https://english.alarabiya.net/tools/rss"},
-    {"name": "The National",          "url": "https://www.thenationalnews.com/rss"},
-    {"name": "Middle East Eye",       "url": "https://www.middleeasteye.net/rss"},
-    {"name": "Asharq Al-Awsat",       "url": "https://english.aawsat.com/feed"},
-    {"name": "Gulf News Saudi",       "url": "https://gulfnews.com/rss/world/gulf/saudi-arabia"},
-    {"name": "Al-Monitor",            "url": "https://www.al-monitor.com/rss"},
+    {"name": "عكاظ",                  "url": "https://www.okaz.com.sa/rss/home.rss"},
+    {"name": "الوطن",                 "url": "https://www.alwatan.com.sa/rssFeed/1"},
+    {"name": "الجزيرة السعودية",      "url": "https://www.al-jazirah.com/rss/ln.xml"},
+    {"name": "مكة",                   "url": "https://makkahnewspaper.com/rssFeed/0"},
 ]
 
 # ─────────────────────────────────────────────
@@ -92,7 +88,7 @@ def fetch_all_feeds() -> dict[str, list[dict[str, str]]]:
     logger.info("Fetching %d feeds in parallel...", total_feeds)
     all_feeds = [("global", f) for f in GLOBAL_FEEDS] + [("local", f) for f in LOCAL_FEEDS]
     results: dict[str, list[dict[str, str]]] = {"global": [], "local": []}
-    with concurrent.futures.ThreadPoolExecutor(max_workers=23) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=total_feeds) as executor:
         future_to_cat = {executor.submit(fetch_feed, f): cat for cat, f in all_feeds}
         for future in concurrent.futures.as_completed(future_to_cat):
             results[future_to_cat[future]].extend(future.result())
