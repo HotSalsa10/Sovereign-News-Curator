@@ -864,6 +864,18 @@ def test_build_html_focus_visible_on_buttons():
     assert ":focus-visible" in result
 
 
+def test_build_html_copy_failure_shows_toast():
+    """copyHeadlines should show a toast on clipboard failure instead of silently swallowing errors."""
+    digest = _sample_digest()
+    now = datetime.now(timezone.utc)
+    result = build_html(digest, now, {"global": 10, "local": 5})
+    # Toast element must exist in HTML
+    assert 'id="toast"' in result
+    # JS must handle failure and call showToast (not silent catch)
+    assert "showToast" in result
+    assert "فشل النسخ" in result
+
+
 # ────────────────────────────────────────────────────────────────
 # Tests: main()
 # ────────────────────────────────────────────────────────────────

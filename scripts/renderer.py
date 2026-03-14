@@ -358,6 +358,17 @@ def build_html(
       outline:2px solid var(--blue);outline-offset:2px;
     }}
 
+    /* ── TOAST NOTIFICATION ── */
+    #toast{{
+      position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+      background:var(--bg3);border:1px solid var(--bd);color:var(--t1);
+      padding:10px 18px;border-radius:8px;font-size:13px;
+      opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;
+      z-index:9999;white-space:nowrap;
+    }}
+    #toast.show{{opacity:1;transform:translateX(-50%) translateY(0)}}
+    #toast.error{{border-color:#ef4444;color:#ef4444}}
+
     /* ── FOOTER ── */
     footer{{
       text-align:center;font-size:11px;color:var(--t3);
@@ -431,6 +442,7 @@ def build_html(
 </div>
 
 <button id="go-top" onclick="scrollTo({{top:0,behavior:'smooth'}})">↑</button>
+<div id="toast" role="status" aria-live="polite"></div>
 
 <footer>
   التحديث القادم: غداً الساعة ٩:٠٠ صباحاً (توقيت السعودية)
@@ -552,14 +564,40 @@ async function shareStory(btn){{
   }}
 }}
 
+// ── Toast ──
+let _toastTimer=null;
+function showToast(msg,isError=false){{
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.classList.toggle('error',isError);
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>el.classList.remove('show'),2500);
+}}
+
 // ── Copy headlines ──
 async function copyHeadlines(){{
+  const btn=document.getElementById('copy-btn');
   try{{
     await navigator.clipboard.writeText(HEADLINES);
-    const btn=document.getElementById('copy-btn');
     btn.textContent='تم النسخ ✓';
     setTimeout(()=>btn.textContent='نسخ العناوين',2500);
-  }}catch(e){{}}
+    showToast('تم نسخ العناوين ✓');
+  }}catch(e){{
+    // Fallback for HTTP pages or restricted contexts
+    try{{
+      const ta=document.createElement('textarea');
+      ta.value=HEADLINES;ta.style.position='fixed';ta.style.opacity='0';
+      document.body.appendChild(ta);ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      btn.textContent='تم النسخ ✓';
+      setTimeout(()=>btn.textContent='نسخ العناوين',2500);
+      showToast('تم نسخ العناوين ✓');
+    }}catch(e2){{
+      showToast('فشل النسخ — انسخ يدوياً',true);
+    }}
+  }}
 }}
 
 // ── Scroll-to-top ──
