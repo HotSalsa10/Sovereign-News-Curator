@@ -175,13 +175,21 @@ def build_version_json(digest: dict[str, list[dict[str, Any]]], generated_at: da
 
 
 def all_headlines_js(digest: dict[str, list[dict[str, Any]]]) -> str:
+    """Return newline-separated headlines safe for JS template literal injection."""
+    def _js_safe(text: str) -> str:
+        return (
+            text
+            .replace("\\", "\\\\")
+            .replace("`", "\\`")
+            .replace("${", "\\${")
+            .replace("<", "\\x3c")  # prevent </script> from closing the enclosing <script> block
+        )
     lines = []
     for i, s in enumerate(digest.get("global", []), 1):
-        lines.append(f"{i}. {html_lib.escape(s.get('headline', ''))}")
+        lines.append(f"{i}. {_js_safe(s.get('headline', ''))}")
     for i, s in enumerate(digest.get("local", []), 1):
-        lines.append(f"{i}. {html_lib.escape(s.get('headline', ''))}")
-    # Escape for JS template literal
-    return "\\n".join(lines).replace("`", "\\`")
+        lines.append(f"{i}. {_js_safe(s.get('headline', ''))}")
+    return "\\n".join(lines)
 
 
 # ─────────────────────────────────────────────

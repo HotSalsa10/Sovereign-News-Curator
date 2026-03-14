@@ -735,13 +735,13 @@ def test_fetch_feed_skips_empty_title(mocker):
     assert result == []
 
 
-def test_fetch_feed_returns_empty_on_exception(mocker):
-    """fetch_feed should return [] if feedparser raises."""
+def test_fetch_feed_raises_on_unexpected_exception(mocker):
+    """fetch_feed should re-raise unexpected exceptions (not silently return [])."""
     mocker.patch("feedparser.parse", side_effect=Exception("Network error"))
 
     feed = {"url": "http://bad-url.com/rss", "name": "BadFeed"}
-    result = fetch_feed(feed)
-    assert result == []
+    with pytest.raises(Exception, match="Network error"):
+        fetch_feed(feed)
 
 
 # ────────────────────────────────────────────────────────────────

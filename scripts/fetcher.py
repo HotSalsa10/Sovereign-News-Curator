@@ -59,6 +59,8 @@ def fetch_feed(feed: dict[str, str]) -> list[dict[str, str]]:
             parsed = feedparser.parse(feed["url"], agent=USER_AGENT)
         finally:
             socket.setdefaulttimeout(old_timeout)
+        if parsed.bozo:
+            logger.warning("[WARN] %s: Malformed feed (%s), continuing", feed["name"], parsed.bozo_exception)
         articles = []
         for entry in parsed.entries[:ARTICLES_PER_FEED]:
             title = strip_html(entry.get("title", "")).strip()
@@ -81,7 +83,7 @@ def fetch_feed(feed: dict[str, str]) -> list[dict[str, str]]:
         return []
     except Exception as e:
         logger.error("[FAIL] %s: Unexpected error: %s", feed["name"], e)
-        return []
+        raise
 
 
 def fetch_all_feeds() -> dict[str, list[dict[str, str]]]:
@@ -91,7 +93,7 @@ def fetch_all_feeds() -> dict[str, list[dict[str, str]]]:
     results: dict[str, list[dict[str, str]]] = {"global": [], "local": []}
     with concurrent.futures.ThreadPoolExecutor(max_workers=total_feeds) as executor:
         future_to_cat = {executor.submit(fetch_feed, f): cat for cat, f in all_feeds}
-        for future in concurrent.futures.as_completed(future_to_cat):
+        for future in concurrent.futures.as_completed(future_to_cat, timeout=FEED_TIMEOUT * 3):
             results[future_to_cat[future]].extend(future.result())
     logger.info("RSS total: %d global, %d local", len(results["global"]), len(results["local"]))
     return results

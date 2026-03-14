@@ -25,15 +25,17 @@ def load_archive() -> str:
     files = sorted(archive_dir.glob("*.json"), reverse=True)[:ARCHIVE_DAYS]
     if not files:
         return ""
-    lines = ["HISTORICAL CONTEXT — story headlines from the past 7 days (use this to detect developing stories and add context):"]
+    lines = [f"HISTORICAL CONTEXT — story headlines from the past {ARCHIVE_DAYS} days (use this to detect developing stories and add context):"]
     for f in reversed(files):
         try:
             data = json.loads(f.read_text(encoding="utf-8"))
+            if not isinstance(data, dict) or "global" not in data or "local" not in data:
+                raise ValueError(f"Invalid archive structure in {f.name}")
             date = f.stem
-            g = " / ".join(data.get("global", [])[:6])
-            local_line = " / ".join(data.get("local", [])[:4])
+            g = " / ".join(str(h) for h in data["global"][:6])
+            local_line = " / ".join(str(h) for h in data["local"][:4])
             lines.append(f"[{date}] Global: {g} | Saudi: {local_line}")
-        except (json.JSONDecodeError, UnicodeDecodeError, OSError) as e:
+        except (json.JSONDecodeError, UnicodeDecodeError, OSError, ValueError) as e:
             logger.warning("Archive file %s corrupted, skipping: %s", f.name, e)
     return "\n".join(lines)
 

@@ -6,7 +6,7 @@ import os
 import random
 import re
 import time
-from typing import Any, cast
+from typing import Any
 
 import anthropic
 
@@ -133,12 +133,20 @@ def validate_digest(digest: dict[str, Any]) -> None:
             for field in required_story_fields:
                 if field not in story:
                     raise ValueError(f"Story {i} in '{section}' missing field '{field}'")
+            if not isinstance(story["headline"], str):
+                raise ValueError(f"Story {i} in '{section}': 'headline' must be a string")
+            if not isinstance(story["summary"], str):
+                raise ValueError(f"Story {i} in '{section}': 'summary' must be a string")
+            if not isinstance(story["sources"], list):
+                raise ValueError(f"Story {i} in '{section}': 'sources' must be a list")
 
 
 def call_claude(articles: dict[str, Any], archive_context: str) -> dict[str, Any]:
-    from anthropic.types import TextBlock
     logger.info("Calling %s...", MODEL)
-    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise ValueError("ANTHROPIC_API_KEY environment variable not set")
+    client = anthropic.Anthropic(api_key=api_key)
     user_content = format_for_claude(articles["global"], articles["local"], archive_context)
     last_exc: Exception | None = None
     for attempt in range(1, MAX_RETRIES + 1):
@@ -150,7 +158,9 @@ def call_claude(articles: dict[str, Any], archive_context: str) -> dict[str, Any
                 system=SYSTEM_PROMPT,
                 messages=[{"role": "user", "content": user_content}],
             )
-            raw = cast(TextBlock, message.content[0]).text
+            raw = getattr(message.content[0], "text", None) if message.content else None
+            if not isinstance(raw, str):
+                raise ValueError(f"Unexpected Claude response structure: {message.content!r}")
             logger.info(
                 "Claude done. Tokens — input: %d, output: %d",
                 message.usage.input_tokens,
@@ -158,10 +168,13 @@ def call_claude(articles: dict[str, Any], archive_context: str) -> dict[str, Any
             )
             digest = extract_json(raw)
             validate_digest(digest)
-            for section_key in ("global", "local"):
-                for story in digest.get(section_key, []):
-                    story["source_count"] = len(story.get("sources", []))
-            return digest
+            return {
+                key: [
+                    {**story, "source_count": len(story.get("sources", []))}
+                    for story in digest.get(key, [])
+                ]
+                for key in ("global", "local")
+            }
         except (KeyboardInterrupt, SystemExit):
             raise
         except (anthropic.APIError, anthropic.APIConnectionError, anthropic.APITimeoutError) as e:
