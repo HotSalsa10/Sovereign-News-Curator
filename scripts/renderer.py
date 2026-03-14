@@ -520,7 +520,7 @@ def build_html(
       </div>
     </div>
     <div style="display:flex;gap:6px">
-      <button class="icon-btn" id="notif-btn" aria-label="تفعيل الإشعارات" style="display:none">{svg_bell}</button>
+      <button class="icon-btn" id="notif-btn" aria-label="تفعيل الإشعارات">{svg_bell}</button>
       <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="تبديل السمة"></button>
     </div>
   </div>
@@ -791,20 +791,18 @@ const goTop=document.getElementById('go-top');
 window.addEventListener('scroll',()=>goTop.classList.toggle('on',scrollY>300));
 
 // ── Notifications ──
-(function initNotifBtn(){{
-  const btn=document.getElementById('notif-btn');
-  if(!('Notification' in window)||!('serviceWorker' in navigator))return;
-  btn.style.display='';
-  btn.onclick=async function(){{
-    const perm=await Notification.requestPermission();
-    if(perm!=='granted'){{showToast('تم رفض الإشعارات',true);return;}}
-    showToast('تم تفعيل الإشعارات ✓');
-    const reg=await navigator.serviceWorker.ready;
-    if('periodicSync' in reg){{
-      try{{await reg.periodicSync.register('check-digest',{{minInterval:3600000}});}}catch(e){{}}
-    }}
-  }};
-}})();
+document.getElementById('notif-btn').onclick=async function(){{
+  if(!('Notification' in window)||!('serviceWorker' in navigator)){{
+    showToast('الإشعارات غير مدعومة — أضف التطبيق إلى الشاشة الرئيسية أولاً',true);return;
+  }}
+  const perm=await Notification.requestPermission();
+  if(perm!=='granted'){{showToast('تم رفض الإشعارات',true);return;}}
+  showToast('تم تفعيل الإشعارات ✓');
+  const reg=await navigator.serviceWorker.ready;
+  if('periodicSync' in reg){{
+    try{{await reg.periodicSync.register('check-digest',{{minInterval:3600000}});}}catch(e){{}}
+  }}
+}};
 
 // ── Version check on page focus (new-digest banner) ──
 document.addEventListener('visibilitychange',async()=>{{
