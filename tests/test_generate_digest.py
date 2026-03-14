@@ -121,6 +121,29 @@ def test_extract_json_no_valid_json_raises():
         extract_json("Just some text with no JSON")
 
 
+def test_extract_json_repairs_missing_comma():
+    """JSON with a missing comma between fields should be repaired and returned."""
+    malformed = '{"key1": "value1" "key2": "value2"}'
+    result = extract_json(malformed)
+    assert result["key1"] == "value1"
+    assert result["key2"] == "value2"
+
+
+def test_extract_json_repairs_trailing_comma():
+    """JSON with a trailing comma should be repaired and returned."""
+    malformed = '{"key": "value",}'
+    result = extract_json(malformed)
+    assert result["key"] == "value"
+
+
+def test_extract_json_logs_warning_on_repair(mocker):
+    """extract_json should log a warning when repair is needed."""
+    mock_logger = mocker.patch("scripts.claude_client.logger")
+    malformed = '{"key": "value",}'
+    extract_json(malformed)
+    assert mock_logger.warning.called
+
+
 # ────────────────────────────────────────────────────────────────
 # Tests: ar() — Arabic numeral conversion
 # ────────────────────────────────────────────────────────────────

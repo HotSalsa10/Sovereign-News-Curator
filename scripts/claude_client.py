@@ -95,12 +95,30 @@ def format_for_claude(
 
 
 def extract_json(text: str) -> dict[str, Any]:
+    from json_repair import repair_json
+
     text = re.sub(r'^```(?:json)?\s*', '', text.strip(), flags=re.MULTILINE)
     text = re.sub(r'\s*```$', '', text.strip(), flags=re.MULTILINE)
     match = re.search(r'\{[\s\S]*\}', text)
-    if match:
-        return json.loads(match.group())  # type: ignore[no-any-return]
-    raise ValueError("No valid JSON in Claude response")
+    if not match:
+        raise ValueError("No valid JSON in Claude response")
+    raw_json = match.group()
+    try:
+        return json.loads(raw_json)  # type: ignore[no-any-return]
+    except json.JSONDecodeError as exc:
+        logger.warning(
+            "JSON parse failed at char %d (line %d, col %d): %s — attempting repair. "
+            "Context: ...%s...",
+            exc.pos,
+            exc.lineno,
+            exc.colno,
+            exc.msg,
+            raw_json[max(0, exc.pos - 60) : exc.pos + 60],
+        )
+        repaired = repair_json(raw_json, return_objects=True)
+        if isinstance(repaired, dict):
+            return repaired  # type: ignore[return-value]
+        raise ValueError(f"JSON repair failed — unrecoverable response: {exc}") from exc
 
 
 def validate_digest(digest: dict[str, Any]) -> None:
