@@ -15,8 +15,8 @@ import anthropic
 # ─────────────────────────────────────────────
 
 MODEL = "claude-sonnet-4-6"
-ARTICLES_PER_FEED = 5
-ARCHIVE_DAYS = 7
+ARTICLES_PER_FEED = 3
+ARCHIVE_DAYS = 3
 ROOT_DIR = Path(__file__).parent.parent
 
 GLOBAL_FEEDS = [
@@ -47,43 +47,13 @@ LOCAL_FEEDS = [
 # SYSTEM PROMPT
 # ─────────────────────────────────────────────
 
-SYSTEM_PROMPT = """LANGUAGE DIRECTIVE: Every Arabic-language field in your JSON output must be written in Arabic (العربية). Do not use English in headline, summary, spin, category, or context fields.
+SYSTEM_PROMPT = """You are the Sovereign News Curator. Extract consensus facts only. Output ONLY valid JSON.
 
-You are the Sovereign News Curator — an elite defensive AI reading agent protecting the user from cognitive exploitation and delivering a pure, verified daily signal.
+TASKS: (1) Deduplicate articles covering same events (2) Consensus facts only, no hallucinations (3) Detect media spin (4) Flag developing stories using historical context
 
-YOUR TASKS:
-1. Read all provided articles under GLOBAL and SAUDI ARABIA categories.
-2. Semantically deduplicate — merge articles covering the same event into one story.
-3. Extract consensus facts only — no hallucinated quotes, dates, or URLs.
-4. Identify how different outlets framed the same story (spin detection).
-5. Assign a category and flag stories that continue from prior days using the historical context provided.
+OUTPUT: Valid JSON with global/local arrays. Each story: headline (Arabic), summary (3 sent max), spin (1 sent), sources (list), category (سياسة|اقتصاد|أمن|صحة|تقنية|بيئة|مجتمع), is_developing (bool), context (Arabic or null).
 
-OUTPUT FORMAT: Return ONLY a raw, valid JSON object. No markdown. No code blocks. No explanation. Just JSON.
-
-EXACT SCHEMA:
-{
-  "global": [
-    {
-      "headline": "Arabic — short, factual, de-sensationalized headline",
-      "summary": "Arabic — maximum 3 sentences of undeniable consensus facts",
-      "spin": "Arabic — 1 sentence on how outlets framed this story differently",
-      "sources": ["Exact source name from the articles provided"],
-      "category": "Exactly one of: سياسة | اقتصاد | أمن | صحة | تقنية | بيئة | مجتمع",
-      "is_developing": true or false,
-      "context": "Arabic — 1 sentence of historical context if developing story, or null if brand new"
-    }
-  ],
-  "local": [
-    { "same structure as global entries" }
-  ]
-}
-
-STRICT RULES:
-- If a section has no usable articles, return an empty array [].
-- context must be null for new stories, never an empty string.
-- Only include sources that actually appear in the provided articles.
-- Summaries must be factual consensus — not a single outlet's framing.
-- Output valid JSON only. Escape quotes inside strings with backslash."""
+RULES: Empty section = []. All Arabic text in headline/summary/spin/context/category. No hallucinated quotes/dates/URLs. context=null for new stories."""
 
 # ─────────────────────────────────────────────
 # RSS FETCHING
@@ -103,7 +73,7 @@ def fetch_feed(feed: dict) -> list[dict]:
                 entry.get("summary") or
                 entry.get("description") or
                 (entry.get("content") or [{}])[0].get("value", "")
-            )[:500].strip()
+            )[:250].strip()
             if not title:
                 continue
             articles.append({
