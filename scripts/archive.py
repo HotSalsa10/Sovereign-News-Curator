@@ -1,8 +1,11 @@
 """Archive loading and saving for the Living Context Engine."""
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 # ─────────────────────────────────────────────
 # CONFIG
@@ -31,7 +34,7 @@ def load_archive() -> str:
             local_line = " / ".join(data.get("local", [])[:4])
             lines.append(f"[{date}] Global: {g} | Saudi: {local_line}")
         except (json.JSONDecodeError, UnicodeDecodeError, OSError) as e:
-            print(f"[Archive] Warning: {f.name} corrupted, skipping: {e}")
+            logger.warning("Archive file %s corrupted, skipping: %s", f.name, e)
     return "\n".join(lines)
 
 
@@ -44,4 +47,4 @@ def save_archive(digest: dict[str, Any], date_str: str) -> None:
     }
     out = archive_dir / f"{date_str}.json"
     out.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"[Archive] Saved → {out.name}")
+    logger.info("Archive saved → %s", out.name)

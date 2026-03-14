@@ -1,10 +1,13 @@
 """RSS feed fetching utilities."""
 
 import concurrent.futures
+import logging
 import re
 import socket
 
 import feedparser
+
+logger = logging.getLogger(__name__)
 
 # ─────────────────────────────────────────────
 # CONFIG
@@ -74,23 +77,24 @@ def fetch_feed(feed: dict[str, str]) -> list[dict[str, str]]:
                 "title": title,
                 "summary": summary or "(No summary)",
             })
-        print(f"  [OK]   {feed['name']}: {len(articles)} articles")
+        logger.info("[OK]   %s: %d articles", feed["name"], len(articles))
         return articles
     except (OSError, TimeoutError) as e:
-        print(f"  [FAIL] {feed['name']}: {e}")
+        logger.warning("[FAIL] %s: %s", feed["name"], e)
         return []
     except Exception as e:
-        print(f"  [FAIL] {feed['name']}: Unexpected error: {e}")
+        logger.error("[FAIL] %s: Unexpected error: %s", feed["name"], e)
         return []
 
 
 def fetch_all_feeds() -> dict[str, list[dict[str, str]]]:
-    print(f"\n[RSS] Fetching {len(GLOBAL_FEEDS) + len(LOCAL_FEEDS)} feeds in parallel...")
+    total_feeds = len(GLOBAL_FEEDS) + len(LOCAL_FEEDS)
+    logger.info("Fetching %d feeds in parallel...", total_feeds)
     all_feeds = [("global", f) for f in GLOBAL_FEEDS] + [("local", f) for f in LOCAL_FEEDS]
     results: dict[str, list[dict[str, str]]] = {"global": [], "local": []}
     with concurrent.futures.ThreadPoolExecutor(max_workers=23) as executor:
         future_to_cat = {executor.submit(fetch_feed, f): cat for cat, f in all_feeds}
         for future in concurrent.futures.as_completed(future_to_cat):
             results[future_to_cat[future]].extend(future.result())
-    print(f"\n[RSS] Total: {len(results['global'])} global, {len(results['local'])} local")
+    logger.info("RSS total: %d global, %d local", len(results["global"]), len(results["local"]))
     return results

@@ -1,12 +1,15 @@
 """Claude API client, prompt formatting, and JSON extraction."""
 
 import json
+import logging
 import os
 import re
 import time
 from typing import Any, cast
 
 import anthropic
+
+logger = logging.getLogger(__name__)
 
 # ─────────────────────────────────────────────
 # CONFIG
@@ -73,7 +76,7 @@ def validate_digest(digest: dict[str, Any]) -> None:
 
 def call_claude(articles: dict[str, Any], archive_context: str) -> dict[str, Any]:
     from anthropic.types import TextBlock
-    print(f"\n[Claude] Calling {MODEL}...")
+    logger.info("Calling %s...", MODEL)
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     user_content = format_for_claude(articles["global"], articles["local"], archive_context)
     last_exc: Exception | None = None
@@ -87,10 +90,10 @@ def call_claude(articles: dict[str, Any], archive_context: str) -> dict[str, Any
                 messages=[{"role": "user", "content": user_content}],
             )
             raw = cast(TextBlock, message.content[0]).text
-            print(
-                f"[Claude] Done. Tokens — "
-                f"input: {message.usage.input_tokens}, "
-                f"output: {message.usage.output_tokens}"
+            logger.info(
+                "Claude done. Tokens — input: %d, output: %d",
+                message.usage.input_tokens,
+                message.usage.output_tokens,
             )
             digest = extract_json(raw)
             validate_digest(digest)
@@ -104,12 +107,12 @@ def call_claude(articles: dict[str, Any], archive_context: str) -> dict[str, Any
             last_exc = e
             if attempt < MAX_RETRIES:
                 wait = 2 ** attempt
-                print(f"[Claude] Attempt {attempt} failed: {e}. Retrying in {wait}s...")
+                logger.warning("Attempt %d failed: %s. Retrying in %ds...", attempt, e, wait)
                 time.sleep(wait)
         except Exception as e:
             last_exc = e
             if attempt < MAX_RETRIES:
                 wait = 2 ** attempt
-                print(f"[Claude] Attempt {attempt} failed: {e}. Retrying in {wait}s...")
+                logger.warning("Attempt %d failed: %s. Retrying in %ds...", attempt, e, wait)
                 time.sleep(wait)
     raise RuntimeError(f"Claude API failed after {MAX_RETRIES} attempts: {last_exc}") from last_exc

@@ -1,5 +1,6 @@
 """Orchestration entry point for the daily digest pipeline."""
 
+import logging
 import os
 import sys
 from datetime import datetime, timezone
@@ -22,27 +23,38 @@ ROOT_DIR = Path(__file__).parent.parent
 # ─────────────────────────────────────────────
 
 def main() -> None:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+    logger = logging.getLogger(__name__)
+
     if not os.environ.get("ANTHROPIC_API_KEY"):
-        print("ERROR: ANTHROPIC_API_KEY not set.")
+        logger.error("ANTHROPIC_API_KEY not set.")
         sys.exit(1)
 
-    print("=" * 52)
-    print(f"  SOVEREIGN NEWS CURATOR  |  Model: {MODEL}")
-    print("=" * 52)
+    logger.info("=" * 52)
+    logger.info("  SOVEREIGN NEWS CURATOR  |  Model: %s", MODEL)
+    logger.info("=" * 52)
 
     articles = fetch_all_feeds()
 
     total_articles = len(articles["global"]) + len(articles["local"])
     if total_articles < MIN_ARTICLES:
-        print(f"ERROR: Only {total_articles} articles fetched (minimum {MIN_ARTICLES}). Aborting.")
+        logger.error(
+            "Only %d articles fetched (minimum %d). Aborting.",
+            total_articles,
+            MIN_ARTICLES,
+        )
         sys.exit(1)
 
     archive_context = load_archive()
     if archive_context:
         days = archive_context.count("\n")
-        print(f"\n[Archive] Loaded {days} days of historical context")
+        logger.info("Archive: loaded %d days of historical context", days)
     else:
-        print("\n[Archive] No historical context yet (first run)")
+        logger.info("Archive: no historical context yet (first run)")
 
     digest = call_claude(articles, archive_context)
 
@@ -57,10 +69,10 @@ def main() -> None:
 
     g = len(digest.get("global", []))
     local_count = len(digest.get("local", []))
-    print("\n[Done] index.html written")
-    print(f"       Global stories : {g}")
-    print(f"       Local stories  : {local_count}")
-    print("=" * 52)
+    logger.info("Done. index.html written")
+    logger.info("Global stories : %d", g)
+    logger.info("Local stories  : %d", local_count)
+    logger.info("=" * 52)
 
 
 if __name__ == "__main__":
