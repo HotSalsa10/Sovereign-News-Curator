@@ -1,8 +1,11 @@
 """HTML rendering for the daily digest page."""
 
 import html as html_lib
+import logging
 from datetime import datetime, timezone, timedelta
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 # ─────────────────────────────────────────────
 # HELPERS
@@ -17,6 +20,29 @@ def ar(n: int) -> str:
 def safe(text: str) -> str:
     """HTML-escape a string for use in attributes."""
     return html_lib.escape(str(text or ""), quote=True)
+
+
+def _build_badges(is_top: bool, is_dev: bool) -> str:
+    """Return badge HTML for a story card."""
+    badges = ""
+    if is_top:
+        badges += '<span class="badge badge-hot">الأكثر تداولاً</span>'
+    if is_dev:
+        badges += '<span class="badge badge-dev">متطور</span>'
+    return badges
+
+
+def _build_spin_section(spin: str) -> str:
+    """Return the spin disclosure HTML, or empty string if no spin."""
+    if not spin:
+        return ""
+    return (
+        f'<div class="spin-wrap">'
+        f'<button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button>'
+        f'<div class="spin-body" hidden>'
+        f'<span class="spin-label">التلاعب الإعلامي: </span>{safe(spin)}'
+        f'</div></div>'
+    )
 
 
 def build_story_cards(stories: list[dict[str, Any]], section_id: str) -> str:
@@ -37,21 +63,10 @@ def build_story_cards(stories: list[dict[str, Any]], section_id: str) -> str:
         source_count = story.get("source_count", 0)
         is_top      = source_count == max_sources and max_sources > 1
 
-        badges = ""
-        if is_top:
-            badges += '<span class="badge badge-hot">الأكثر تداولاً</span>'
-        if is_dev:
-            badges += '<span class="badge badge-dev">متطور</span>'
-
+        badges       = _build_badges(is_top, is_dev)
         source_pills = "".join(f'<span class="src-pill">{safe(s)}</span>' for s in sources)
         context_html = f'<div class="story-context">{safe(context)}</div>' if context else ""
-        spin_html = (
-            f'<div class="spin-wrap">'
-            f'<button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button>'
-            f'<div class="spin-body" hidden>'
-            f'<span class="spin-label">التلاعب الإعلامي: </span>{safe(spin)}'
-            f'</div></div>'
-        ) if spin else ""
+        spin_html    = _build_spin_section(spin)
 
         cards.append(f"""
 <div class="story-card" data-cat="{safe(category)}" data-headline="{safe(headline)}" data-summary="{safe(summary[:150])}">
@@ -114,9 +129,9 @@ def count_words(digest: dict[str, list[dict[str, Any]]]) -> int:
 def all_headlines_js(digest: dict[str, list[dict[str, Any]]]) -> str:
     lines = []
     for i, s in enumerate(digest.get("global", []), 1):
-        lines.append(f"{i}. {s.get('headline','')}")
+        lines.append(f"{i}. {html_lib.escape(s.get('headline', ''))}")
     for i, s in enumerate(digest.get("local", []), 1):
-        lines.append(f"{i}. {s.get('headline','')}")
+        lines.append(f"{i}. {html_lib.escape(s.get('headline', ''))}")
     # Escape for JS template literal
     return "\\n".join(lines).replace("`", "\\`")
 
@@ -139,6 +154,7 @@ def build_html(
     local_stories  = digest.get("local",  [])
     g_count = len(global_stories)
     l_count = len(local_stories)
+    logger.info("Building HTML: %d global, %d local stories", g_count, l_count)
     total   = article_count["global"] + article_count["local"]
 
     words   = count_words(digest)
@@ -603,6 +619,11 @@ async function copyHeadlines(){{
 // ── Scroll-to-top ──
 const goTop=document.getElementById('go-top');
 window.addEventListener('scroll',()=>goTop.classList.toggle('on',scrollY>300));
+
+// ── Service Worker ──
+if('serviceWorker' in navigator){{
+  navigator.serviceWorker.register('./sw.js').catch(()=>{{}});
+}}
 </script>
 </body>
 </html>"""

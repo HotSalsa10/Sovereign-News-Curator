@@ -355,6 +355,46 @@ def test_build_toc_html_escaping():
 
 
 # ────────────────────────────────────────────────────────────────
+# Tests: _build_badges() / _build_spin_section() helpers
+# ────────────────────────────────────────────────────────────────
+
+from scripts.renderer import _build_badges, _build_spin_section
+
+
+def test_build_badges_top_and_developing():
+    result = _build_badges(is_top=True, is_dev=True)
+    assert "badge-hot" in result
+    assert "badge-dev" in result
+
+
+def test_build_badges_neither():
+    result = _build_badges(is_top=False, is_dev=False)
+    assert result == ""
+
+
+def test_build_badges_only_top():
+    result = _build_badges(is_top=True, is_dev=False)
+    assert "badge-hot" in result
+    assert "badge-dev" not in result
+
+
+def test_build_badges_only_dev():
+    result = _build_badges(is_top=False, is_dev=True)
+    assert "badge-dev" in result
+    assert "badge-hot" not in result
+
+
+def test_build_spin_section_with_spin():
+    result = _build_spin_section("Some bias description")
+    assert "spin-btn" in result
+    assert "Some bias description" in result
+
+
+def test_build_spin_section_empty_spin():
+    assert _build_spin_section("") == ""
+
+
+# ────────────────────────────────────────────────────────────────
 # Tests: build_story_cards()
 # ────────────────────────────────────────────────────────────────
 
@@ -862,6 +902,35 @@ def test_build_html_focus_visible_on_buttons():
     now = datetime.now(timezone.utc)
     result = build_html(digest, now, {"global": 10, "local": 5})
     assert ":focus-visible" in result
+
+
+def test_build_html_escapes_xss_in_headline():
+    """Headlines with script tags should be HTML-escaped to prevent XSS."""
+    digest = {
+        "global": [{
+            "headline": "<script>alert('xss')</script>",
+            "summary": "Normal summary.",
+            "sources": ["BBC"],
+            "category": "أمن",
+            "is_developing": False,
+            "context": None,
+            "source_count": 1,
+        }],
+        "local": [],
+    }
+    now = datetime.now(timezone.utc)
+    result = build_html(digest, now, {"global": 1, "local": 0})
+    assert "<script>alert" not in result
+    assert "&lt;script&gt;" in result
+
+
+def test_build_html_logs_story_count(mocker):
+    """build_html should log global and local story counts."""
+    mock_logger = mocker.patch("scripts.renderer.logger")
+    digest = _sample_digest()
+    now = datetime.now(timezone.utc)
+    build_html(digest, now, {"global": 10, "local": 5})
+    mock_logger.info.assert_called()
 
 
 def test_build_html_copy_failure_shows_toast():
