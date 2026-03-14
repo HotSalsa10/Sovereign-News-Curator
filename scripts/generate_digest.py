@@ -38,6 +38,9 @@ GLOBAL_FEEDS = [
     {"name": "The Independent World", "url": "https://www.independent.co.uk/news/world/rss"},
     {"name": "NHK World News",        "url": "https://www3.nhk.or.jp/nhkworld/data/en/news/backstory/rss.xml"},
     {"name": "ABC News Australia",    "url": "https://www.abc.net.au/news/feed/10498/rss.xml"},
+    {"name": "New York Times World",  "url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml"},
+    {"name": "Fox News World",        "url": "https://moxie.foxnews.com/google-publisher/world.xml"},
+    {"name": "CBS News World",        "url": "https://www.cbsnews.com/latest/rss/world"},
 ]
 
 LOCAL_FEEDS = [
@@ -100,7 +103,7 @@ def fetch_all_feeds() -> dict:
     print(f"\n[RSS] Fetching {len(GLOBAL_FEEDS) + len(LOCAL_FEEDS)} feeds in parallel...")
     all_feeds = [("global", f) for f in GLOBAL_FEEDS] + [("local", f) for f in LOCAL_FEEDS]
     results: dict[str, list] = {"global": [], "local": []}
-    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=23) as executor:
         future_to_cat = {executor.submit(fetch_feed, f): cat for cat, f in all_feeds}
         for future in concurrent.futures.as_completed(future_to_cat):
             results[future_to_cat[future]].extend(future.result())
