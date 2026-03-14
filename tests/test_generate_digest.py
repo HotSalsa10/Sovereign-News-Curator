@@ -10,6 +10,7 @@ import tempfile
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 
+from datetime import datetime, timezone
 from scripts.generate_digest import (
     strip_html,
     extract_json,
@@ -20,6 +21,14 @@ from scripts.generate_digest import (
     get_categories,
     count_words,
     load_archive,
+    save_archive,
+    format_for_claude,
+    fetch_feed,
+    fetch_all_feeds,
+    call_claude,
+    all_headlines_js,
+    build_html,
+    main,
 )
 
 
@@ -538,3 +547,313 @@ def test_load_archive_max_7_days():
                 result = load_archive()
                 # Should only have the 7 most recent days
                 assert result.count("[2026-03-") == 7
+
+
+# ────────────────────────────────────────────────────────────────
+# Tests: save_archive()
+# ────────────────────────────────────────────────────────────────
+
+def test_save_archive_creates_file():
+    """save_archive should write a JSON file in archive/."""
+    digest = {
+        "global": [{"headline": "Global Story"}],
+        "local": [{"headline": "Local Story"}],
+    }
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmppath = Path(tmpdir)
+        with patch("scripts.generate_digest.ROOT_DIR", tmppath):
+            save_archive(digest, "2026-03-14")
+            out = tmppath / "archive" / "2026-03-14.json"
+            assert out.exists()
+            data = json.loads(out.read_text(encoding="utf-8"))
+            assert "Global Story" in data["global"]
+            assert "Local Story" in data["local"]
+
+
+def test_save_archive_empty_digest():
+    """save_archive with empty digest should write empty arrays."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmppath = Path(tmpdir)
+        with patch("scripts.generate_digest.ROOT_DIR", tmppath):
+            save_archive({}, "2026-03-14")
+            out = tmppath / "archive" / "2026-03-14.json"
+            data = json.loads(out.read_text(encoding="utf-8"))
+            assert data["global"] == []
+            assert data["local"] == []
+
+
+# ────────────────────────────────────────────────────────────────
+# Tests: format_for_claude()
+# ────────────────────────────────────────────────────────────────
+
+def test_format_for_claude_with_archive():
+    """Archive context should be prepended with separator."""
+    articles = [{"source": "BBC", "title": "Test Title", "summary": "Summary"}]
+    result = format_for_claude(articles, [], "HISTORICAL CONTEXT")
+    assert "HISTORICAL CONTEXT" in result
+    assert "---" in result
+    assert "Test Title" in result
+
+
+def test_format_for_claude_no_archive():
+    """Without archive, result should start with news section."""
+    articles = [{"source": "BBC", "title": "Test", "summary": "Summary"}]
+    result = format_for_claude(articles, [], "")
+    assert "GLOBAL NEWS ARTICLES" in result
+    assert "HISTORICAL CONTEXT" not in result
+
+
+def test_format_for_claude_empty_articles():
+    """Empty article lists should produce fallback message."""
+    result = format_for_claude([], [], "")
+    assert "No articles fetched" in result
+
+
+def test_format_for_claude_both_sections():
+    """Both global and local articles should appear in output."""
+    global_a = [{"source": "BBC", "title": "Global", "summary": "G summary"}]
+    local_a = [{"source": "SPA", "title": "Local", "summary": "L summary"}]
+    result = format_for_claude(global_a, local_a, "")
+    assert "GLOBAL NEWS ARTICLES" in result
+    assert "SAUDI ARABIA NEWS ARTICLES" in result
+    assert "Global" in result
+    assert "Local" in result
+
+
+# ────────────────────────────────────────────────────────────────
+# Tests: fetch_feed()
+# ────────────────────────────────────────────────────────────────
+
+def test_fetch_feed_returns_articles(mocker):
+    """fetch_feed should return parsed articles from feedparser."""
+    mock_entry = Mock()
+    mock_entry.get.side_effect = lambda key, default="": {
+        "title": "Test Headline",
+        "summary": "Test summary text",
+    }.get(key, default)
+
+    mock_parsed = Mock()
+    mock_parsed.entries = [mock_entry]
+
+    mocker.patch("feedparser.parse", return_value=mock_parsed)
+
+    feed = {"url": "http://example.com/rss", "name": "TestFeed"}
+    result = fetch_feed(feed)
+
+    assert len(result) == 1
+    assert result[0]["source"] == "TestFeed"
+    assert result[0]["title"] == "Test Headline"
+
+
+def test_fetch_feed_skips_empty_title(mocker):
+    """fetch_feed should skip entries with no title."""
+    mock_entry = Mock()
+    mock_entry.get.side_effect = lambda key, default="": {
+        "title": "",
+        "summary": "Summary without title",
+    }.get(key, default)
+
+    mock_parsed = Mock()
+    mock_parsed.entries = [mock_entry]
+
+    mocker.patch("feedparser.parse", return_value=mock_parsed)
+
+    feed = {"url": "http://example.com/rss", "name": "TestFeed"}
+    result = fetch_feed(feed)
+    assert result == []
+
+
+def test_fetch_feed_returns_empty_on_exception(mocker):
+    """fetch_feed should return [] if feedparser raises."""
+    mocker.patch("feedparser.parse", side_effect=Exception("Network error"))
+
+    feed = {"url": "http://bad-url.com/rss", "name": "BadFeed"}
+    result = fetch_feed(feed)
+    assert result == []
+
+
+# ────────────────────────────────────────────────────────────────
+# Tests: fetch_all_feeds()
+# ────────────────────────────────────────────────────────────────
+
+def test_fetch_all_feeds_aggregates_results(mocker):
+    """fetch_all_feeds should combine results from all feeds."""
+    mocker.patch(
+        "scripts.generate_digest.fetch_feed",
+        return_value=[{"source": "Test", "title": "T", "summary": "S"}],
+    )
+    result = fetch_all_feeds()
+    assert "global" in result
+    assert "local" in result
+    assert len(result["global"]) > 0
+    assert len(result["local"]) > 0
+
+
+# ────────────────────────────────────────────────────────────────
+# Tests: call_claude()
+# ────────────────────────────────────────────────────────────────
+
+def test_call_claude_returns_digest(mocker):
+    """call_claude should call API and return parsed digest."""
+    mock_message = Mock()
+    mock_message.content = [Mock(text='{"global": [], "local": []}')]
+    mock_message.usage = Mock(input_tokens=100, output_tokens=50)
+
+    mock_client = Mock()
+    mock_client.messages.create.return_value = mock_message
+
+    mocker.patch("anthropic.Anthropic", return_value=mock_client)
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+
+    articles = {"global": [], "local": []}
+    result = call_claude(articles, "")
+
+    assert "global" in result
+    assert "local" in result
+
+
+def test_call_claude_adds_source_count(mocker):
+    """call_claude should add source_count to each story."""
+    story = {"headline": "Test", "sources": ["BBC", "Reuters"]}
+    mock_message = Mock()
+    mock_message.content = [Mock(text=json.dumps({"global": [story], "local": []}))]
+    mock_message.usage = Mock(input_tokens=100, output_tokens=50)
+
+    mock_client = Mock()
+    mock_client.messages.create.return_value = mock_message
+
+    mocker.patch("anthropic.Anthropic", return_value=mock_client)
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+
+    result = call_claude({"global": [], "local": []}, "")
+    assert result["global"][0]["source_count"] == 2
+
+
+# ────────────────────────────────────────────────────────────────
+# Tests: all_headlines_js()
+# ────────────────────────────────────────────────────────────────
+
+def test_all_headlines_js_returns_string():
+    """all_headlines_js should return a string."""
+    digest = {
+        "global": [{"headline": "Global Story"}],
+        "local": [{"headline": "Local Story"}],
+    }
+    result = all_headlines_js(digest)
+    assert isinstance(result, str)
+    assert "Global Story" in result
+    assert "Local Story" in result
+
+
+def test_all_headlines_js_escapes_backticks():
+    """Backticks in headlines should be escaped for JS template literals."""
+    digest = {
+        "global": [{"headline": "Story `with` backticks"}],
+        "local": [],
+    }
+    result = all_headlines_js(digest)
+    assert "\\`" in result
+
+
+def test_all_headlines_js_empty_digest():
+    """Empty digest should return empty string."""
+    result = all_headlines_js({})
+    assert result == ""
+
+
+# ────────────────────────────────────────────────────────────────
+# Tests: build_html()
+# ────────────────────────────────────────────────────────────────
+
+def _sample_digest():
+    return {
+        "global": [{
+            "headline": "Global Headline",
+            "summary": "Global summary text",
+            "spin": "Some spin",
+            "sources": ["BBC"],
+            "category": "سياسة",
+            "is_developing": False,
+            "context": None,
+            "source_count": 1,
+        }],
+        "local": [{
+            "headline": "Local Headline",
+            "summary": "Local summary text",
+            "spin": None,
+            "sources": ["SPA"],
+            "category": "اقتصاد",
+            "is_developing": False,
+            "context": None,
+            "source_count": 1,
+        }],
+    }
+
+
+def test_build_html_returns_doctype():
+    """build_html should return a valid HTML document."""
+    digest = _sample_digest()
+    now = datetime.now(timezone.utc)
+    result = build_html(digest, now, {"global": 10, "local": 5})
+    assert result.startswith("<!DOCTYPE html>")
+    assert "<html" in result
+    assert "</html>" in result
+
+
+def test_build_html_contains_headlines():
+    """build_html should include story headlines."""
+    digest = _sample_digest()
+    now = datetime.now(timezone.utc)
+    result = build_html(digest, now, {"global": 10, "local": 5})
+    assert "Global Headline" in result
+    assert "Local Headline" in result
+
+
+def test_build_html_arabic_language():
+    """build_html should set Arabic language and RTL direction."""
+    digest = _sample_digest()
+    now = datetime.now(timezone.utc)
+    result = build_html(digest, now, {"global": 10, "local": 5})
+    assert 'lang="ar"' in result
+    assert 'dir="rtl"' in result
+
+
+def test_build_html_category_buttons():
+    """build_html should include category filter buttons."""
+    digest = _sample_digest()
+    now = datetime.now(timezone.utc)
+    result = build_html(digest, now, {"global": 10, "local": 5})
+    assert "سياسة" in result
+    assert "اقتصاد" in result
+
+
+# ────────────────────────────────────────────────────────────────
+# Tests: main()
+# ────────────────────────────────────────────────────────────────
+
+def test_main_exits_without_api_key(mocker):
+    """main should exit with error if ANTHROPIC_API_KEY is not set."""
+    mocker.patch.dict("os.environ", {}, clear=True)
+    # Remove key if present
+    mocker.patch("os.environ.get", return_value=None)
+    with pytest.raises(SystemExit):
+        main()
+
+
+def test_main_runs_full_pipeline(mocker, tmp_path):
+    """main should orchestrate the full pipeline and write index.html."""
+    digest = _sample_digest()
+
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+    mocker.patch("scripts.generate_digest.fetch_all_feeds", return_value={"global": [], "local": []})
+    mocker.patch("scripts.generate_digest.load_archive", return_value="")
+    mocker.patch("scripts.generate_digest.call_claude", return_value=digest)
+    mocker.patch("scripts.generate_digest.save_archive")
+    mocker.patch("scripts.generate_digest.ROOT_DIR", tmp_path)
+
+    main()
+
+    out = tmp_path / "index.html"
+    assert out.exists()
+    content = out.read_text(encoding="utf-8")
+    assert "<!DOCTYPE html>" in content
