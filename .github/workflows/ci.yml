@@ -22,8 +22,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Lint with ruff
+        run: ruff check scripts/ tests/
+
+      - name: Type check with mypy
+        run: mypy scripts/generate_digest.py --ignore-missing-imports
+
       - name: Run pytest with coverage
-        run: python -m pytest tests/ -v --cov=scripts --cov-report=term-missing --cov-fail-under=80
+        run: python -m pytest tests/ -v --cov=scripts --cov-report=term-missing --cov-report=xml --cov-fail-under=90
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v3

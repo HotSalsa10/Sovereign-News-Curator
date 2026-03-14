@@ -3,9 +3,15 @@ Sovereign News Curator — Daily Digest Generator
 Model: claude-sonnet-4-6
 """
 
-import os, re, sys, json, concurrent.futures, html as html_lib
+import concurrent.futures
+import html as html_lib
+import json
+import os
+import re
+import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from typing import cast
 
 import feedparser
 import anthropic
@@ -91,7 +97,7 @@ def fetch_feed(feed: dict) -> list[dict]:
 def fetch_all_feeds() -> dict:
     print(f"\n[RSS] Fetching {len(GLOBAL_FEEDS) + len(LOCAL_FEEDS)} feeds in parallel...")
     all_feeds = [("global", f) for f in GLOBAL_FEEDS] + [("local", f) for f in LOCAL_FEEDS]
-    results = {"global": [], "local": []}
+    results: dict[str, list] = {"global": [], "local": []}
     with concurrent.futures.ThreadPoolExecutor(max_workers=18) as executor:
         future_to_cat = {executor.submit(fetch_feed, f): cat for cat, f in all_feeds}
         for future in concurrent.futures.as_completed(future_to_cat):
@@ -116,8 +122,8 @@ def load_archive() -> str:
             data = json.loads(f.read_text(encoding="utf-8"))
             date = f.stem
             g = " / ".join(data.get("global", [])[:6])
-            l = " / ".join(data.get("local", [])[:4])
-            lines.append(f"[{date}] Global: {g} | Saudi: {l}")
+            local_line = " / ".join(data.get("local", [])[:4])
+            lines.append(f"[{date}] Global: {g} | Saudi: {local_line}")
         except Exception:
             pass
     return "\n".join(lines)
@@ -175,7 +181,8 @@ def call_claude(articles: dict, archive_context: str) -> dict:
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_content}],
     )
-    raw = message.content[0].text
+    from anthropic.types import TextBlock
+    raw = cast(TextBlock, message.content[0]).text
     print(f"[Claude] Done. Tokens — input: {message.usage.input_tokens}, output: {message.usage.output_tokens}")
     digest = extract_json(raw)
     for section_key in ("global", "local"):
@@ -763,10 +770,10 @@ def main():
     out.write_text(html, encoding="utf-8")
 
     g = len(digest.get("global", []))
-    l = len(digest.get("local", []))
-    print(f"\n[Done] index.html written")
+    local_count = len(digest.get("local", []))
+    print("\n[Done] index.html written")
     print(f"       Global stories : {g}")
-    print(f"       Local stories  : {l}")
+    print(f"       Local stories  : {local_count}")
     print("=" * 52)
 
 
