@@ -18,7 +18,7 @@ def ar(n: int) -> str:
 
 
 def safe(text: str) -> str:
-    """HTML-escape a string for use in attributes."""
+    """HTML-escape a string for use in attributes or text nodes."""
     return html_lib.escape(str(text or ""), quote=True)
 
 
@@ -80,12 +80,14 @@ def build_story_cards(stories: list[dict[str, Any]], section_id: str) -> str:
     {f'<div class="src-pills">{source_pills}</div>' if source_pills else ""}
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
-  <div class="story-body" hidden>
-    {context_html}
-    <p class="story-summary">{safe(summary)}</p>
-    {spin_html}
-    <div class="story-actions">
-      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+  <div class="story-body">
+    <div class="story-body-inner">
+      {context_html}
+      <p class="story-summary">{safe(summary)}</p>
+      {spin_html}
+      <div class="story-actions">
+        <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+      </div>
     </div>
   </div>
 </div>""")
@@ -118,12 +120,42 @@ def get_categories(digest: dict[str, list[dict[str, Any]]]) -> list[str]:
     return sorted(cats)
 
 
+def get_category_counts(digest: dict[str, list[dict[str, Any]]]) -> dict[str, int]:
+    """Count stories per category across all sections."""
+    counts: dict[str, int] = {}
+    for sk in ("global", "local"):
+        for s in digest.get(sk, []):
+            cat = s.get("category", "")
+            if cat:
+                counts[cat] = counts.get(cat, 0) + 1
+    return counts
+
+
 def count_words(digest: dict[str, list[dict[str, Any]]]) -> int:
     words = 0
     for sk in ("global", "local"):
         for s in digest.get(sk, []):
             words += len(s.get("summary", "").split())
     return words
+
+
+def next_run_display(generated_at: datetime) -> str:
+    """Return the next scheduled digest run as an Arabic-Indic time string."""
+    saudi_tz = timezone(timedelta(hours=3))
+    # Pipeline fires daily at 06:00 UTC = 09:00 AST (+3)
+    run_at_utc = generated_at.replace(hour=6, minute=0, second=0, microsecond=0)
+    if generated_at >= run_at_utc:
+        next_run = run_at_utc + timedelta(days=1)
+    else:
+        next_run = run_at_utc
+    next_local = next_run.astimezone(saudi_tz)
+    saudi_now = generated_at.astimezone(saudi_tz)
+    day = "غداً" if next_local.date() > saudi_now.date() else "اليوم"
+    h = next_local.hour % 12 or 12
+    m = next_local.minute
+    period = "صباحاً" if next_local.hour < 12 else "مساءً"
+    m_str = f"٠{ar(m)}" if m < 10 else ar(m)
+    return f"{day} الساعة {ar(h)}:{m_str} {period} (توقيت السعودية)"
 
 
 def all_headlines_js(digest: dict[str, list[dict[str, Any]]]) -> str:
@@ -134,6 +166,30 @@ def all_headlines_js(digest: dict[str, list[dict[str, Any]]]) -> str:
         lines.append(f"{i}. {html_lib.escape(s.get('headline', ''))}")
     # Escape for JS template literal
     return "\\n".join(lines).replace("`", "\\`")
+
+
+# ─────────────────────────────────────────────
+# SVG ICONS
+# ─────────────────────────────────────────────
+
+_SVG_SUN = (
+    '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" '
+    'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" '
+    'aria-hidden="true">'
+    '<circle cx="12" cy="12" r="5"/>'
+    '<line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>'
+    '<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>'
+    '<line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>'
+    '<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+    '</svg>'
+)
+_SVG_MOON = (
+    '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" '
+    'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" '
+    'aria-hidden="true">'
+    '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
+    '</svg>'
+)
 
 
 # ─────────────────────────────────────────────
@@ -157,24 +213,34 @@ def build_html(
     logger.info("Building HTML: %d global, %d local stories", g_count, l_count)
     total   = article_count["global"] + article_count["local"]
 
-    words   = count_words(digest)
+    words    = count_words(digest)
     read_min = max(1, round(words / 120))
 
     global_cards = build_story_cards(global_stories, "global")
     local_cards  = build_story_cards(local_stories,  "local")
     toc_html     = build_toc(digest)
     categories   = get_categories(digest)
+    cat_counts   = get_category_counts(digest)
     headlines_js = all_headlines_js(digest)
+    next_run     = next_run_display(generated_at)
 
     cat_btns = '<button class="flt-btn active" data-cat="all" onclick="filterCat(this)">الكل</button>'
     for c in categories:
-        cat_btns += f'<button class="flt-btn" data-cat="{safe(c)}" onclick="filterCat(this)">{safe(c)}</button>'
+        cnt = cat_counts.get(c, 0)
+        cnt_html = f' <span class="flt-count">({ar(cnt)})</span>'
+        cat_btns += (
+            f'<button class="flt-btn" data-cat="{safe(c)}" onclick="filterCat(this)">'
+            f'{safe(c)}{cnt_html}</button>'
+        )
+
+    svg_sun  = _SVG_SUN
+    svg_moon = _SVG_MOON
 
     return f"""<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="المنتقي"/>
@@ -228,6 +294,7 @@ def build_html(
       border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer;
       font-family:inherit;transition:all .15s;
       min-height:44px;min-width:44px;
+      display:inline-flex;align-items:center;justify-content:center;
     }}
     .icon-btn:hover{{color:var(--t1);border-color:var(--t2)}}
 
@@ -264,8 +331,12 @@ def build_html(
       font-family:inherit;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;
       min-height:44px;
     }}
-    .toc-body{{padding:0 16px 12px;display:none}}
-    .toc-body.open{{display:block}}
+    .toc-body{{
+      display:grid;grid-template-rows:0fr;
+      transition:grid-template-rows 200ms ease;
+    }}
+    .toc-body.open{{grid-template-rows:1fr}}
+    .toc-body-inner{{overflow:hidden;padding:0 16px 12px;min-height:0}}
     .toc-label{{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin:10px 0 4px}}
     .toc-item{{
       display:block;font-size:13px;color:var(--t2);padding:5px 0;
@@ -284,6 +355,7 @@ def build_html(
       min-height:44px;
     }}
     .flt-btn.active{{background:var(--blue);border-color:var(--blue);color:#fff}}
+    .flt-count{{font-size:10px;opacity:.7}}
 
     /* ── SECTION ── */
     .sec{{display:none}}.sec.on{{display:block}}
@@ -318,8 +390,16 @@ def build_html(
     .expand-icon{{position:absolute;inset-inline-start:14px;top:14px;font-size:20px;color:var(--t3);font-weight:300;transition:transform .2s;line-height:1}}
     .story-hdr.open .expand-icon{{transform:rotate(45deg)}}
 
-    /* ── STORY BODY ── */
-    .story-body{{padding:0 16px 14px;border-top:1px solid var(--bd2)}}
+    /* ── STORY BODY (animated expand) ── */
+    .story-body{{
+      display:grid;grid-template-rows:0fr;
+      transition:grid-template-rows 220ms cubic-bezier(.4,0,.2,1);
+    }}
+    .story-body.open{{grid-template-rows:1fr}}
+    .story-body-inner{{
+      overflow:hidden;padding:0 16px 14px;min-height:0;
+      border-top:1px solid var(--bd2);
+    }}
     .story-context{{
       font-size:12px;color:var(--green);background:var(--green-d);
       padding:8px 12px;border-radius:8px;margin:12px 0 10px;line-height:1.7;
@@ -352,8 +432,10 @@ def build_html(
     }}
     .share-btn:hover{{color:var(--t1)}}
 
-    /* ── EMPTY ── */
+    /* ── EMPTY STATES ── */
     .empty-state{{text-align:center;color:var(--t3);font-size:14px;padding:40px 20px}}
+    .filter-empty{{display:none}}
+    .filter-empty:not([hidden]){{display:block}}
 
     /* ── SCROLL TOP ── */
     #go-top{{
@@ -385,6 +467,11 @@ def build_html(
     #toast.show{{opacity:1;transform:translateX(-50%) translateY(0)}}
     #toast.error{{border-color:#ef4444;color:#ef4444}}
 
+    /* ── REDUCED MOTION ── */
+    @media (prefers-reduced-motion:reduce){{
+      *,*::before,*::after{{transition:none!important;animation:none!important}}
+    }}
+
     /* ── FOOTER ── */
     footer{{
       text-align:center;font-size:11px;color:var(--t3);
@@ -407,7 +494,7 @@ def build_html(
         وقت القراءة: {ar(read_min)} دقائق
       </div>
     </div>
-    <button class="icon-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+    <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="تبديل السمة"></button>
   </div>
   <div class="tabs">
     <button class="tab on"     onclick="switchTab('g',this)">عالمي ({ar(g_count)})</button>
@@ -428,7 +515,9 @@ def build_html(
       <span>فهرس القصص</span><span id="toc-arrow">▾</span>
     </button>
     <div class="toc-body" id="toc-body">
-      {toc_html}
+      <div class="toc-body-inner">
+        {toc_html}
+      </div>
     </div>
   </div>
 
@@ -461,7 +550,7 @@ def build_html(
 <div id="toast" role="status" aria-live="polite"></div>
 
 <footer>
-  التحديث القادم: غداً الساعة ٩:٠٠ صباحاً (توقيت السعودية)
+  التحديث القادم: {next_run}
   &nbsp;·&nbsp;
   <a href="https://github.com/HotSalsa10/Sovereign-News-Curator/actions" target="_blank">تحديث يدوي ↗</a>
 </footer>
@@ -469,6 +558,8 @@ def build_html(
 <script>
 const GEN = "{iso}";
 const HEADLINES = `{headlines_js}`;
+const SVG_SUN = '{svg_sun}';
+const SVG_MOON = '{svg_moon}';
 
 // ── Freshness ──
 function relTime(iso){{
@@ -493,16 +584,21 @@ let dark=true;
 function toggleTheme(){{
   dark=!dark;
   document.body.classList.toggle('light',!dark);
-  document.getElementById('theme-btn').textContent=dark?'☀️':'🌙';
+  document.getElementById('theme-btn').innerHTML=dark?SVG_SUN:SVG_MOON;
   document.getElementById('theme-meta').content=dark?'#0a0a0a':'#f4f4f5';
   localStorage.setItem('snc-theme',dark?'dark':'light');
 }}
 if(localStorage.getItem('snc-theme')==='light') toggleTheme();
+else document.getElementById('theme-btn').innerHTML=SVG_SUN;
 
 // ── Tabs ──
 let curTab='g', curCat='all';
 function switchTab(id,btn){{
   curTab=id;
+  curCat='all';
+  document.querySelectorAll('.flt-btn').forEach(b=>b.classList.remove('active'));
+  const allBtn=document.querySelector('.flt-btn[data-cat="all"]');
+  if(allBtn) allBtn.classList.add('active');
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
@@ -514,11 +610,33 @@ function switchTab(id,btn){{
 // ── Story expand ──
 function toggleStory(hdr){{
   const body=hdr.nextElementSibling;
-  const opening=body.hidden;
-  body.hidden=!opening;
+  const opening=!body.classList.contains('open');
+  body.classList.toggle('open',opening);
   hdr.classList.toggle('open',opening);
-  if(opening) hdr.closest('.story-card').classList.add('read');
+  if(opening){{
+    const card=hdr.closest('.story-card');
+    card.classList.add('read');
+    _markRead(card.dataset.headline.slice(0,64));
+  }}
 }}
+
+// ── Read state persistence ──
+const READ_KEY='snc-read-v1';
+function _getRead(){{
+  try{{return new Set(JSON.parse(localStorage.getItem(READ_KEY)||'[]'));}}
+  catch{{return new Set();}}
+}}
+function _markRead(key){{
+  const s=_getRead();s.add(key);
+  localStorage.setItem(READ_KEY,JSON.stringify([...s]));
+}}
+(function restoreRead(){{
+  const s=_getRead();
+  if(!s.size) return;
+  document.querySelectorAll('.story-card').forEach(card=>{{
+    if(s.has(card.dataset.headline.slice(0,64))) card.classList.add('read');
+  }});
+}})();
 
 // ── Spin ──
 function toggleSpin(btn){{
@@ -531,25 +649,23 @@ function toggleSpin(btn){{
 // ── TOC ──
 function toggleToc(btn){{
   const body=document.getElementById('toc-body');
-  body.classList.toggle('open');
-  document.getElementById('toc-arrow').textContent=body.classList.contains('open')?'▴':'▾';
+  const open=!body.classList.contains('open');
+  body.classList.toggle('open',open);
+  document.getElementById('toc-arrow').textContent=open?'▴':'▾';
 }}
 function jumpToStory(el){{
   const sec=el.dataset.section==='global'?'g':'l';
   const idx=parseInt(el.dataset.index);
-  // Switch tab
   const tabBtn=document.querySelector(sec==='g'?'.tab:not(.local)':'.tab.local');
   switchTab(sec,tabBtn);
-  // Close TOC
   document.getElementById('toc-body').classList.remove('open');
   document.getElementById('toc-arrow').textContent='▾';
-  // Scroll & expand
   setTimeout(()=>{{
     const cards=[...document.querySelectorAll('#sec-'+sec+' .story-card')].filter(c=>!c.hidden);
     if(cards[idx]){{
       cards[idx].scrollIntoView({{behavior:'smooth',block:'center'}});
       const hdr=cards[idx].querySelector('.story-hdr');
-      if(cards[idx].querySelector('.story-body').hidden) toggleStory(hdr);
+      if(!cards[idx].querySelector('.story-body').classList.contains('open')) toggleStory(hdr);
     }}
   }},120);
 }}
@@ -562,9 +678,21 @@ function filterCat(btn){{
   applyFilter();
 }}
 function applyFilter(){{
-  document.querySelectorAll('#sec-'+curTab+' .story-card').forEach(card=>{{
-    card.hidden = curCat!=='all' && card.dataset.cat!==curCat;
+  const section=document.getElementById('sec-'+curTab);
+  let visible=0;
+  section.querySelectorAll('.story-card').forEach(card=>{{
+    const show=curCat==='all'||card.dataset.cat===curCat;
+    card.hidden=!show;
+    if(show) visible++;
   }});
+  let empty=section.querySelector('.filter-empty');
+  if(!empty){{
+    empty=document.createElement('p');
+    empty.className='filter-empty empty-state';
+    section.appendChild(empty);
+  }}
+  empty.hidden=visible>0;
+  empty.textContent=visible===0?'لا توجد قصص في هذه الفئة.':'';
 }}
 
 // ── Share ──
@@ -576,7 +704,12 @@ async function shareStory(btn){{
   if(navigator.share){{
     try{{await navigator.share({{title:headline,text}});}}catch(e){{}}
   }}else{{
-    try{{await navigator.clipboard.writeText(text);alert('تم النسخ!');}}catch(e){{}}
+    try{{
+      await navigator.clipboard.writeText(text);
+      showToast('تم نسخ الرابط ✓');
+    }}catch(e){{
+      showToast('فشل النسخ — انسخ يدوياً',true);
+    }}
   }}
 }}
 
@@ -600,7 +733,6 @@ async function copyHeadlines(){{
     setTimeout(()=>btn.textContent='نسخ العناوين',2500);
     showToast('تم نسخ العناوين ✓');
   }}catch(e){{
-    // Fallback for HTTP pages or restricted contexts
     try{{
       const ta=document.createElement('textarea');
       ta.value=HEADLINES;ta.style.position='fixed';ta.style.opacity='0';

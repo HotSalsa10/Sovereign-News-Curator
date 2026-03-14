@@ -358,7 +358,12 @@ def test_build_toc_html_escaping():
 # Tests: _build_badges() / _build_spin_section() helpers
 # ────────────────────────────────────────────────────────────────
 
-from scripts.renderer import _build_badges, _build_spin_section
+from scripts.renderer import (
+    _build_badges,
+    _build_spin_section,
+    get_category_counts,
+    next_run_display,
+)
 
 
 def test_build_badges_top_and_developing():
@@ -943,6 +948,118 @@ def test_build_html_copy_failure_shows_toast():
     # JS must handle failure and call showToast (not silent catch)
     assert "showToast" in result
     assert "فشل النسخ" in result
+
+
+# ────────────────────────────────────────────────────────────────
+# Tests: UI/UX improvements (10 items)
+# ────────────────────────────────────────────────────────────────
+
+def test_build_html_no_maximum_scale():
+    """Viewport meta must not restrict user zoom (WCAG accessibility)."""
+    result = build_html(_sample_digest(), datetime.now(timezone.utc), {"global": 10, "local": 5})
+    assert "maximum-scale=1" not in result
+
+
+def test_build_html_theme_btn_uses_svg():
+    """Theme toggle button must use inline SVG, not emoji (CLAUDE.md requirement)."""
+    result = build_html(_sample_digest(), datetime.now(timezone.utc), {"global": 10, "local": 5})
+    assert 'id="theme-btn"' in result
+    assert "<svg" in result
+
+
+def test_build_html_story_body_has_transition():
+    """Story card expand/collapse must use CSS transition, not instant snap (CLAUDE.md 150-300ms)."""
+    result = build_html(_sample_digest(), datetime.now(timezone.utc), {"global": 10, "local": 5})
+    assert "grid-template-rows" in result
+    assert "story-body-inner" in result
+
+
+def test_build_html_toc_has_transition():
+    """TOC expand must animate, not snap open/closed."""
+    result = build_html(_sample_digest(), datetime.now(timezone.utc), {"global": 10, "local": 5})
+    assert "toc-body-inner" in result
+
+
+def test_build_html_prefers_reduced_motion():
+    """HTML output must include a prefers-reduced-motion media query (WCAG / CLAUDE.md)."""
+    result = build_html(_sample_digest(), datetime.now(timezone.utc), {"global": 10, "local": 5})
+    assert "prefers-reduced-motion" in result
+
+
+def test_build_html_no_alert_in_share():
+    """shareStory must not use alert() — showToast must be used instead."""
+    result = build_html(_sample_digest(), datetime.now(timezone.utc), {"global": 10, "local": 5})
+    assert "alert(" not in result
+
+
+def test_build_html_read_state_uses_localStorage():
+    """Read state must persist to localStorage so it survives page reloads."""
+    result = build_html(_sample_digest(), datetime.now(timezone.utc), {"global": 10, "local": 5})
+    assert "snc-read" in result
+    assert "localStorage" in result
+
+
+def test_build_html_filter_reset_on_tab_switch():
+    """switchTab must reset category filter to 'all' when changing tabs."""
+    result = build_html(_sample_digest(), datetime.now(timezone.utc), {"global": 10, "local": 5})
+    assert "curCat='all'" in result
+
+
+def test_build_html_filter_shows_counts():
+    """Category filter buttons must display per-category story counts."""
+    result = build_html(_sample_digest(), datetime.now(timezone.utc), {"global": 10, "local": 5})
+    assert "flt-count" in result
+
+
+def test_build_html_filter_empty_state():
+    """applyFilter must render an empty-state message when no cards match."""
+    result = build_html(_sample_digest(), datetime.now(timezone.utc), {"global": 10, "local": 5})
+    assert "filter-empty" in result
+
+
+# ── get_category_counts() ──
+
+def test_get_category_counts_basic():
+    """get_category_counts sums across both sections."""
+    digest = {
+        "global": [{"category": "سياسة"}, {"category": "اقتصاد"}, {"category": "سياسة"}],
+        "local":  [{"category": "اقتصاد"}],
+    }
+    counts = get_category_counts(digest)
+    assert counts["سياسة"] == 2
+    assert counts["اقتصاد"] == 2
+
+
+def test_get_category_counts_empty():
+    """get_category_counts returns empty dict for empty digest."""
+    assert get_category_counts({"global": [], "local": []}) == {}
+
+
+def test_get_category_counts_skips_missing_category():
+    """get_category_counts ignores stories with no category key."""
+    digest = {"global": [{"headline": "X"}], "local": []}
+    assert get_category_counts(digest) == {}
+
+
+# ── next_run_display() ──
+
+def test_next_run_display_after_0600_utc():
+    """next_run_display says 'غداً' when digest generated after 06:00 UTC."""
+    generated = datetime(2026, 3, 15, 8, 0, 0, tzinfo=timezone.utc)
+    assert "غداً" in next_run_display(generated)
+
+
+def test_next_run_display_before_0600_utc():
+    """next_run_display says 'اليوم' when digest generated before 06:00 UTC."""
+    generated = datetime(2026, 3, 15, 4, 0, 0, tzinfo=timezone.utc)
+    assert "اليوم" in next_run_display(generated)
+
+
+def test_next_run_display_contains_arabic_indic_digits():
+    """next_run_display must use Arabic-Indic numerals."""
+    generated = datetime(2026, 3, 15, 8, 0, 0, tzinfo=timezone.utc)
+    result = next_run_display(generated)
+    assert any(d in result for d in "٠١٢٣٤٥٦٧٨٩")
 
 
 # ────────────────────────────────────────────────────────────────
