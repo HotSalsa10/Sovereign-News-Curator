@@ -9,6 +9,7 @@ import json
 import os
 import re
 import sys
+import time
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import cast
@@ -23,6 +24,8 @@ import anthropic
 MODEL = "claude-sonnet-4-6"
 ARTICLES_PER_FEED = 3
 ARCHIVE_DAYS = 3
+MIN_ARTICLES = 5
+MAX_RETRIES = 3
 ROOT_DIR = Path(__file__).parent.parent
 
 GLOBAL_FEEDS = [
@@ -176,24 +179,48 @@ def extract_json(text: str) -> dict:
     raise ValueError("No valid JSON in Claude response")
 
 
+def validate_digest(digest: dict) -> None:
+    """Raise ValueError if digest is missing required top-level keys or story fields."""
+    required_story_fields = ("headline", "summary", "sources", "category")
+    for key in ("global", "local"):
+        if key not in digest or not isinstance(digest[key], list):
+            raise ValueError(f"Digest missing '{key}' array")
+    for section in ("global", "local"):
+        for i, story in enumerate(digest[section]):
+            for field in required_story_fields:
+                if field not in story:
+                    raise ValueError(f"Story {i} in '{section}' missing field '{field}'")
+
+
 def call_claude(articles: dict, archive_context: str) -> dict:
+    from anthropic.types import TextBlock
     print(f"\n[Claude] Calling {MODEL}...")
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     user_content = format_for_claude(articles["global"], articles["local"], archive_context)
-    message = client.messages.create(
-        model=MODEL,
-        max_tokens=8192,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": user_content}],
-    )
-    from anthropic.types import TextBlock
-    raw = cast(TextBlock, message.content[0]).text
-    print(f"[Claude] Done. Tokens — input: {message.usage.input_tokens}, output: {message.usage.output_tokens}")
-    digest = extract_json(raw)
-    for section_key in ("global", "local"):
-        for story in digest.get(section_key, []):
-            story["source_count"] = len(story.get("sources", []))
-    return digest
+    last_exc: Exception | None = None
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            message = client.messages.create(
+                model=MODEL,
+                max_tokens=8192,
+                system=SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": user_content}],
+            )
+            raw = cast(TextBlock, message.content[0]).text
+            print(f"[Claude] Done. Tokens — input: {message.usage.input_tokens}, output: {message.usage.output_tokens}")
+            digest = extract_json(raw)
+            validate_digest(digest)
+            for section_key in ("global", "local"):
+                for story in digest.get(section_key, []):
+                    story["source_count"] = len(story.get("sources", []))
+            return digest
+        except Exception as e:
+            last_exc = e
+            if attempt < MAX_RETRIES:
+                wait = 2 ** attempt
+                print(f"[Claude] Attempt {attempt} failed: {e}. Retrying in {wait}s...")
+                time.sleep(wait)
+    raise RuntimeError(f"Claude API failed after {MAX_RETRIES} attempts: {last_exc}") from last_exc
 
 # ─────────────────────────────────────────────
 # HTML HELPERS
@@ -762,6 +789,11 @@ def main():
     print("=" * 52)
 
     articles = fetch_all_feeds()
+
+    total_articles = len(articles["global"]) + len(articles["local"])
+    if total_articles < MIN_ARTICLES:
+        print(f"ERROR: Only {total_articles} articles fetched (minimum {MIN_ARTICLES}). Aborting.")
+        sys.exit(1)
 
     archive_context = load_archive()
     if archive_context:

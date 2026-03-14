@@ -26,6 +26,7 @@ from scripts.generate_digest import (
     fetch_feed,
     fetch_all_feeds,
     call_claude,
+    validate_digest,
     all_headlines_js,
     build_html,
     main,
@@ -714,7 +715,10 @@ def test_call_claude_returns_digest(mocker):
 
 def test_call_claude_adds_source_count(mocker):
     """call_claude should add source_count to each story."""
-    story = {"headline": "Test", "sources": ["BBC", "Reuters"]}
+    story = {
+        "headline": "Test", "summary": "Summary", "sources": ["BBC", "Reuters"],
+        "category": "سياسة", "spin": None, "is_developing": False, "context": None,
+    }
     mock_message = Mock()
     mock_message.content = [Mock(text=json.dumps({"global": [story], "local": []}))]
     mock_message.usage = Mock(input_tokens=100, output_tokens=50)
@@ -843,9 +847,11 @@ def test_main_exits_without_api_key(mocker):
 def test_main_runs_full_pipeline(mocker, tmp_path):
     """main should orchestrate the full pipeline and write index.html."""
     digest = _sample_digest()
+    articles = {"global": [{"source": "BBC", "title": f"T{i}", "summary": "S"} for i in range(4)],
+                "local":  [{"source": "SPA", "title": f"L{i}", "summary": "S"} for i in range(2)]}
 
     mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
-    mocker.patch("scripts.generate_digest.fetch_all_feeds", return_value={"global": [], "local": []})
+    mocker.patch("scripts.generate_digest.fetch_all_feeds", return_value=articles)
     mocker.patch("scripts.generate_digest.load_archive", return_value="")
     mocker.patch("scripts.generate_digest.call_claude", return_value=digest)
     mocker.patch("scripts.generate_digest.save_archive")
@@ -857,3 +863,151 @@ def test_main_runs_full_pipeline(mocker, tmp_path):
     assert out.exists()
     content = out.read_text(encoding="utf-8")
     assert "<!DOCTYPE html>" in content
+
+
+# ────────────────────────────────────────────────────────────────
+# Tests: validate_digest()  [Phase 1 — schema validation]
+# ────────────────────────────────────────────────────────────────
+
+def test_validate_digest_valid_passes():
+    """A correctly structured digest should not raise."""
+    digest = {
+        "global": [{"headline": "H", "summary": "S", "sources": [], "category": "سياسة"}],
+        "local": [],
+    }
+    validate_digest(digest)  # should not raise
+
+
+def test_validate_digest_missing_global_raises():
+    """Digest without 'global' key should raise ValueError."""
+    with pytest.raises(ValueError, match="global"):
+        validate_digest({"local": []})
+
+
+def test_validate_digest_missing_local_raises():
+    """Digest without 'local' key should raise ValueError."""
+    with pytest.raises(ValueError, match="local"):
+        validate_digest({"global": []})
+
+
+def test_validate_digest_non_list_global_raises():
+    """'global' being non-list should raise ValueError."""
+    with pytest.raises(ValueError):
+        validate_digest({"global": "not a list", "local": []})
+
+
+def test_validate_digest_missing_story_field_raises():
+    """Story missing required field should raise ValueError."""
+    digest = {
+        "global": [{"headline": "H", "sources": [], "category": "أمن"}],  # missing summary
+        "local": [],
+    }
+    with pytest.raises(ValueError, match="summary"):
+        validate_digest(digest)
+
+
+def test_validate_digest_empty_sections_pass():
+    """Empty global and local arrays should be valid."""
+    validate_digest({"global": [], "local": []})
+
+
+# ────────────────────────────────────────────────────────────────
+# Tests: call_claude() retry logic  [Phase 1]
+# ────────────────────────────────────────────────────────────────
+
+def _valid_story():
+    return {
+        "headline": "H", "summary": "S", "spin": None,
+        "sources": ["BBC"], "category": "سياسة",
+        "is_developing": False, "context": None,
+    }
+
+
+def test_call_claude_retries_on_failure(mocker):
+    """call_claude should retry up to MAX_RETRIES on API failure then succeed."""
+    good_message = Mock()
+    good_message.content = [Mock(text=json.dumps({"global": [_valid_story()], "local": []}))]
+    good_message.usage = Mock(input_tokens=100, output_tokens=50)
+
+    mock_client = Mock()
+    mock_client.messages.create.side_effect = [
+        Exception("timeout"),
+        Exception("rate limit"),
+        good_message,
+    ]
+
+    mocker.patch("anthropic.Anthropic", return_value=mock_client)
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+    mocker.patch("time.sleep")  # avoid real waiting
+
+    result = call_claude({"global": [], "local": []}, "")
+    assert mock_client.messages.create.call_count == 3
+    assert "global" in result
+
+
+def test_call_claude_raises_after_max_retries(mocker):
+    """call_claude should raise RuntimeError after all retries fail."""
+    mock_client = Mock()
+    mock_client.messages.create.side_effect = Exception("persistent failure")
+
+    mocker.patch("anthropic.Anthropic", return_value=mock_client)
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+    mocker.patch("time.sleep")
+
+    with pytest.raises(RuntimeError, match="Claude API failed"):
+        call_claude({"global": [], "local": []}, "")
+
+    assert mock_client.messages.create.call_count == 3
+
+
+def test_call_claude_raises_on_invalid_schema(mocker):
+    """call_claude should raise if Claude returns JSON with wrong schema."""
+    bad_message = Mock()
+    bad_message.content = [Mock(text='{"wrong_key": []}')]  # missing global/local
+    bad_message.usage = Mock(input_tokens=100, output_tokens=50)
+
+    mock_client = Mock()
+    mock_client.messages.create.return_value = bad_message
+
+    mocker.patch("anthropic.Anthropic", return_value=mock_client)
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+    mocker.patch("time.sleep")
+
+    with pytest.raises(RuntimeError, match="Claude API failed"):
+        call_claude({"global": [], "local": []}, "")
+
+
+# ────────────────────────────────────────────────────────────────
+# Tests: zero-article guard in main()  [Phase 1]
+# ────────────────────────────────────────────────────────────────
+
+def test_main_exits_when_no_articles(mocker):
+    """main() should exit(1) if fetch returns fewer than MIN_ARTICLES articles."""
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+    mocker.patch(
+        "scripts.generate_digest.fetch_all_feeds",
+        return_value={"global": [], "local": []},
+    )
+    mocker.patch("scripts.generate_digest.load_archive", return_value="")
+
+    with pytest.raises(SystemExit) as exc_info:
+        main()
+
+    assert exc_info.value.code == 1
+
+
+def test_main_continues_when_enough_articles(mocker, tmp_path):
+    """main() should not exit when fetch returns enough articles."""
+    articles = {"global": [{"source": "BBC", "title": f"T{i}", "summary": "S"} for i in range(4)],
+                "local":  [{"source": "SPA", "title": f"L{i}", "summary": "S"} for i in range(2)]}
+    digest = _sample_digest()
+
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+    mocker.patch("scripts.generate_digest.fetch_all_feeds", return_value=articles)
+    mocker.patch("scripts.generate_digest.load_archive", return_value="")
+    mocker.patch("scripts.generate_digest.call_claude", return_value=digest)
+    mocker.patch("scripts.generate_digest.save_archive")
+    mocker.patch("scripts.generate_digest.ROOT_DIR", tmp_path)
+
+    main()  # should not raise
+    assert (tmp_path / "index.html").exists()
