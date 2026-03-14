@@ -55,6 +55,7 @@
       background:var(--bg3);border:1px solid var(--bd);color:var(--t2);
       border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer;
       font-family:inherit;transition:all .15s;
+      min-height:44px;min-width:44px;
     }
     .icon-btn:hover{color:var(--t1);border-color:var(--t2)}
 
@@ -64,6 +65,7 @@
       flex:1;padding:8px;border-radius:8px;border:1px solid var(--bd);
       background:transparent;color:var(--t2);font-family:inherit;
       font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;
+      min-height:44px;
     }
     .tab.on{background:var(--blue);border-color:var(--blue);color:#fff}
     .tab.on.local{background:var(--green);border-color:var(--green)}
@@ -78,6 +80,7 @@
       font-size:11px;padding:5px 10px;background:var(--bg3);
       border:1px solid var(--bd);color:var(--t2);border-radius:6px;
       cursor:pointer;font-family:inherit;transition:all .15s;
+      min-height:44px;min-width:44px;
     }
     .copy-btn:hover{color:var(--t1)}
 
@@ -87,6 +90,7 @@
       width:100%;background:none;border:none;padding:12px 16px;
       display:flex;align-items:center;justify-content:space-between;
       font-family:inherit;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;
+      min-height:44px;
     }
     .toc-body{padding:0 16px 12px;display:none}
     .toc-body.open{display:block}
@@ -105,6 +109,7 @@
       padding:5px 12px;border-radius:20px;border:1px solid var(--bd);
       background:transparent;color:var(--t2);font-size:12px;
       font-family:inherit;cursor:pointer;transition:all .15s;
+      min-height:44px;
     }
     .flt-btn.active{background:var(--blue);border-color:var(--blue);color:#fff}
 
@@ -138,7 +143,7 @@
     .story-title{font-size:15px;font-weight:700;color:var(--t1);line-height:1.55;margin-bottom:8px;padding-left:22px}
     .src-pills{display:flex;flex-wrap:wrap;gap:4px}
     .src-pill{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--t3);border:1px solid var(--bd)}
-    .expand-icon{position:absolute;left:14px;top:14px;font-size:20px;color:var(--t3);font-weight:300;transition:transform .2s;line-height:1}
+    .expand-icon{position:absolute;inset-inline-start:14px;top:14px;font-size:20px;color:var(--t3);font-weight:300;transition:transform .2s;line-height:1}
     .story-hdr.open .expand-icon{transform:rotate(45deg)}
 
     /* ── STORY BODY ── */
@@ -155,6 +160,7 @@
       font-size:12px;padding:6px 14px;background:transparent;
       border:1px solid var(--amber);color:var(--amber);border-radius:6px;
       cursor:pointer;font-family:inherit;font-weight:600;transition:all .15s;
+      min-height:44px;
     }
     .spin-btn.open{background:var(--amber-d)}
     .spin-body{
@@ -170,6 +176,7 @@
       font-size:12px;padding:6px 14px;background:var(--bg3);
       border:1px solid var(--bd);color:var(--t2);border-radius:6px;
       cursor:pointer;font-family:inherit;transition:all .15s;
+      min-height:44px;
     }
     .share-btn:hover{color:var(--t1)}
 
@@ -178,8 +185,8 @@
 
     /* ── SCROLL TOP ── */
     #go-top{
-      position:fixed;bottom:24px;left:16px;
-      width:40px;height:40px;border-radius:50%;
+      position:fixed;bottom:24px;inset-inline-start:16px;
+      width:44px;height:44px;border-radius:50%;
       background:var(--bg3);border:1px solid var(--bd);
       color:var(--t2);font-size:18px;cursor:pointer;
       display:none;align-items:center;justify-content:center;
@@ -207,13 +214,13 @@
         <span class="dot" id="fresh-dot"></span>
         <span id="rel-time">...</span>
         &nbsp;·&nbsp;
-        وقت القراءة: ٥ دقائق
+        وقت القراءة: ٧ دقائق
       </div>
     </div>
     <button class="icon-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
   </div>
   <div class="tabs">
-    <button class="tab on"     onclick="switchTab('g',this)">عالمي (٩)</button>
+    <button class="tab on"     onclick="switchTab('g',this)">عالمي (١٣)</button>
     <button class="tab local"  onclick="switchTab('l',this)">السعودية (٤)</button>
   </div>
 </header>
@@ -221,7 +228,7 @@
 <div class="main">
 
   <div class="dmeta">
-    <span class="dmeta-txt">٥٥ مقال · 11/03/2026 · 09:38 AM</span>
+    <span class="dmeta-txt">٥١ مقال · 14/03/2026 · 11:12 PM</span>
     <button class="copy-btn" id="copy-btn" onclick="copyHeadlines()">نسخ العناوين</button>
   </div>
 
@@ -232,217 +239,305 @@
     </button>
     <div class="toc-body" id="toc-body">
       <p class="toc-label">الأخبار العالمية</p>
-<a class="toc-item" data-section="global" data-index="0" onclick="jumpToStory(this);return false;" href="#">#١ الحرب على إيران تدخل يومها الحادي عشر: أعنف قصف أمريكي حتى الآن وإغلاق مضيق هرمز</a>
-<a class="toc-item" data-section="global" data-index="1" onclick="jumpToStory(this);return false;" href="#">#٢ إيران تتوعد بالرد على الضربات في المناطق السكنية وتحذّر من احتجاجات داخلية</a>
-<a class="toc-item" data-section="global" data-index="2" onclick="jumpToStory(this);return false;" href="#">#٣ إسرائيل تضرب مبنى سكنياً في بيروت وتتصاعد الاشتباكات مع حزب الله</a>
-<a class="toc-item" data-section="global" data-index="3" onclick="jumpToStory(this);return false;" href="#">#٤ ترامب يُرسل رسائل متضاربة بشأن نهاية الحرب على إيران</a>
-<a class="toc-item" data-section="global" data-index="4" onclick="jumpToStory(this);return false;" href="#">#٥ الحرب على إيران تُعيد ترتيب التحالفات الدولية: روسيا تدعم طهران وأوكرانيا تشارك خبراتها في مواجهة المسيّرات</a>
-<a class="toc-item" data-section="global" data-index="5" onclick="jumpToStory(this);return false;" href="#">#٦ باكستان تُغلق المدارس وتخفض الإنفاق الحكومي تأثراً بالحرب على إيران</a>
-<a class="toc-item" data-section="global" data-index="6" onclick="jumpToStory(this);return false;" href="#">#٧ مقتل ستة أشخاص في حريق حافلة &quot;متعمّد&quot; بسويسرا</a>
-<a class="toc-item" data-section="global" data-index="7" onclick="jumpToStory(this);return false;" href="#">#٨ دراسة: يمكن إنتاج حقن إنقاص الوزن سيماغلوتايد بثلاثة دولارات شهرياً</a>
-<a class="toc-item" data-section="global" data-index="8" onclick="jumpToStory(this);return false;" href="#">#٩ حادثة سفينة قرب سواحل الإمارات وسط اضطراب حركة الشحن الإقليمية</a>
+<a class="toc-item" data-section="global" data-index="0" onclick="jumpToStory(this);return false;" href="#">#١ الولايات المتحدة تقصف جزيرة خارك النفطية الإيرانية وطهران تتوعد بالرد</a>
+<a class="toc-item" data-section="global" data-index="1" onclick="jumpToStory(this);return false;" href="#">#٢ هجوم على السفارة الأمريكية في بغداد وواشنطن تطلب من مواطنيها مغادرة العراق</a>
+<a class="toc-item" data-section="global" data-index="2" onclick="jumpToStory(this);return false;" href="#">#٣ إدارة ترامب ترفض مساعي وقف إطلاق النار مع إيران وتعرض مكافأة للإبلاغ عن قيادتها</a>
+<a class="toc-item" data-section="global" data-index="3" onclick="jumpToStory(this);return false;" href="#">#٤ اليونسكو تدين ضربة صاروخية على مدرسة بنات في مينب الإيرانية</a>
+<a class="toc-item" data-section="global" data-index="4" onclick="jumpToStory(this);return false;" href="#">#٥ تصاعد الضربات الروسية على أوكرانيا في ظل تعليق محادثات وقف إطلاق النار</a>
+<a class="toc-item" data-section="global" data-index="5" onclick="jumpToStory(this);return false;" href="#">#٦ تأثير النزاع في إيران على الأسواق العالمية وأسعار النفط</a>
+<a class="toc-item" data-section="global" data-index="6" onclick="jumpToStory(this);return false;" href="#">#٧ إدارة ترامب تهدد وسائل الإعلام بسحب التراخيص بسبب التغطية النقدية للحرب على إيران</a>
+<a class="toc-item" data-section="global" data-index="7" onclick="jumpToStory(this);return false;" href="#">#٨ تعزيز الوجود العسكري الأمريكي في الشرق الأوسط بإرسال مزيد من المارينز والسفن الحربية</a>
+<a class="toc-item" data-section="global" data-index="8" onclick="jumpToStory(this);return false;" href="#">#٩ حركة حماس تدعو إيران إلى وقف الهجمات على دول الخليج</a>
+<a class="toc-item" data-section="global" data-index="9" onclick="jumpToStory(this);return false;" href="#">#١٠ باكستان تتبادل الضربات مع أفغانستان وتعترض طائرات مسيّرة طالبانية</a>
+<a class="toc-item" data-section="global" data-index="10" onclick="jumpToStory(this);return false;" href="#">#١١ الرئيس البرازيلي الأسبق بولسونارو يدخل العناية المركزة إثر إصابته بالتهاب رئوي</a>
+<a class="toc-item" data-section="global" data-index="11" onclick="jumpToStory(this);return false;" href="#">#١٢ انفجار يتسبب في أضرار بمدرسة يهودية في أمستردام</a>
+<a class="toc-item" data-section="global" data-index="12" onclick="jumpToStory(this);return false;" href="#">#١٣ فرنسا تُعيد طبلاً أثرياً نهبته من ساحل العاج قبل أكثر من قرن</a>
 <p class="toc-label">أخبار المملكة</p>
-<a class="toc-item" data-section="local" data-index="0" onclick="jumpToStory(this);return false;" href="#">#١ قطر تعترض هجوماً صاروخياً وتُحذّر من انعدام إمكانية الوساطة في ظل الاستهداف المستمر</a>
-<a class="toc-item" data-section="local" data-index="1" onclick="jumpToStory(this);return false;" href="#">#٢ المرشد الإيراني الجديد مجتبى خامنئي بخير رغم إصاباته، وسط تواصل الضربات</a>
-<a class="toc-item" data-section="local" data-index="2" onclick="jumpToStory(this);return false;" href="#">#٣ جثامين 84 بحاراً إيرانياً أمام القضاء السريلانكي بعد تدمير السفينة الحربية &quot;IRIS Dena&quot;</a>
-<a class="toc-item" data-section="local" data-index="3" onclick="jumpToStory(this);return false;" href="#">#٤ تحليل: هل يملك الخليج سلاح الحظر النفطي لوقف الحرب على إيران؟</a>
+<a class="toc-item" data-section="local" data-index="0" onclick="jumpToStory(this);return false;" href="#">#١ الكويت تعتقل ثلاثة أشخاص بتهمة تصوير الضربات الإيرانية بطائرات مسيّرة</a>
+<a class="toc-item" data-section="local" data-index="1" onclick="jumpToStory(this);return false;" href="#">#٢ البحرين تعتقل ستة أشخاص بتهمة نشر معلومات مضللة عن الهجمات الإيرانية</a>
+<a class="toc-item" data-section="local" data-index="2" onclick="jumpToStory(this);return false;" href="#">#٣ رئيس الوزراء العراقي يحذّر من تدهور الأوضاع الأمنية إثر الهجمات المتصاعدة</a>
+<a class="toc-item" data-section="local" data-index="3" onclick="jumpToStory(this);return false;" href="#">#٤ إيران تنفي وجود أي مشكلة صحية لدى مرشدها الأعلى الجديد</a>
     </div>
   </div>
 
   <!-- Category Filters -->
-  <div class="filters"><button class="flt-btn active" data-cat="all" onclick="filterCat(this)">الكل</button><button class="flt-btn" data-cat="أمن" onclick="filterCat(this)">أمن</button><button class="flt-btn" data-cat="اقتصاد" onclick="filterCat(this)">اقتصاد</button><button class="flt-btn" data-cat="سياسة" onclick="filterCat(this)">سياسة</button><button class="flt-btn" data-cat="صحة" onclick="filterCat(this)">صحة</button></div>
+  <div class="filters"><button class="flt-btn active" data-cat="all" onclick="filterCat(this)">الكل</button><button class="flt-btn" data-cat="أمن" onclick="filterCat(this)">أمن</button><button class="flt-btn" data-cat="اقتصاد" onclick="filterCat(this)">اقتصاد</button><button class="flt-btn" data-cat="سياسة" onclick="filterCat(this)">سياسة</button><button class="flt-btn" data-cat="صحة" onclick="filterCat(this)">صحة</button><button class="flt-btn" data-cat="مجتمع" onclick="filterCat(this)">مجتمع</button></div>
 
   <!-- Global Section -->
   <div class="sec on" id="sec-g">
     <div class="sec-hdr">
       <span class="sec-dot g"></span>
       <span class="sec-title">الأخبار العالمية</span>
-      <span class="sec-count">٩ قصة</span>
+      <span class="sec-count">١٣ قصة</span>
     </div>
     
-<div class="story-card" data-cat="أمن" data-headline="الحرب على إيران تدخل يومها الحادي عشر: أعنف قصف أمريكي حتى الآن وإغلاق مضيق هرمز" data-summary="أعلن وزير الدفاع الأمريكي بيت هيغسيث أن الثلاثاء شهد أشد القصف الأمريكي على إيران منذ بدء الحرب. دمّرت القوات الأمريكية 16 سفينة إيرانية لزرع الألغام ">
+<div class="story-card" data-cat="أمن" data-headline="الولايات المتحدة تقصف جزيرة خارك النفطية الإيرانية وطهران تتوعد بالرد" data-summary="شنّت القوات الأمريكية غارة جوية على جزيرة خارك في الخليج العربي، التي تُعدّ المنشأة النفطية الأكثر أهمية لإيران. ووصف ترامب العملية بأنها من &#x27;أقوى الغ">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#١</span>
       <span class="cat-tag">أمن</span>
       <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">الحرب على إيران تدخل يومها الحادي عشر: أعنف قصف أمريكي حتى الآن وإغلاق مضيق هرمز</h3>
-    <div class="src-pills"><span class="src-pill">France 24 English</span><span class="src-pill">NPR World</span><span class="src-pill">The Independent World</span><span class="src-pill">Al-Monitor</span><span class="src-pill">Sky News World</span></div>
+    <h3 class="story-title">الولايات المتحدة تقصف جزيرة خارك النفطية الإيرانية وطهران تتوعد بالرد</h3>
+    <div class="src-pills"><span class="src-pill">Sky News World</span><span class="src-pill">CBS News World</span><span class="src-pill">New York Times World</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">الحرب الأمريكية الإسرائيلية على إيران مستمرة منذ أكثر من أسبوع وقد شهدت تصاعداً متواصلاً في حدة الضربات على الجانبين.</div>
-    <p class="story-summary">أعلن وزير الدفاع الأمريكي بيت هيغسيث أن الثلاثاء شهد أشد القصف الأمريكي على إيران منذ بدء الحرب. دمّرت القوات الأمريكية 16 سفينة إيرانية لزرع الألغام في مضيق هرمز، مما أدى إلى إغلاق فعلي للمضيق وتعطّل حركة الشحن البحري الدولية. ردّت إيران بإطلاق أعنف وابل صاروخي منذ بداية النزاع مستهدفةً مواقع إسرائيلية وأمريكية في المنطقة.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُبرز وسائل الإعلام الأمريكية مبررات الضربات الدفاعية في مضيق هرمز، بينما تركز وسائل الإعلام المحايدة على الضحايا المدنيين وتداعيات إغلاق المضيق على أسواق الطاقة العالمية.</div></div>
+    <div class="story-context">الحرب على إيران تدخل يومها الحادي عشر وسط أعنف القصف الأمريكي حتى الآن وإغلاق مضيق هرمز.</div>
+    <p class="story-summary">شنّت القوات الأمريكية غارة جوية على جزيرة خارك في الخليج العربي، التي تُعدّ المنشأة النفطية الأكثر أهمية لإيران. ووصف ترامب العملية بأنها من &#x27;أقوى الغارات الجوية&#x27;، فيما توعّدت طهران بالرد على الضربات التي طالت مناطق حيوية. تُشكّل الجزيرة نقطة تصدير محورية للنفط الإيراني، مما يجعل استهدافها ذا تأثير بالغ على إمدادات الطاقة العالمية.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُبرز وسائل الإعلام الأمريكية المؤيدة لترامب الغارة باعتبارها إنجازاً عسكرياً، بينما تُركّز وسائل إعلام أخرى على التداعيات الإنسانية والاقتصادية للضربة.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="أمن" data-headline="إيران تتوعد بالرد على الضربات في المناطق السكنية وتحذّر من احتجاجات داخلية" data-summary="أعلن الناطق باسم القوات المسلحة الإيرانية أن طهران ستردّ على الضربات الأمريكية الإسرائيلية التي طالت المناطق السكنية. في الوقت ذاته، حذّرت الحكومة الإ">
+<div class="story-card" data-cat="أمن" data-headline="هجوم على السفارة الأمريكية في بغداد وواشنطن تطلب من مواطنيها مغادرة العراق" data-summary="تعرّضت السفارة الأمريكية في بغداد لهجوم نسبته مليشيا مدعومة من إيران، مما دفع واشنطن إلى مطالبة مواطنيها بمغادرة العراق فوراً. جاء الهجوم عقب ضربات أم">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٢</span>
       <span class="cat-tag">أمن</span>
-      <span class="badge badge-dev">متطور</span>
+      <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">إيران تتوعد بالرد على الضربات في المناطق السكنية وتحذّر من احتجاجات داخلية</h3>
-    <div class="src-pills"><span class="src-pill">BBC World News</span><span class="src-pill">Al-Monitor</span><span class="src-pill">Middle East Eye</span></div>
+    <h3 class="story-title">هجوم على السفارة الأمريكية في بغداد وواشنطن تطلب من مواطنيها مغادرة العراق</h3>
+    <div class="src-pills"><span class="src-pill">France 24 English</span><span class="src-pill">New York Times World</span><span class="src-pill">Asharq Al-Awsat</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">منذ مقتل المرشد الأعلى علي خامنئي في الغارات، تعاني إيران من ضغوط داخلية وخارجية متصاعدة وسط محاولات النظام تعزيز سلطة المرشد الجديد مجتبى خامنئي.</div>
-    <p class="story-summary">أعلن الناطق باسم القوات المسلحة الإيرانية أن طهران ستردّ على الضربات الأمريكية الإسرائيلية التي طالت المناطق السكنية. في الوقت ذاته، حذّرت الحكومة الإيرانية من أن أجهزة الأمن مستعدة لقمع أي احتجاجات داخلية. وصف سكان طهران وكرج حالةً من الإرهاق الشديد جراء عشرة أيام من القصف المتواصل وانقطاع التيار الكهربائي.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تصف وسائل الإعلام الغربية الأوضاع الداخلية الإيرانية بالهشاشة وتُلمّح إلى احتمال انهيار النظام، فيما تؤكد وسائل الإعلام المقربة من طهران صمود القيادة وقدرتها على الرد.</div></div>
+    <div class="story-context">طائرات مسيّرة إيرانية تهدد دول الخليج وسفن التجارة في المنطقة وسط استمرار التصعيد الإقليمي.</div>
+    <p class="story-summary">تعرّضت السفارة الأمريكية في بغداد لهجوم نسبته مليشيا مدعومة من إيران، مما دفع واشنطن إلى مطالبة مواطنيها بمغادرة العراق فوراً. جاء الهجوم عقب ضربات أمريكية أسفرت عن مقتل ثلاثة عناصر من فصائل مسلحة موالية لإيران في العاصمة العراقية. وحذّر رئيس الوزراء العراقي من تدهور الأوضاع الأمنية في المنطقة جراء تصاعد الهجمات.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُصوّر بعض وسائل الإعلام الهجوم باعتباره ردّ فعل إيرانياً مبرراً، بينما تُقدّمه وسائل أخرى دليلاً على الحاجة لتصعيد الضغط العسكري.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="أمن" data-headline="إسرائيل تضرب مبنى سكنياً في بيروت وتتصاعد الاشتباكات مع حزب الله" data-summary="استهدفت ضربات إسرائيلية مبنى سكنياً في وسط بيروت، وهو الثاني من نوعه في المدينة خلال أيام قليلة. يتوسّع نطاق العمليات العسكرية في لبنان في ظل تصاعد اش">
+<div class="story-card" data-cat="سياسة" data-headline="إدارة ترامب ترفض مساعي وقف إطلاق النار مع إيران وتعرض مكافأة للإبلاغ عن قيادتها" data-summary="رفضت إدارة ترامب جهوداً لحلفاء شرق أوسطيين لبدء مفاوضات دبلوماسية لوقف القتال مع إيران. في الوقت ذاته، أعلنت الولايات المتحدة عرض مكافأة بقيمة 10 ملاي">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٣</span>
-      <span class="cat-tag">أمن</span>
-      <span class="badge badge-dev">متطور</span>
+      <span class="cat-tag">سياسة</span>
+      <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">إسرائيل تضرب مبنى سكنياً في بيروت وتتصاعد الاشتباكات مع حزب الله</h3>
-    <div class="src-pills"><span class="src-pill">Al Jazeera English</span><span class="src-pill">Al-Monitor</span><span class="src-pill">DW World</span></div>
+    <h3 class="story-title">إدارة ترامب ترفض مساعي وقف إطلاق النار مع إيران وتعرض مكافأة للإبلاغ عن قيادتها</h3>
+    <div class="src-pills"><span class="src-pill">Al-Monitor</span><span class="src-pill">Fox News World</span><span class="src-pill">New York Times World</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">تواصل إسرائيل عملياتها العسكرية في لبنان منذ أن انخرط حزب الله في المواجهة رداً على الحرب على إيران، وقد سبق أن نفّذت ضربات بيروتية أوقعت قتلى في الأيام الماضية.</div>
-    <p class="story-summary">استهدفت ضربات إسرائيلية مبنى سكنياً في وسط بيروت، وهو الثاني من نوعه في المدينة خلال أيام قليلة. يتوسّع نطاق العمليات العسكرية في لبنان في ظل تصاعد اشتباكات حزب الله مع القوات الإسرائيلية، مما دفع بيروت إلى تأجيل الانتخابات البرلمانية. يتجاوز عدد النازحين داخل لبنان أرقاماً قياسية وسط استمرار الغارات.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تصف إسرائيل ضرباتها في بيروت بأنها تستهدف عناصر الحرس الثوري الإيراني، بينما تُركّز وسائل الإعلام اللبنانية على الخسائر المدنية والأضرار في المناطق السكنية.</div></div>
+    <div class="story-context">ترامب يُرسل رسائل متضاربة بشأن نهاية الحرب على إيران وسط استمرار الضربات.</div>
+    <p class="story-summary">رفضت إدارة ترامب جهوداً لحلفاء شرق أوسطيين لبدء مفاوضات دبلوماسية لوقف القتال مع إيران. في الوقت ذاته، أعلنت الولايات المتحدة عرض مكافأة بقيمة 10 ملايين دولار مقابل معلومات عن المرشد الإيراني الجديد مجتبى خامنئي وكبار مسؤولي الحرس الثوري. ونفى وزير الخارجية الإيراني وجود أي مشكلة صحية تتعلق بالمرشد الجديد، رداً على ادعاءات وزير الدفاع الأمريكي بإصابته.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُقدّم وسائل إعلام موالية لترامب رفض المفاوضات باعتباره موقفاً من القوة، فيما تصفه وسائل أخرى بأنه عقبة أمام الحل الدبلوماسي.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="سياسة" data-headline="ترامب يُرسل رسائل متضاربة بشأن نهاية الحرب على إيران" data-summary="أطلق الرئيس الأمريكي دونالد ترامب تصريحات متناقضة حول الجدول الزمني لإنهاء الحرب مع إيران، مهدداً في الوقت ذاته بردٍّ عسكري &quot;لم يشهده التاريخ&quot; إذا واص">
+<div class="story-card" data-cat="أمن" data-headline="اليونسكو تدين ضربة صاروخية على مدرسة بنات في مينب الإيرانية" data-summary="أدان أمين سر اللجنة الوطنية الإيرانية لليونسكو الضربة الصاروخية التي استهدفت مدرسة ابتدائية للبنات في مدينة مينب. وأشار المسؤول إلى أن المدرسة تعرّضت ">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٤</span>
-      <span class="cat-tag">سياسة</span>
+      <span class="cat-tag">أمن</span>
       <span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">ترامب يُرسل رسائل متضاربة بشأن نهاية الحرب على إيران</h3>
-    <div class="src-pills"><span class="src-pill">NPR World</span><span class="src-pill">The Independent World</span><span class="src-pill">Al-Monitor</span></div>
+    <h3 class="story-title">اليونسكو تدين ضربة صاروخية على مدرسة بنات في مينب الإيرانية</h3>
+    <div class="src-pills"><span class="src-pill">Al Jazeera English</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">سبق أن ألمح ترامب في اليوم العاشر للحرب إلى اقتراب نهايتها، غير أن العمليات العسكرية تصاعدت بعد ذلك بدلاً من أن تتراجع.</div>
-    <p class="story-summary">أطلق الرئيس الأمريكي دونالد ترامب تصريحات متناقضة حول الجدول الزمني لإنهاء الحرب مع إيران، مهدداً في الوقت ذاته بردٍّ عسكري &quot;لم يشهده التاريخ&quot; إذا واصلت إيران هجماتها. أشارت تقارير إلى أن إدارته تدرس خيار الاستيلاء على جزيرة خارك المركزية لتصدير النفط الإيراني بوصفه ورقة ضغط. يُعقّد هذا التناقض جهود التفاوض الدولية ويُربك أسواق النفط العالمية.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>يصف المؤيدون لترامب تصريحاته بأنها استراتيجية ضغط مدروسة، في حين يرى المنتقدون أنها تعكس غياب رؤية استراتيجية واضحة وتزيد من حدة عدم اليقين.</div></div>
+    <div class="story-context">فيديو يُظهر صاروخاً أمريكياً يضرب منشأة مدرسية إيرانية وسط تناقض الروايات.</div>
+    <p class="story-summary">أدان أمين سر اللجنة الوطنية الإيرانية لليونسكو الضربة الصاروخية التي استهدفت مدرسة ابتدائية للبنات في مدينة مينب. وأشار المسؤول إلى أن المدرسة تعرّضت لضربتين متتاليتين. يأتي هذا الحادث في سياق تقارير سابقة عن قصف منشأة مدرسية إيرانية بصاروخ أمريكي وسط تضارب الروايات.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُبرز وسائل الإعلام المناهضة للحرب الضربة دليلاً على الأضرار التي تلحق بالمدنيين، بينما تتحاشى بعض وسائل الإعلام الأمريكية الخوض في تفاصيلها.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="سياسة" data-headline="الحرب على إيران تُعيد ترتيب التحالفات الدولية: روسيا تدعم طهران وأوكرانيا تشارك خبراتها في مواجهة المسيّرات" data-summary="كشفت تقارير عن دعم روسي للقدرات العسكرية الإيرانية بينما يسعى الرئيس بوتين إلى تصوير نفسه وسيطاً محتملاً في النزاع. في المقابل، تسعى أوكرانيا إلى توظي">
+<div class="story-card" data-cat="أمن" data-headline="تصاعد الضربات الروسية على أوكرانيا في ظل تعليق محادثات وقف إطلاق النار" data-summary="شنّت روسيا ضربات على منطقة كييف راح ضحيتها ما بين 4 و6 أشخاص وأصيب عشرات آخرون، وفق ما أفادت به مصادر متعددة. جاءت الضربات بعد أن علّقت الولايات المتح">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٥</span>
-      <span class="cat-tag">سياسة</span>
-      <span class="badge badge-dev">متطور</span>
+      <span class="cat-tag">أمن</span>
+      <span class="badge badge-hot">الأكثر تداولاً</span>
     </div>
-    <h3 class="story-title">الحرب على إيران تُعيد ترتيب التحالفات الدولية: روسيا تدعم طهران وأوكرانيا تشارك خبراتها في مواجهة المسيّرات</h3>
-    <div class="src-pills"><span class="src-pill">France 24 English</span><span class="src-pill">BBC World News</span><span class="src-pill">NPR World</span><span class="src-pill">Sky News World</span></div>
+    <h3 class="story-title">تصاعد الضربات الروسية على أوكرانيا في ظل تعليق محادثات وقف إطلاق النار</h3>
+    <div class="src-pills"><span class="src-pill">NPR World</span><span class="src-pill">CBS News World</span><span class="src-pill">Al Jazeera English</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">تواصل روسيا منذ بداية النزاع تقديم دعم لوجستي وتقني لإيران، بينما تعرضت لانتكاسات في جبهتها الأوكرانية جراء استعادة كييف مناطق واسعة.</div>
-    <p class="story-summary">كشفت تقارير عن دعم روسي للقدرات العسكرية الإيرانية بينما يسعى الرئيس بوتين إلى تصوير نفسه وسيطاً محتملاً في النزاع. في المقابل، تسعى أوكرانيا إلى توظيف خبراتها الواسعة في حرب المسيّرات لصالح جهود التحالف الغربي. يرى محللون أن الحرب باتت تربط بشكل متزايد بين ميادين القتال المتعددة في أوكرانيا والشرق الأوسط.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُصوّر وسائل الإعلام الغربية الدعم الروسي لإيران بوصفه تهديداً للأمن الدولي، فيما تؤكد وسائل الإعلام الروسية دور موسكو الوساطي البنّاء.</div></div>
+    
+    <p class="story-summary">شنّت روسيا ضربات على منطقة كييف راح ضحيتها ما بين 4 و6 أشخاص وأصيب عشرات آخرون، وفق ما أفادت به مصادر متعددة. جاءت الضربات بعد أن علّقت الولايات المتحدة محادثات وقف إطلاق النار بسبب انشغالها بالحرب على إيران. كما مدّد الاتحاد الأوروبي عقوباته على روسيا، في حين انتقد رفع واشنطن قيودها عن صادرات النفط الروسي.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُركّز وسائل الإعلام الغربية على الضحايا المدنيين وتعليق المحادثات، بينما تُصوّر وسائل إعلام أخرى العملية في سياق الصراع الأشمل.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="اقتصاد" data-headline="باكستان تُغلق المدارس وتخفض الإنفاق الحكومي تأثراً بالحرب على إيران" data-summary="أعلنت باكستان حزمة من الإجراءات التقشفية تشمل إغلاق المدارس مؤقتاً وخفض رواتب الموظفين الحكوميين وحظر تجمعات الإفطار الرمضانية، وذلك للتخفيف من التداع">
+<div class="story-card" data-cat="اقتصاد" data-headline="تأثير النزاع في إيران على الأسواق العالمية وأسعار النفط" data-summary="يُلقي تصاعد النزاع في إيران بظلاله على الأسواق العالمية من خلال ارتفاع أسعار النفط والوقود والسلع الأساسية. يُغذّي هذا الارتفاع مخاطر التضخم وتراجع ال">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٦</span>
       <span class="cat-tag">اقتصاد</span>
       <span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">باكستان تُغلق المدارس وتخفض الإنفاق الحكومي تأثراً بالحرب على إيران</h3>
-    <div class="src-pills"><span class="src-pill">DW World</span></div>
+    <h3 class="story-title">تأثير النزاع في إيران على الأسواق العالمية وأسعار النفط</h3>
+    <div class="src-pills"><span class="src-pill">NPR World</span><span class="src-pill">New York Times World</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">ارتفعت أسعار النفط عالمياً فوق 100 دولار للبرميل منذ اندلاع الحرب، مما أفضى إلى ضغوط اقتصادية حادة على الدول المستوردة للطاقة كباكستان.</div>
-    <p class="story-summary">أعلنت باكستان حزمة من الإجراءات التقشفية تشمل إغلاق المدارس مؤقتاً وخفض رواتب الموظفين الحكوميين وحظر تجمعات الإفطار الرمضانية، وذلك للتخفيف من التداعيات الاقتصادية للحرب الدائرة في المنطقة. يعكس هذا القرار الأثر الموسّع للصراع على دول الجوار الإقليمي غير المنخرطة مباشرة في القتال.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُقدّم وسائل الإعلام الباكستانية الإجراءات بوصفها قرارات سيادية مسؤولة، بينما تتساءل بعض التقارير الدولية عن مدى قدرة الحكومة على احتواء التبعات الاجتماعية لهذه الإجراءات.</div></div>
+    <div class="story-context">أسعار النفط تتجاوز 100 دولار للبرميل والأسواق العالمية تتراجع حاداً.</div>
+    <p class="story-summary">يُلقي تصاعد النزاع في إيران بظلاله على الأسواق العالمية من خلال ارتفاع أسعار النفط والوقود والسلع الأساسية. يُغذّي هذا الارتفاع مخاطر التضخم وتراجع النمو الاقتصادي في مناطق عدة حول العالم. طالب ترامب الدول الأخرى بالمساعدة في تأمين ناقلات النفط عبر مضيق هرمز.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُركّز بعض وسائل الإعلام على المخاطر الاقتصادية العالمية، بينما تُلقي وسائل أخرى الضوء على الفرص التي قد يوفّرها ارتفاع أسعار النفط لبعض المنتجين.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="أمن" data-headline="مقتل ستة أشخاص في حريق حافلة &quot;متعمّد&quot; بسويسرا" data-summary="لقي ستة أشخاص حتفهم وأُصيب آخرون في حريق اندلع داخل حافلة في مقاطعة فريبورغ السويسرية. تشير التحقيقات الأولية إلى أن الحريق قد يكون مُتعمّداً، ويُحتمل">
+<div class="story-card" data-cat="سياسة" data-headline="إدارة ترامب تهدد وسائل الإعلام بسحب التراخيص بسبب التغطية النقدية للحرب على إيران" data-summary="أعلن رئيس هيئة الاتصالات الفيدرالية الأمريكية أن وسائل الإعلام التي تنشر ما وصفه بـ&#x27;التشويهات&#x27; حول الحرب على إيران قد تتعرّض لفقدان تراخيصها. تأتي هذه">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٧</span>
-      <span class="cat-tag">أمن</span>
+      <span class="cat-tag">سياسة</span>
       
     </div>
-    <h3 class="story-title">مقتل ستة أشخاص في حريق حافلة &quot;متعمّد&quot; بسويسرا</h3>
-    <div class="src-pills"><span class="src-pill">BBC World News</span><span class="src-pill">Sky News World</span><span class="src-pill">DW World</span><span class="src-pill">Asharq Al-Awsat</span></div>
+    <h3 class="story-title">إدارة ترامب تهدد وسائل الإعلام بسحب التراخيص بسبب التغطية النقدية للحرب على إيران</h3>
+    <div class="src-pills"><span class="src-pill">Al Jazeera English</span><span class="src-pill">The Independent World</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
     
-    <p class="story-summary">لقي ستة أشخاص حتفهم وأُصيب آخرون في حريق اندلع داخل حافلة في مقاطعة فريبورغ السويسرية. تشير التحقيقات الأولية إلى أن الحريق قد يكون مُتعمّداً، ويُحتمل أن يكون شخص داخل الحافلة أشعل النار في نفسه. لا تزال التحقيقات جارية لتحديد الملابسات.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تتحاشى بعض وسائل الإعلام الإشارة إلى احتمال الانتحار في انتظار نتائج التحقيق، بينما تستند وسائل أخرى إلى شهادات شهود عيان وتقارير الشرطة الأولية.</div></div>
+    <p class="story-summary">أعلن رئيس هيئة الاتصالات الفيدرالية الأمريكية أن وسائل الإعلام التي تنشر ما وصفه بـ&#x27;التشويهات&#x27; حول الحرب على إيران قد تتعرّض لفقدان تراخيصها. تأتي هذه التصريحات في سياق ما وصفه منتقدون بممارسة ضغوط على حرية الصحافة خلال فترة النزاع. ولفت تقرير إلى أن منظمة مرتبطة بترامب استخدمت صوراً لجنود قتلى في رسائل تبرع تستغل الحرب.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُبرز وسائل إعلام مستقلة التهديد بوصفه انتهاكاً لحرية الصحافة، بينما تُقدّمه وسائل إعلام موالية للإدارة باعتباره مكافحة للتضليل الإعلامي.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="صحة" data-headline="دراسة: يمكن إنتاج حقن إنقاص الوزن سيماغلوتايد بثلاثة دولارات شهرياً" data-summary="كشفت دراسة جديدة أن الدواء الفعّال في حقن إنقاص الوزن &quot;أوزمبيك&quot; و&quot;ويغوفي&quot; يمكن تصنيعه بتكلفة لا تتجاوز ثلاثة دولارات شهرياً، مما قد يُتيح إمكانية وصول">
+<div class="story-card" data-cat="أمن" data-headline="تعزيز الوجود العسكري الأمريكي في الشرق الأوسط بإرسال مزيد من المارينز والسفن الحربية" data-summary="تشير تقارير إلى أن الولايات المتحدة تنقل تعزيزات عسكرية إضافية من مشاة البحرية وسفن حربية إلى منطقة الشرق الأوسط. وستُقدَم هذه التعزيزات من مجموعة برم">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٨</span>
+      <span class="cat-tag">أمن</span>
+      <span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">تعزيز الوجود العسكري الأمريكي في الشرق الأوسط بإرسال مزيد من المارينز والسفن الحربية</h3>
+    <div class="src-pills"><span class="src-pill">BBC World News</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">إسرائيل تواصل ضرب إيران وحزب الله يخوض اشتباكات مع القوات البرية في شرق لبنان.</div>
+    <p class="story-summary">تشير تقارير إلى أن الولايات المتحدة تنقل تعزيزات عسكرية إضافية من مشاة البحرية وسفن حربية إلى منطقة الشرق الأوسط. وستُقدَم هذه التعزيزات من مجموعة برمائية كانت مرابطة في اليابان. يجري ذلك في خضم استمرار العمليات العسكرية الأمريكية ضد إيران.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُقدّم بعض وسائل الإعلام التعزيزات باعتبارها ضرورة دفاعية، فيما تراها وسائل أخرى مؤشراً على نية التصعيد.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="سياسة" data-headline="حركة حماس تدعو إيران إلى وقف الهجمات على دول الخليج" data-summary="طالبت حركة حماس إيران بوقف هجماتها على دول الخليج العربي، مع تأكيدها في الوقت ذاته حق طهران في الدفاع عن نفسها في مواجهة ما وصفته بالعدوان الأمريكي ال">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٩</span>
+      <span class="cat-tag">سياسة</span>
+      <span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">حركة حماس تدعو إيران إلى وقف الهجمات على دول الخليج</h3>
+    <div class="src-pills"><span class="src-pill">BBC World News</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">قطر تصف الضربات الإيرانية على دول الخليج بأنها خطأ حسابي خطير.</div>
+    <p class="story-summary">طالبت حركة حماس إيران بوقف هجماتها على دول الخليج العربي، مع تأكيدها في الوقت ذاته حق طهران في الدفاع عن نفسها في مواجهة ما وصفته بالعدوان الأمريكي الإسرائيلي. يعكس هذا الموقف توتراً دبلوماسياً داخل محور الممانعة في ظل تداعيات الحرب الإقليمية. ويأتي ذلك في خضم تحذيرات متواصلة من دول الخليج إزاء الهجمات الإيرانية على أراضيها.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُقدّم بعض وسائل الإعلام هذا الموقف بوصفه تصدّعاً في محور الممانعة، بينما تُصوّره وسائل أخرى مجرد تكتيك دبلوماسي.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="أمن" data-headline="باكستان تتبادل الضربات مع أفغانستان وتعترض طائرات مسيّرة طالبانية" data-summary="أعلن الجيش الباكستاني اعتراض طائرات مسيّرة أطلقتها حركة طالبان من الأراضي الأفغانية. جاء ذلك عقب شنّ باكستان ضربات على كابول وولاية قندهار أسفرت عن سق">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#١٠</span>
+      <span class="cat-tag">أمن</span>
+      
+    </div>
+    <h3 class="story-title">باكستان تتبادل الضربات مع أفغانستان وتعترض طائرات مسيّرة طالبانية</h3>
+    <div class="src-pills"><span class="src-pill">DW World</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    
+    <p class="story-summary">أعلن الجيش الباكستاني اعتراض طائرات مسيّرة أطلقتها حركة طالبان من الأراضي الأفغانية. جاء ذلك عقب شنّ باكستان ضربات على كابول وولاية قندهار أسفرت عن سقوط قتلى. يُشير هذا التطور إلى تصاعد حدة التوترات على الحدود الباكستانية الأفغانية.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُصوّر وسائل الإعلام الباكستانية الضربات باعتبارها رداً دفاعياً مشروعاً، فيما تنتقدها وسائل إعلام أخرى لما تُسفر عنه من سقوط ضحايا مدنيين.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="صحة" data-headline="الرئيس البرازيلي الأسبق بولسونارو يدخل العناية المركزة إثر إصابته بالتهاب رئوي" data-summary="نقل المستشفى الرئيس البرازيلي الأسبق جاير بولسونارو إلى وحدة العناية المركزة بعد تدهور حالته جراء التهاب رئوي. وصف أطباؤه حالته الصحية بـ&#x27;الخطيرة&#x27;. لا">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#١١</span>
       <span class="cat-tag">صحة</span>
       
     </div>
-    <h3 class="story-title">دراسة: يمكن إنتاج حقن إنقاص الوزن سيماغلوتايد بثلاثة دولارات شهرياً</h3>
+    <h3 class="story-title">الرئيس البرازيلي الأسبق بولسونارو يدخل العناية المركزة إثر إصابته بالتهاب رئوي</h3>
+    <div class="src-pills"><span class="src-pill">NPR World</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    
+    <p class="story-summary">نقل المستشفى الرئيس البرازيلي الأسبق جاير بولسونارو إلى وحدة العناية المركزة بعد تدهور حالته جراء التهاب رئوي. وصف أطباؤه حالته الصحية بـ&#x27;الخطيرة&#x27;. لا تتوفر حتى الآن تفاصيل إضافية بشأن مسار العلاج أو التوقعات الطبية.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُبرز وسائل الإعلام الموالية لبولسونارو تضامن مؤيديه، فيما تكتفي وسائل إعلام أخرى بالإبلاغ الحيادي عن وضعه الصحي.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="أمن" data-headline="انفجار يتسبب في أضرار بمدرسة يهودية في أمستردام" data-summary="تعرّضت مدرسة يهودية في أمستردام لأضرار جراء انفجار، وفق ما أكده مسؤولون هولنديون. لم تُكشف حتى الآن تفاصيل إضافية بشأن ملابسات الحادثة أو ما إذا كانت ">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#١٢</span>
+      <span class="cat-tag">أمن</span>
+      
+    </div>
+    <h3 class="story-title">انفجار يتسبب في أضرار بمدرسة يهودية في أمستردام</h3>
+    <div class="src-pills"><span class="src-pill">Sky News World</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    
+    <p class="story-summary">تعرّضت مدرسة يهودية في أمستردام لأضرار جراء انفجار، وفق ما أكده مسؤولون هولنديون. لم تُكشف حتى الآن تفاصيل إضافية بشأن ملابسات الحادثة أو ما إذا كانت هناك إصابات. تأتي الحادثة في سياق توترات أمنية مرتفعة في أوروبا.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُركّز بعض وسائل الإعلام على الطابع المعادي للسامية المحتمل للحادثة، بينما تنتظر وسائل أخرى نتائج التحقيق قبل إصدار أي حكم.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="مجتمع" data-headline="فرنسا تُعيد طبلاً أثرياً نهبته من ساحل العاج قبل أكثر من قرن" data-summary="سلّمت فرنسا لمسؤولين من ساحل العاج في باريس طبل &#x27;جيجي آيوكوي&#x27; المقدّس، الذي نهبته السلطات الاستعمارية الفرنسية منذ أكثر من مئة عام. تُعدّ هذه الخطوة م">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#١٣</span>
+      <span class="cat-tag">مجتمع</span>
+      
+    </div>
+    <h3 class="story-title">فرنسا تُعيد طبلاً أثرياً نهبته من ساحل العاج قبل أكثر من قرن</h3>
     <div class="src-pills"><span class="src-pill">The Guardian World</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
     
-    <p class="story-summary">كشفت دراسة جديدة أن الدواء الفعّال في حقن إنقاص الوزن &quot;أوزمبيك&quot; و&quot;ويغوفي&quot; يمكن تصنيعه بتكلفة لا تتجاوز ثلاثة دولارات شهرياً، مما قد يُتيح إمكانية وصول ملايين المرضى في الدول الفقيرة إليه بعد انتهاء براءات الاختراع. يُصنَّف أكثر من مليار شخص حول العالم ضمن فئة السمنة، وترتفع المعدلات بسرعة في الدول منخفضة الدخل.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُبرز وسائل الإعلام الصحية الأمل في إتاحة العلاج للفقراء، بينما تتساءل تقارير أخرى عن مدى استعداد شركات الأدوية الكبرى للسماح بإنتاج النسخ الرخيصة.</div></div>
-    <div class="story-actions">
-      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
-    </div>
-  </div>
-</div>
-
-<div class="story-card" data-cat="أمن" data-headline="حادثة سفينة قرب سواحل الإمارات وسط اضطراب حركة الشحن الإقليمية" data-summary="أفادت وكالة بريطانية متخصصة في أمن الملاحة بأن سفينة حاويات تعرضت لضربة بمقذوف مجهول المصدر قرب سواحل الإمارات، مشيرةً إلى أن حجم الأضرار غير معلوم وأ">
-  <div class="story-hdr" onclick="toggleStory(this)">
-    <div class="story-meta">
-      <span class="story-num">#٩</span>
-      <span class="cat-tag">أمن</span>
-      <span class="badge badge-dev">متطور</span>
-    </div>
-    <h3 class="story-title">حادثة سفينة قرب سواحل الإمارات وسط اضطراب حركة الشحن الإقليمية</h3>
-    <div class="src-pills"><span class="src-pill">Al-Monitor</span></div>
-    <span class="expand-icon" aria-hidden="true">+</span>
-  </div>
-  <div class="story-body" hidden>
-    <div class="story-context">سبق أن هددت إيران بمنع صادرات النفط الإقليمية وضرب حركة الملاحة في الخليج، وقد أعلنت عن إغلاق فعلي لمضيق هرمز منذ اليوم الحادي عشر للحرب.</div>
-    <p class="story-summary">أفادت وكالة بريطانية متخصصة في أمن الملاحة بأن سفينة حاويات تعرضت لضربة بمقذوف مجهول المصدر قرب سواحل الإمارات، مشيرةً إلى أن حجم الأضرار غير معلوم وأن طاقم السفينة بخير. تأتي هذه الحادثة في سياق اضطراب واسع النطاق في حركة الشحن البحري الإقليمية في أعقاب إغلاق مضيق هرمز.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُدرج وسائل الإعلام البحرية الحادثة ضمن سياق الحرب الإيرانية الأوسع، في حين تتحفّظ بعض التقارير على إسناد المسؤولية قبل اكتمال التحقيق.</div></div>
+    <p class="story-summary">سلّمت فرنسا لمسؤولين من ساحل العاج في باريس طبل &#x27;جيجي آيوكوي&#x27; المقدّس، الذي نهبته السلطات الاستعمارية الفرنسية منذ أكثر من مئة عام. تُعدّ هذه الخطوة من أبرز عمليات إعادة الآثار الثقافية إلى بلدان أفريقية. تنسجم هذه الخطوة مع توجه أوروبي متصاعد نحو إعادة الممتلكات الثقافية المنهوبة إبان الحقبة الاستعمارية.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُقدّم وسائل الإعلام الفرنسية الخطوة باعتبارها بادرة تصالحية طوعية، فيما تنظر إليها وسائل إعلام أفريقية بوصفها خطوة متأخرة ومنقوصة.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
@@ -458,84 +553,84 @@
       <span class="sec-count">٤ قصة</span>
     </div>
     
-<div class="story-card" data-cat="أمن" data-headline="قطر تعترض هجوماً صاروخياً وتُحذّر من انعدام إمكانية الوساطة في ظل الاستهداف المستمر" data-summary="أعلنت وزارة الدفاع القطرية أن قواتها المسلحة اعترضت هجوماً صاروخياً استهدف البلاد. وأفاد وزير قطري بأن الدوحة ومسقط لا تستطيعان الاضطلاع بدور الوسيط ف">
+<div class="story-card" data-cat="أمن" data-headline="الكويت تعتقل ثلاثة أشخاص بتهمة تصوير الضربات الإيرانية بطائرات مسيّرة" data-summary="اعتقلت السلطات الكويتية ثلاثة أشخاص بتهمة استخدام طائرات مسيّرة مزودة بكاميرات لتصوير الضربات الإيرانية الأخيرة. جاء الاعتقال عقب تحذيرات رسمية من الت">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#١</span>
       <span class="cat-tag">أمن</span>
-      <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
-    </div>
-    <h3 class="story-title">قطر تعترض هجوماً صاروخياً وتُحذّر من انعدام إمكانية الوساطة في ظل الاستهداف المستمر</h3>
-    <div class="src-pills"><span class="src-pill">Middle East Eye</span><span class="src-pill">Al Jazeera English</span></div>
-    <span class="expand-icon" aria-hidden="true">+</span>
-  </div>
-  <div class="story-body" hidden>
-    <div class="story-context">سبق أن وصفت قطر الضربات الإيرانية على دول الخليج بأنها خطأ حسابي خطير، وكانت تُعدّ من الدول المرشحة للعب دور الوساطة في النزاع.</div>
-    <p class="story-summary">أعلنت وزارة الدفاع القطرية أن قواتها المسلحة اعترضت هجوماً صاروخياً استهدف البلاد. وأفاد وزير قطري بأن الدوحة ومسقط لا تستطيعان الاضطلاع بدور الوسيط في حين تتعرضان للهجوم، مؤكداً في الوقت ذاته أن دول المنطقة لا تُعدّ عدواً لإيران. وتأتي هذه الحادثة في سياق تصاعد الهجمات الإيرانية على دول الخليج المتعددة.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُصوّر قطر الهجوم على أنه يُقوّض جهودها الدبلوماسية ودورها الوساطي التاريخي، بينما تُقدّمه تقارير أخرى دليلاً على توسّع نطاق الاستهداف الإيراني.</div></div>
-    <div class="story-actions">
-      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
-    </div>
-  </div>
-</div>
-
-<div class="story-card" data-cat="سياسة" data-headline="المرشد الإيراني الجديد مجتبى خامنئي بخير رغم إصاباته، وسط تواصل الضربات" data-summary="أكد نجل الرئيس الإيراني أن المرشد الأعلى الجديد مجتبى خامنئي بخير رغم الإصابات التي لحقت به، وذلك رداً على تساؤلات حول مصيره في ظل استمرار الغارات. عُ">
-  <div class="story-hdr" onclick="toggleStory(this)">
-    <div class="story-meta">
-      <span class="story-num">#٢</span>
-      <span class="cat-tag">سياسة</span>
       <span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">المرشد الإيراني الجديد مجتبى خامنئي بخير رغم إصاباته، وسط تواصل الضربات</h3>
+    <h3 class="story-title">الكويت تعتقل ثلاثة أشخاص بتهمة تصوير الضربات الإيرانية بطائرات مسيّرة</h3>
     <div class="src-pills"><span class="src-pill">Middle East Eye</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">أثار تعيين مجتبى خامنئي مرشداً أعلى احتجاجات في طهران وتساؤلات واسعة حول شرعيته وقدرته على قيادة البلاد في أوقات الحرب.</div>
-    <p class="story-summary">أكد نجل الرئيس الإيراني أن المرشد الأعلى الجديد مجتبى خامنئي بخير رغم الإصابات التي لحقت به، وذلك رداً على تساؤلات حول مصيره في ظل استمرار الغارات. عُيِّن مجتبى خامنئي مرشداً أعلى خلفاً لوالده الذي قُتل في الضربات الأمريكية الإسرائيلية الأسبوع الماضي. تتصاعد حدة الصراع على الحكم في طهران في ظل الحرب والضغوط الداخلية المتزايدة.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تتعامل وسائل الإعلام الموالية للنظام مع الخبر على أنه تطمين للرأي العام، بينما تتساءل وسائل إعلام غربية عن قدرة خامنئي الابن على إحكام السيطرة في خضم الحرب.</div></div>
+    <div class="story-context">السعودية تعترض صواريخ باليستية وطائرات مسيّرة إيرانية فوق أراضيها وسط تصاعد الهجمات الإيرانية على المنطقة.</div>
+    <p class="story-summary">اعتقلت السلطات الكويتية ثلاثة أشخاص بتهمة استخدام طائرات مسيّرة مزودة بكاميرات لتصوير الضربات الإيرانية الأخيرة. جاء الاعتقال عقب تحذيرات رسمية من التوثيق غير المصرّح به للعمليات العسكرية. يعكس هذا الإجراء حالة الاستنفار الأمني التي تعيشها دول الخليج في ظل استمرار التهديدات الإيرانية.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تتعامل بعض وسائل الإعلام مع الاعتقالات باعتبارها إجراء أمنياً مشروعاً، فيما تُثير وسائل أخرى تساؤلات حول تأثيرها على حرية الصحافة الميدانية.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="أمن" data-headline="جثامين 84 بحاراً إيرانياً أمام القضاء السريلانكي بعد تدمير السفينة الحربية &quot;IRIS Dena&quot;" data-summary="أصدرت محكمة سريلانكية أمراً بتسليم جثامين 84 بحاراً إيرانياً قُتلوا في هجوم على السفينة الحربية الإيرانية &quot;IRIS Dena&quot; إلى سفارة طهران في كولومبو. أغرق">
+<div class="story-card" data-cat="أمن" data-headline="البحرين تعتقل ستة أشخاص بتهمة نشر معلومات مضللة عن الهجمات الإيرانية" data-summary="أعلنت السلطات البحرينية اعتقال ستة أشخاص بتهمة نشر معلومات مضللة عبر منصات التواصل الاجتماعي بشأن الهجمات الإيرانية على البلاد. لم تكشف الجهات الرسمية">
+  <div class="story-hdr" onclick="toggleStory(this)">
+    <div class="story-meta">
+      <span class="story-num">#٢</span>
+      <span class="cat-tag">أمن</span>
+      <span class="badge badge-dev">متطور</span>
+    </div>
+    <h3 class="story-title">البحرين تعتقل ستة أشخاص بتهمة نشر معلومات مضللة عن الهجمات الإيرانية</h3>
+    <div class="src-pills"><span class="src-pill">Middle East Eye</span></div>
+    <span class="expand-icon" aria-hidden="true">+</span>
+  </div>
+  <div class="story-body" hidden>
+    <div class="story-context">طائرات مسيّرة تضرب مصفاة بابكو في البحرين وتُصيب 32 مدنياً.</div>
+    <p class="story-summary">أعلنت السلطات البحرينية اعتقال ستة أشخاص بتهمة نشر معلومات مضللة عبر منصات التواصل الاجتماعي بشأن الهجمات الإيرانية على البلاد. لم تكشف الجهات الرسمية عن تفاصيل المحتوى الذي أفضى إلى الاعتقالات. تأتي هذه الخطوة في سياق تصاعد إجراءات التعامل مع المحتوى الرقمي في المنطقة خلال فترة النزاع.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُقدّم وسائل الإعلام الرسمية الاعتقالات باعتبارها مكافحة للتضليل الإعلامي، فيما تنظر منظمات حقوق الإنسان إليها باعتبارها تضييقاً على حرية التعبير.</div></div>
+    <div class="story-actions">
+      <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
+    </div>
+  </div>
+</div>
+
+<div class="story-card" data-cat="أمن" data-headline="رئيس الوزراء العراقي يحذّر من تدهور الأوضاع الأمنية إثر الهجمات المتصاعدة" data-summary="حذّر رئيس الوزراء العراقي محمد شياع السوداني من تفاقم الوضع الأمني في المنطقة جراء تصاعد الهجمات على البعثات الدبلوماسية وغيرها من المواقع. جاء التصري">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٣</span>
       <span class="cat-tag">أمن</span>
-      <span class="badge badge-hot">الأكثر تداولاً</span><span class="badge badge-dev">متطور</span>
+      <span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">جثامين 84 بحاراً إيرانياً أمام القضاء السريلانكي بعد تدمير السفينة الحربية &quot;IRIS Dena&quot;</h3>
-    <div class="src-pills"><span class="src-pill">Middle East Eye</span><span class="src-pill">Al-Monitor</span></div>
+    <h3 class="story-title">رئيس الوزراء العراقي يحذّر من تدهور الأوضاع الأمنية إثر الهجمات المتصاعدة</h3>
+    <div class="src-pills"><span class="src-pill">Middle East Eye</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">سبق أن دمّرت الولايات المتحدة سفناً عسكرية وناقلات إيرانية في مضيق هرمز، غير أن ضرب سفينة حربية في المحيط الهندي يُمثّل توسّعاً جغرافياً لافتاً في نطاق العمليات.</div>
-    <p class="story-summary">أصدرت محكمة سريلانكية أمراً بتسليم جثامين 84 بحاراً إيرانياً قُتلوا في هجوم على السفينة الحربية الإيرانية &quot;IRIS Dena&quot; إلى سفارة طهران في كولومبو. أغرقت غواصة أمريكية السفينة بطوربيد في المحيط الهندي خلال عودتها من مناورات بحرية مشتركة مع الهند. تُعدّ هذه الحادثة من أشد التوترات البحرية بُعداً جغرافياً عن منطقة الشرق الأوسط منذ بداية الحرب.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُقدّم طهران الحادثة باعتبارها عدواناً أمريكياً سافراً في المياه الدولية، بينما تتذرع واشنطن بالسياق العسكري الأوسع للعمليات الجارية ضد القدرات البحرية الإيرانية.</div></div>
+    <div class="story-context">إيران تُحكم قبضتها الإعلامية وسكانها يروون معاناتهم سراً وسط استمرار الضربات وتداعياتها الإقليمية.</div>
+    <p class="story-summary">حذّر رئيس الوزراء العراقي محمد شياع السوداني من تفاقم الوضع الأمني في المنطقة جراء تصاعد الهجمات على البعثات الدبلوماسية وغيرها من المواقع. جاء التصريح في أعقاب الهجوم على السفارة الأمريكية في بغداد وتبعاته الأمنية. تعكس تصريحاته القلق العراقي من أن تتحوّل البلاد إلى ساحة للصراع بين القوى الإقليمية والدولية.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تُقدّم بعض وسائل الإعلام تصريحات السوداني باعتبارها مطالبة بضبط النفس من جميع الأطراف، فيما تُفسّرها وسائل أخرى على أنها توجيه ضمني للميليشيات المدعومة من إيران.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
   </div>
 </div>
 
-<div class="story-card" data-cat="اقتصاد" data-headline="تحليل: هل يملك الخليج سلاح الحظر النفطي لوقف الحرب على إيران؟" data-summary="يستعرض تحليل منشور في صحيفة ميدل إيست آي إمكانية أن تفرض دول مجلس التعاون الخليجي حظراً جماعياً على صادرات النفط والغاز بهدف إجبار الأطراف على وقف الح">
+<div class="story-card" data-cat="سياسة" data-headline="إيران تنفي وجود أي مشكلة صحية لدى مرشدها الأعلى الجديد" data-summary="نفى وزير الخارجية الإيراني عباس عراقجي وجود أي مشكلة صحية تتعلق بالمرشد الأعلى الجديد مجتبى خامنئي، رداً على تصريحات وزير الدفاع الأمريكي بيت هيغسيث ا">
   <div class="story-hdr" onclick="toggleStory(this)">
     <div class="story-meta">
       <span class="story-num">#٤</span>
-      <span class="cat-tag">اقتصاد</span>
+      <span class="cat-tag">سياسة</span>
       <span class="badge badge-dev">متطور</span>
     </div>
-    <h3 class="story-title">تحليل: هل يملك الخليج سلاح الحظر النفطي لوقف الحرب على إيران؟</h3>
-    <div class="src-pills"><span class="src-pill">Middle East Eye</span></div>
+    <h3 class="story-title">إيران تنفي وجود أي مشكلة صحية لدى مرشدها الأعلى الجديد</h3>
+    <div class="src-pills"><span class="src-pill">Al-Monitor</span></div>
     <span class="expand-icon" aria-hidden="true">+</span>
   </div>
   <div class="story-body" hidden>
-    <div class="story-context">تواجه دول الخليج معادلة صعبة بين احتواء الضرر الناجم عن الهجمات الإيرانية على بنيتها التحتية والحفاظ على مصالحها الاقتصادية في سياق الحرب الإقليمية.</div>
-    <p class="story-summary">يستعرض تحليل منشور في صحيفة ميدل إيست آي إمكانية أن تفرض دول مجلس التعاون الخليجي حظراً جماعياً على صادرات النفط والغاز بهدف إجبار الأطراف على وقف الحرب. يرى المحلل أن هذا الخيار غير المسبوق يظل نظرياً في الوقت الراهن، نظراً للانقسامات الخليجية الداخلية والاعتماد الوثيق على عائدات الطاقة. وتبقى الفجوة واسعة بين امتلاك هذا الورقة والقدرة على توظيفها فعلياً.</p>
-    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>يُقدّم التحليل الخيارَ بوصفه رافعةً استراتيجية فاعلة بيد الخليج، في حين يرى محللون آخرون أن تداعياته الاقتصادية ستضرب دول الخليج ذاتها بالدرجة الأولى.</div></div>
+    <div class="story-context">مجتبى خامنئي يتولى منصب المرشد الأعلى لإيران خلفاً لوالده في خضم الضربات المتواصلة.</div>
+    <p class="story-summary">نفى وزير الخارجية الإيراني عباس عراقجي وجود أي مشكلة صحية تتعلق بالمرشد الأعلى الجديد مجتبى خامنئي، رداً على تصريحات وزير الدفاع الأمريكي بيت هيغسيث التي أشارت إلى إصابته. لم يُقدّم المسؤولون الإيرانيون أي دليل أو توضيح إضافي يدعم هذا النفي. تأتي هذه التصريحات في سياق حرب معلومات متصاعدة بين الطرفين.</p>
+    <div class="spin-wrap"><button class="spin-btn" onclick="toggleSpin(this)">اكشف التحيز الإعلامي</button><div class="spin-body" hidden><span class="spin-label">التلاعب الإعلامي: </span>تميل وسائل الإعلام الأمريكية إلى التشكيك في رواية طهران، فيما تتبنّى وسائل الإعلام الإيرانية والمقرّبة منها موقف الحكومة دون تحقق مستقل.</div></div>
     <div class="story-actions">
       <button class="share-btn" onclick="shareStory(this)">مشاركة ↗</button>
     </div>
@@ -554,8 +649,8 @@
 </footer>
 
 <script>
-const GEN = "2026-03-11T06:38:50.044687+00:00";
-const HEADLINES = `1. الحرب على إيران تدخل يومها الحادي عشر: أعنف قصف أمريكي حتى الآن وإغلاق مضيق هرمز\n2. إيران تتوعد بالرد على الضربات في المناطق السكنية وتحذّر من احتجاجات داخلية\n3. إسرائيل تضرب مبنى سكنياً في بيروت وتتصاعد الاشتباكات مع حزب الله\n4. ترامب يُرسل رسائل متضاربة بشأن نهاية الحرب على إيران\n5. الحرب على إيران تُعيد ترتيب التحالفات الدولية: روسيا تدعم طهران وأوكرانيا تشارك خبراتها في مواجهة المسيّرات\n6. باكستان تُغلق المدارس وتخفض الإنفاق الحكومي تأثراً بالحرب على إيران\n7. مقتل ستة أشخاص في حريق حافلة "متعمّد" بسويسرا\n8. دراسة: يمكن إنتاج حقن إنقاص الوزن سيماغلوتايد بثلاثة دولارات شهرياً\n9. حادثة سفينة قرب سواحل الإمارات وسط اضطراب حركة الشحن الإقليمية\n1. قطر تعترض هجوماً صاروخياً وتُحذّر من انعدام إمكانية الوساطة في ظل الاستهداف المستمر\n2. المرشد الإيراني الجديد مجتبى خامنئي بخير رغم إصاباته، وسط تواصل الضربات\n3. جثامين 84 بحاراً إيرانياً أمام القضاء السريلانكي بعد تدمير السفينة الحربية "IRIS Dena"\n4. تحليل: هل يملك الخليج سلاح الحظر النفطي لوقف الحرب على إيران؟`;
+const GEN = "2026-03-14T20:12:59.152063+00:00";
+const HEADLINES = `1. الولايات المتحدة تقصف جزيرة خارك النفطية الإيرانية وطهران تتوعد بالرد\n2. هجوم على السفارة الأمريكية في بغداد وواشنطن تطلب من مواطنيها مغادرة العراق\n3. إدارة ترامب ترفض مساعي وقف إطلاق النار مع إيران وتعرض مكافأة للإبلاغ عن قيادتها\n4. اليونسكو تدين ضربة صاروخية على مدرسة بنات في مينب الإيرانية\n5. تصاعد الضربات الروسية على أوكرانيا في ظل تعليق محادثات وقف إطلاق النار\n6. تأثير النزاع في إيران على الأسواق العالمية وأسعار النفط\n7. إدارة ترامب تهدد وسائل الإعلام بسحب التراخيص بسبب التغطية النقدية للحرب على إيران\n8. تعزيز الوجود العسكري الأمريكي في الشرق الأوسط بإرسال مزيد من المارينز والسفن الحربية\n9. حركة حماس تدعو إيران إلى وقف الهجمات على دول الخليج\n10. باكستان تتبادل الضربات مع أفغانستان وتعترض طائرات مسيّرة طالبانية\n11. الرئيس البرازيلي الأسبق بولسونارو يدخل العناية المركزة إثر إصابته بالتهاب رئوي\n12. انفجار يتسبب في أضرار بمدرسة يهودية في أمستردام\n13. فرنسا تُعيد طبلاً أثرياً نهبته من ساحل العاج قبل أكثر من قرن\n1. الكويت تعتقل ثلاثة أشخاص بتهمة تصوير الضربات الإيرانية بطائرات مسيّرة\n2. البحرين تعتقل ستة أشخاص بتهمة نشر معلومات مضللة عن الهجمات الإيرانية\n3. رئيس الوزراء العراقي يحذّر من تدهور الأوضاع الأمنية إثر الهجمات المتصاعدة\n4. إيران تنفي وجود أي مشكلة صحية لدى مرشدها الأعلى الجديد`;
 
 // ── Freshness ──
 function relTime(iso){
