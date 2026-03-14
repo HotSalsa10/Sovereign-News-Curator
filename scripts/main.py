@@ -9,7 +9,7 @@ from pathlib import Path
 from .fetcher import fetch_all_feeds
 from .archive import load_archive, save_archive
 from .claude_client import call_claude, MODEL
-from .renderer import build_html
+from .renderer import build_html, build_version_json
 
 # ─────────────────────────────────────────────
 # CONFIG
@@ -87,6 +87,9 @@ def main() -> None:
 
     out = ROOT_DIR / "index.html"
     out.write_text(html, encoding="utf-8")
+
+    ver = ROOT_DIR / "version.json"
+    ver.write_text(build_version_json(digest, now), encoding="utf-8")
 
     g = len(digest.get("global", []))
     local_count = len(digest.get("local", []))
