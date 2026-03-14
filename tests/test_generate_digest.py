@@ -1101,6 +1101,23 @@ def test_call_claude_retries_on_api_error(mocker):
     assert "global" in result
 
 
+def test_call_claude_retry_uses_jitter(mocker):
+    """Retry backoff should include random jitter to avoid synchronized retries."""
+    mock_uniform = mocker.patch("scripts.claude_client.random.uniform", return_value=0.42)
+    request = httpx.Request("POST", "https://api.anthropic.com/v1/messages")
+    api_error = anthropic.APIConnectionError(message="fail", request=request)
+    good_message = Mock()
+    good_message.content = [Mock(text=json.dumps({"global": [_valid_story()], "local": []}))]
+    good_message.usage = Mock(input_tokens=100, output_tokens=50)
+    mock_client = Mock()
+    mock_client.messages.create.side_effect = [api_error, good_message]
+    mocker.patch("anthropic.Anthropic", return_value=mock_client)
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+    mocker.patch("time.sleep")
+    call_claude({"global": [], "local": []}, "")
+    mock_uniform.assert_called_once_with(0, 1)
+
+
 def test_main_logs_archive_context_when_available(mocker, tmp_path):
     """main() should log days count when archive context is non-empty (lines 54-55)."""
     articles = {"global": [{"source": "BBC", "title": f"T{i}", "summary": "S"} for i in range(4)],

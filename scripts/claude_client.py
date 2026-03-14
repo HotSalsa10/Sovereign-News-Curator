@@ -3,6 +3,7 @@
 import json
 import logging
 import os
+import random
 import re
 import time
 from typing import Any, cast
@@ -166,13 +167,13 @@ def call_claude(articles: dict[str, Any], archive_context: str) -> dict[str, Any
         except (anthropic.APIError, anthropic.APIConnectionError, anthropic.APITimeoutError) as e:
             last_exc = e
             if attempt < MAX_RETRIES:
-                wait = 2 ** attempt
-                logger.warning("Attempt %d failed: %s. Retrying in %ds...", attempt, e, wait)
+                wait = (2 ** attempt) + random.uniform(0, 1)
+                logger.warning("Attempt %d failed: %s. Retrying in %.2fs...", attempt, e, wait)
                 time.sleep(wait)
         except Exception as e:
             last_exc = e
             if attempt < MAX_RETRIES:
-                wait = 2 ** attempt
-                logger.warning("Attempt %d failed: %s. Retrying in %ds...", attempt, e, wait)
+                wait = (2 ** attempt) + random.uniform(0, 1)
+                logger.warning("Attempt %d failed: %s. Retrying in %.2fs...", attempt, e, wait)
                 time.sleep(wait)
     raise RuntimeError(f"Claude API failed after {MAX_RETRIES} attempts: {last_exc}") from last_exc
