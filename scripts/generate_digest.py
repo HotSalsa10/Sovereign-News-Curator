@@ -392,6 +392,7 @@ def build_html(digest: dict, generated_at: datetime, article_count: dict) -> str
       background:var(--bg3);border:1px solid var(--bd);color:var(--t2);
       border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer;
       font-family:inherit;transition:all .15s;
+      min-height:44px;min-width:44px;
     }}
     .icon-btn:hover{{color:var(--t1);border-color:var(--t2)}}
 
@@ -401,6 +402,7 @@ def build_html(digest: dict, generated_at: datetime, article_count: dict) -> str
       flex:1;padding:8px;border-radius:8px;border:1px solid var(--bd);
       background:transparent;color:var(--t2);font-family:inherit;
       font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;
+      min-height:44px;
     }}
     .tab.on{{background:var(--blue);border-color:var(--blue);color:#fff}}
     .tab.on.local{{background:var(--green);border-color:var(--green)}}
@@ -415,6 +417,7 @@ def build_html(digest: dict, generated_at: datetime, article_count: dict) -> str
       font-size:11px;padding:5px 10px;background:var(--bg3);
       border:1px solid var(--bd);color:var(--t2);border-radius:6px;
       cursor:pointer;font-family:inherit;transition:all .15s;
+      min-height:44px;min-width:44px;
     }}
     .copy-btn:hover{{color:var(--t1)}}
 
@@ -424,6 +427,7 @@ def build_html(digest: dict, generated_at: datetime, article_count: dict) -> str
       width:100%;background:none;border:none;padding:12px 16px;
       display:flex;align-items:center;justify-content:space-between;
       font-family:inherit;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;
+      min-height:44px;
     }}
     .toc-body{{padding:0 16px 12px;display:none}}
     .toc-body.open{{display:block}}
@@ -442,6 +446,7 @@ def build_html(digest: dict, generated_at: datetime, article_count: dict) -> str
       padding:5px 12px;border-radius:20px;border:1px solid var(--bd);
       background:transparent;color:var(--t2);font-size:12px;
       font-family:inherit;cursor:pointer;transition:all .15s;
+      min-height:44px;
     }}
     .flt-btn.active{{background:var(--blue);border-color:var(--blue);color:#fff}}
 
@@ -475,7 +480,7 @@ def build_html(digest: dict, generated_at: datetime, article_count: dict) -> str
     .story-title{{font-size:15px;font-weight:700;color:var(--t1);line-height:1.55;margin-bottom:8px;padding-left:22px}}
     .src-pills{{display:flex;flex-wrap:wrap;gap:4px}}
     .src-pill{{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--t3);border:1px solid var(--bd)}}
-    .expand-icon{{position:absolute;left:14px;top:14px;font-size:20px;color:var(--t3);font-weight:300;transition:transform .2s;line-height:1}}
+    .expand-icon{{position:absolute;inset-inline-start:14px;top:14px;font-size:20px;color:var(--t3);font-weight:300;transition:transform .2s;line-height:1}}
     .story-hdr.open .expand-icon{{transform:rotate(45deg)}}
 
     /* ── STORY BODY ── */
@@ -492,6 +497,7 @@ def build_html(digest: dict, generated_at: datetime, article_count: dict) -> str
       font-size:12px;padding:6px 14px;background:transparent;
       border:1px solid var(--amber);color:var(--amber);border-radius:6px;
       cursor:pointer;font-family:inherit;font-weight:600;transition:all .15s;
+      min-height:44px;
     }}
     .spin-btn.open{{background:var(--amber-d)}}
     .spin-body{{
@@ -507,6 +513,7 @@ def build_html(digest: dict, generated_at: datetime, article_count: dict) -> str
       font-size:12px;padding:6px 14px;background:var(--bg3);
       border:1px solid var(--bd);color:var(--t2);border-radius:6px;
       cursor:pointer;font-family:inherit;transition:all .15s;
+      min-height:44px;
     }}
     .share-btn:hover{{color:var(--t1)}}
 
@@ -515,8 +522,8 @@ def build_html(digest: dict, generated_at: datetime, article_count: dict) -> str
 
     /* ── SCROLL TOP ── */
     #go-top{{
-      position:fixed;bottom:24px;left:16px;
-      width:40px;height:40px;border-radius:50%;
+      position:fixed;bottom:24px;inset-inline-start:16px;
+      width:44px;height:44px;border-radius:50%;
       background:var(--bg3);border:1px solid var(--bd);
       color:var(--t2);font-size:18px;cursor:pointer;
       display:none;align-items:center;justify-content:center;
