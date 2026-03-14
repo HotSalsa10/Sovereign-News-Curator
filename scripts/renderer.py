@@ -1,6 +1,7 @@
 """HTML rendering for the daily digest page."""
 
 import html as html_lib
+import json
 import logging
 from datetime import datetime, timezone, timedelta
 from typing import Any
@@ -161,6 +162,18 @@ def next_run_display(generated_at: datetime) -> str:
     return f"{day} الساعة {ar(h)}:{m_str} {period} (توقيت السعودية)"
 
 
+def build_version_json(digest: dict[str, list[dict[str, Any]]], generated_at: datetime) -> str:
+    """Return version.json content for PWA update detection."""
+    if generated_at.tzinfo is None:
+        generated_at = generated_at.replace(tzinfo=timezone.utc)
+    count = len(digest.get("global", [])) + len(digest.get("local", []))
+    return json.dumps({
+        "date": generated_at.strftime("%Y-%m-%d"),
+        "generated": generated_at.isoformat(),
+        "count": count,
+    })
+
+
 def all_headlines_js(digest: dict[str, list[dict[str, Any]]]) -> str:
     lines = []
     for i, s in enumerate(digest.get("global", []), 1):
@@ -184,6 +197,14 @@ _SVG_SUN = (
     '<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>'
     '<line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>'
     '<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+    '</svg>'
+)
+_SVG_BELL = (
+    '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" '
+    'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" '
+    'aria-hidden="true">'
+    '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>'
+    '<path d="M13.73 21a2 2 0 0 1-3.46 0"/>'
     '</svg>'
 )
 _SVG_MOON = (
@@ -238,6 +259,7 @@ def build_html(
 
     svg_sun  = _SVG_SUN
     svg_moon = _SVG_MOON
+    svg_bell = _SVG_BELL
 
     return f"""<!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -497,7 +519,10 @@ def build_html(
         وقت القراءة: {ar(read_min)} دقائق
       </div>
     </div>
-    <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="تبديل السمة"></button>
+    <div style="display:flex;gap:6px">
+      <button class="icon-btn" id="notif-btn" aria-label="تفعيل الإشعارات" style="display:none">{svg_bell}</button>
+      <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="تبديل السمة"></button>
+    </div>
   </div>
   <div class="tabs">
     <button class="tab on"     onclick="switchTab('g',this)">عالمي ({ar(g_count)})</button>
@@ -764,6 +789,39 @@ async function copyHeadlines(){{
 // ── Scroll-to-top ──
 const goTop=document.getElementById('go-top');
 window.addEventListener('scroll',()=>goTop.classList.toggle('on',scrollY>300));
+
+// ── Notifications ──
+(function initNotifBtn(){{
+  const btn=document.getElementById('notif-btn');
+  if(!('Notification' in window)||!('serviceWorker' in navigator))return;
+  btn.style.display='';
+  btn.onclick=async function(){{
+    const perm=await Notification.requestPermission();
+    if(perm!=='granted'){{showToast('تم رفض الإشعارات',true);return;}}
+    showToast('تم تفعيل الإشعارات ✓');
+    const reg=await navigator.serviceWorker.ready;
+    if('periodicSync' in reg){{
+      try{{await reg.periodicSync.register('check-digest',{{minInterval:3600000}});}}catch(e){{}}
+    }}
+  }};
+}})();
+
+// ── Version check on page focus (new-digest banner) ──
+document.addEventListener('visibilitychange',async()=>{{
+  if(document.visibilityState!=='visible')return;
+  try{{
+    const res=await fetch('./version.json',{{cache:'no-store'}});
+    if(!res.ok)return;
+    const{{date}}=await res.json();
+    const stored=localStorage.getItem('snc-version');
+    if(!stored){{localStorage.setItem('snc-version',date);return;}}
+    if(stored!==date){{showToast('ملخص جديد متاح — اسحب للتحديث ↻');localStorage.setItem('snc-version',date);}}
+  }}catch(e){{}}
+}});
+(async function initVersion(){{
+  if(localStorage.getItem('snc-version'))return;
+  try{{const res=await fetch('./version.json',{{cache:'no-store'}});if(res.ok){{const{{date}}=await res.json();localStorage.setItem('snc-version',date);}}}}catch(e){{}}
+}})();
 
 // ── Service Worker ──
 if('serviceWorker' in navigator){{

@@ -17,6 +17,7 @@ from scripts.main import filter_empty_articles
 from scripts.renderer import (
     _build_badges,
     _build_spin_section,
+    build_version_json,
     get_category_counts,
     next_run_display,
 )
@@ -1407,3 +1408,98 @@ def test_main_logs_archive_context_when_available(mocker, tmp_path):
 
     main()  # should not raise
     assert (tmp_path / "index.html").exists()
+
+
+# ────────────────────────────────────────────────────────────────
+# Tests: build_version_json()
+# ────────────────────────────────────────────────────────────────
+
+def test_build_version_json_structure():
+    """build_version_json should return JSON with required keys."""
+    now = datetime(2026, 3, 15, 6, 0, 0, tzinfo=timezone.utc)
+    digest = {"global": [{"headline": "H"}], "local": []}
+    result = json.loads(build_version_json(digest, now))
+    assert result["date"] == "2026-03-15"
+    assert result["generated"].startswith("2026-03-15")
+    assert result["count"] == 1
+
+
+def test_build_version_json_counts_both_sections():
+    """count should sum global and local stories."""
+    now = datetime(2026, 3, 15, 6, 0, 0, tzinfo=timezone.utc)
+    digest = {"global": [{}] * 3, "local": [{}] * 2}
+    result = json.loads(build_version_json(digest, now))
+    assert result["count"] == 5
+
+
+def test_build_version_json_naive_datetime():
+    """build_version_json should handle naive datetime without crashing."""
+    naive = datetime(2026, 3, 15, 6, 0, 0)  # no tzinfo
+    result = json.loads(build_version_json({"global": [], "local": []}, naive))
+    assert "date" in result
+    assert result["count"] == 0
+
+
+# ────────────────────────────────────────────────────────────────
+# Smoke test: full pipeline end-to-end (all I/O mocked)
+# ────────────────────────────────────────────────────────────────
+
+def test_smoke_full_pipeline_writes_index_and_version(mocker, tmp_path):
+    """main() should write both index.html and version.json with valid content."""
+    articles = {
+        "global": [{"source": "BBC", "title": f"G{i}", "summary": "Content"} for i in range(4)],
+        "local":  [{"source": "SPA", "title": f"L{i}", "summary": "Content"} for i in range(2)],
+    }
+    digest = _sample_digest()
+
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+    mocker.patch("scripts.main.fetch_all_feeds", return_value=articles)
+    mocker.patch("scripts.main.load_archive", return_value="")
+    mocker.patch("scripts.main.call_claude", return_value=digest)
+    mocker.patch("scripts.main.save_archive")
+    mocker.patch("scripts.main.ROOT_DIR", tmp_path)
+
+    main()
+
+    # index.html must exist and contain key content
+    index = tmp_path / "index.html"
+    assert index.exists(), "index.html not written"
+    html = index.read_text(encoding="utf-8")
+    assert "<!DOCTYPE html>" in html
+    assert "Global Headline" in html        # headline from _sample_digest
+    assert "المنتقي السيادي" in html        # Arabic app name
+    assert "serviceWorker" in html          # SW registration
+    assert "manifest.json" in html          # PWA manifest link
+    assert "version.json" in html           # version check JS
+
+    # version.json must exist with correct schema
+    ver = tmp_path / "version.json"
+    assert ver.exists(), "version.json not written"
+    data = json.loads(ver.read_text(encoding="utf-8"))
+    assert "date" in data
+    assert "generated" in data
+    assert data["count"] == 2               # 1 global + 1 local from _sample_digest
+
+
+def test_smoke_index_html_is_valid_pwa(mocker, tmp_path):
+    """index.html produced by main() must pass key PWA and WCAG checks."""
+    articles = {
+        "global": [{"source": "BBC", "title": f"G{i}", "summary": "Content"} for i in range(4)],
+        "local":  [{"source": "SPA", "title": f"L{i}", "summary": "Content"} for i in range(2)],
+    }
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+    mocker.patch("scripts.main.fetch_all_feeds", return_value=articles)
+    mocker.patch("scripts.main.load_archive", return_value="")
+    mocker.patch("scripts.main.call_claude", return_value=_sample_digest())
+    mocker.patch("scripts.main.save_archive")
+    mocker.patch("scripts.main.ROOT_DIR", tmp_path)
+
+    main()
+    html = (tmp_path / "index.html").read_text(encoding="utf-8")
+
+    assert 'maximum-scale' not in html          # WCAG: pinch-zoom must not be blocked
+    assert 'lang="ar"' in html                  # language declared
+    assert 'dir="rtl"' in html                  # RTL direction
+    assert 'prefers-reduced-motion' in html     # reduced-motion respected
+    assert 'aria-label' in html                 # at least one accessible label
+    assert 'snc-read-v1' in html               # read-state persistence
