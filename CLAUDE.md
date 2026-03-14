@@ -84,7 +84,7 @@ Run the 6-phase verification gate before every commit:
 python -m pytest tests/ --cov=scripts --cov-report=term-missing
 
 # 2. Type check
-mypy scripts/generate_digest.py --ignore-missing-imports
+mypy scripts/ --ignore-missing-imports
 
 # 3. Lint
 ruff check scripts/
@@ -191,10 +191,7 @@ def add_category(digest, story, cat):
 - Target: **200–400 lines** per file (max 800)
 - One responsibility per file — high cohesion, low coupling
 - Group by feature/domain, not by type
-- If `generate_digest.py` exceeds 800 lines, split into:
-  - `scripts/fetcher.py` — RSS fetching
-  - `scripts/renderer.py` — HTML rendering
-  - `scripts/claude_client.py` — API calls
+- `scripts/` is already split into focused modules (see §9 File Structure)
 
 ### Error Handling (never swallow errors)
 ```python
@@ -202,10 +199,10 @@ def add_category(digest, story, cat):
 try:
     digest = call_claude(articles, archive_context)
 except anthropic.APIError as e:
-    print(f"ERROR: Claude API call failed: {e}")
+    logger.error("Claude API call failed: %s", e)
     sys.exit(1)
 except Exception as e:
-    print(f"ERROR: Unexpected failure: {e}")
+    logger.error("Unexpected failure: %s", e)
     raise
 ```
 
@@ -213,7 +210,7 @@ except Exception as e:
 ```python
 # GOOD — validate at startup, fail fast
 if not os.environ.get("ANTHROPIC_API_KEY"):
-    print("ERROR: ANTHROPIC_API_KEY environment variable not set")
+    logger.error("ANTHROPIC_API_KEY environment variable not set")
     sys.exit(1)
 
 # GOOD — validate external API responses
@@ -353,10 +350,15 @@ ci: add mypy type checking to CI pipeline
 ```
 Sovereign-News-Curator/
 ├── scripts/
-│   └── generate_digest.py         # Main pipeline (RSS → Claude → HTML)
+│   ├── generate_digest.py         # Re-export shim (backwards compat + __main__ entry)
+│   ├── fetcher.py                 # RSS feed fetching (parallel, 23 feeds)
+│   ├── archive.py                 # Living Context Engine (load/save 3-day window)
+│   ├── claude_client.py           # Claude API integration (prompt, retry, validation)
+│   ├── renderer.py                # HTML generation (story cards, TOC, PWA shell)
+│   └── main.py                   # Pipeline orchestration (entry point)
 ├── tests/
 │   ├── __init__.py
-│   └── test_generate_digest.py    # Unit tests (16+ tests, 80%+ coverage)
+│   └── test_generate_digest.py    # Unit tests (86 tests, 99% coverage)
 ├── archive/
 │   └── YYYY-MM-DD.json            # 3-day headline history
 ├── .planning/                     # GSD planning artifacts (gitignored optional)
@@ -377,30 +379,34 @@ Sovereign-News-Curator/
         └── ci.yml                 # PR test runner (coverage gate)
 ```
 
-### Key Functions in `generate_digest.py`
+### Key Functions by Module
 
-| Function | Purpose | Priority |
-|----------|---------|----------|
-| `fetch_feed(feed)` | Fetch and parse one RSS feed | Core |
-| `fetch_all_feeds()` | Parallel fetch of 18 feeds | Core |
-| `load_archive()` | Load 3-day context window | Core |
-| `call_claude(articles, archive_context)` | Send to LLM, extract JSON | Core |
-| `build_html(digest, generated_at, article_count)` | Render HTML page | Core |
-| `strip_html(text)` | Remove HTML tags from RSS summaries | Utility — **test** |
-| `extract_json(text)` | Parse JSON from Claude response | Utility — **test** |
-| `safe(text)` | HTML-escape strings (XSS prevention) | Utility — **test** |
-| `ar(n)` | Convert ASCII digits to Arabic-Indic | Utility — **test** |
-| `build_story_cards(stories, section_id)` | Generate HTML cards | Utility — **test** |
-| `build_toc(digest)` | Generate table of contents | Utility — **test** |
-| `get_categories(digest)` | Extract unique categories | Utility — **test** |
-| `count_words(digest)` | Calculate reading time | Utility — **test** |
+| Module | Function | Purpose |
+|--------|----------|---------|
+| `fetcher.py` | `fetch_feed(feed)` | Fetch and parse one RSS feed |
+| `fetcher.py` | `fetch_all_feeds()` | Parallel fetch of 23 feeds |
+| `fetcher.py` | `strip_html(text)` | Remove HTML tags from RSS summaries |
+| `archive.py` | `load_archive()` | Load 3-day context window |
+| `archive.py` | `save_archive(digest, date_str)` | Persist today's headlines |
+| `claude_client.py` | `call_claude(articles, archive_context)` | Send to LLM, extract JSON |
+| `claude_client.py` | `extract_json(text)` | Parse JSON from Claude response |
+| `claude_client.py` | `validate_digest(digest)` | Schema-validate Claude output |
+| `claude_client.py` | `format_for_claude(...)` | Format articles for the prompt |
+| `renderer.py` | `build_html(digest, generated_at, article_count)` | Render full HTML page |
+| `renderer.py` | `build_story_cards(stories, section_id)` | Generate story card HTML |
+| `renderer.py` | `build_toc(digest)` | Generate table of contents |
+| `renderer.py` | `get_categories(digest)` | Extract unique categories |
+| `renderer.py` | `count_words(digest)` | Calculate reading time |
+| `renderer.py` | `safe(text)` | HTML-escape strings (XSS prevention) |
+| `renderer.py` | `ar(n)` | Convert ASCII digits to Arabic-Indic |
+| `main.py` | `main()` | Pipeline orchestration entry point |
 
 ### Daily Digest CI/CD
 
 1. **Trigger**: 06:00 UTC daily (or manual dispatch)
 2. **Checkout**: Clone repo with latest code
 3. **Setup**: Python 3.12 + `pip install -r requirements.txt`
-4. **Generate**: `python scripts/generate_digest.py`
+4. **Generate**: `python -m scripts.generate_digest`
 5. **Commit**: Auto-commit `digest: YYYY-MM-DD HH:MM UTC`
 6. **Push**: GitHub Bot → GitHub Pages live
 
@@ -459,7 +465,7 @@ pip install -r requirements.txt
 python -m pytest tests/ -v --cov=scripts --cov-report=term-missing
 
 # 5. Generate a digest (manual test)
-python scripts/generate_digest.py
+python -m scripts.generate_digest
 
 # 6. Start development cycle
 # Discuss → Plan (.planning/) → TDD (red/green/improve) → Verify → Commit
