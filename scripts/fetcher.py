@@ -40,6 +40,7 @@ LOCAL_FEEDS = [
     {"name": "الوطن",                 "url": "https://www.alwatan.com.sa/rssFeed/1"},
     {"name": "الجزيرة السعودية",      "url": "https://www.al-jazirah.com/rss/ln.xml"},
     {"name": "مكة",                   "url": "https://makkahnewspaper.com/rssFeed/0"},
+    {"name": "اليوم",                 "url": "https://www.alyaum.com/rssFeed/1005"},
 ]
 
 # ─────────────────────────────────────────────

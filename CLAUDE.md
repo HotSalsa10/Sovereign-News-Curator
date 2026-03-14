@@ -9,7 +9,7 @@
 The **Sovereign News Curator** ("المنتقي السيادي للأخبار") is a fully automated, zero-click daily news briefing application. It delivers an "Epistemic Defense Shield" — protecting users from cognitive overload, algorithmic bias, and media manipulation.
 
 ### The Pipeline
-1. **Data Ingestion**: GitHub Actions runs daily at 06:00 UTC. Python script fetches 19 RSS feeds in parallel (15 global news, 4 Saudi Arabic-language).
+1. **Data Ingestion**: GitHub Actions runs daily at 06:00 UTC. Python script fetches 20 RSS feeds in parallel (15 global news, 5 Saudi Arabic-language).
 2. **Living Context Engine**: Loads archived headlines (3-day window) to detect developing stories.
 3. **LLM Processing**: Sends articles to Claude (claude-sonnet-4-6) via Anthropic API.
 4. **JSON Digest**: Claude returns structured JSON with de-sensationalized headlines, consensus facts, media spin analysis, category tags, developing-story flags — all in Arabic.
