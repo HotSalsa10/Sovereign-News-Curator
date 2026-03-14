@@ -957,6 +957,84 @@ def test_validate_digest_empty_sections_pass():
 
 
 # ────────────────────────────────────────────────────────────────
+# Tests: filter_empty_articles()
+# ────────────────────────────────────────────────────────────────
+
+from scripts.main import filter_empty_articles
+
+
+def test_filter_empty_articles_removes_no_summary(mocker):
+    """Articles with '(No summary)' should be filtered out before sending to Claude."""
+    articles = {
+        "global": [
+            {"source": "BBC", "title": "Real news", "summary": "Actual content here."},
+            {"source": "Reuters", "title": "Empty news", "summary": "(No summary)"},
+        ],
+        "local": [
+            {"source": "SPA", "title": "Local", "summary": "(No summary)"},
+        ],
+    }
+    result = filter_empty_articles(articles)
+    assert len(result["global"]) == 1
+    assert result["global"][0]["title"] == "Real news"
+    assert len(result["local"]) == 0
+
+
+def test_filter_empty_articles_keeps_valid_articles():
+    """Articles with real summaries should not be filtered."""
+    articles = {
+        "global": [
+            {"source": "BBC", "title": "A", "summary": "Content A"},
+            {"source": "CNN", "title": "B", "summary": "Content B"},
+        ],
+        "local": [
+            {"source": "SPA", "title": "C", "summary": "Content C"},
+        ],
+    }
+    result = filter_empty_articles(articles)
+    assert len(result["global"]) == 2
+    assert len(result["local"]) == 1
+
+
+def test_filter_empty_articles_logs_dropped_count(mocker):
+    """filter_empty_articles should log how many articles were dropped."""
+    mock_logger = mocker.patch("scripts.main.logger")
+    articles = {
+        "global": [
+            {"source": "BBC", "title": "Real", "summary": "Content"},
+            {"source": "Fox", "title": "Empty", "summary": "(No summary)"},
+        ],
+        "local": [],
+    }
+    filter_empty_articles(articles)
+    mock_logger.info.assert_called()
+
+
+def test_main_filters_empty_articles_before_claude(mocker, tmp_path):
+    """main() should filter empty articles before calling Claude."""
+    articles = {
+        "global": [
+            {"source": "BBC", "title": f"T{i}", "summary": "Content"} for i in range(4)
+        ] + [{"source": "Fox", "title": "Empty", "summary": "(No summary)"}],
+        "local": [{"source": "SPA", "title": "L", "summary": "Content"}],
+    }
+    digest = _sample_digest()
+
+    mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
+    mocker.patch("scripts.main.fetch_all_feeds", return_value=articles)
+    mocker.patch("scripts.main.load_archive", return_value="")
+    mock_claude = mocker.patch("scripts.main.call_claude", return_value=digest)
+    mocker.patch("scripts.main.save_archive")
+    mocker.patch("scripts.main.ROOT_DIR", tmp_path)
+
+    main()
+
+    called_articles = mock_claude.call_args[0][0]
+    summaries = [a["summary"] for a in called_articles["global"]]
+    assert "(No summary)" not in summaries
+
+
+# ────────────────────────────────────────────────────────────────
 # Tests: call_claude() retry logic  [Phase 1]
 # ────────────────────────────────────────────────────────────────
 

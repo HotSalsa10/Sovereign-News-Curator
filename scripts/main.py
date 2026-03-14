@@ -18,6 +18,28 @@ from .renderer import build_html
 MIN_ARTICLES = 5
 ROOT_DIR = Path(__file__).parent.parent
 
+logger = logging.getLogger(__name__)
+
+# ─────────────────────────────────────────────
+# HELPERS
+# ─────────────────────────────────────────────
+
+def filter_empty_articles(articles: dict[str, list[dict[str, str]]]) -> dict[str, list[dict[str, str]]]:
+    """Remove articles with no real content to avoid wasting Claude tokens."""
+    def _keep(a: dict[str, str]) -> bool:
+        return a.get("summary", "") != "(No summary)"
+
+    filtered = {
+        "global": [a for a in articles["global"] if _keep(a)],
+        "local": [a for a in articles["local"] if _keep(a)],
+    }
+    dropped = (len(articles["global"]) - len(filtered["global"])) + \
+              (len(articles["local"]) - len(filtered["local"]))
+    if dropped:
+        logger.info("Filtered %d empty article(s) before Claude call", dropped)
+    return filtered
+
+
 # ─────────────────────────────────────────────
 # PIPELINE
 # ─────────────────────────────────────────────
@@ -28,7 +50,6 @@ def main() -> None:
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-    logger = logging.getLogger(__name__)
 
     if not os.environ.get("ANTHROPIC_API_KEY"):
         logger.error("ANTHROPIC_API_KEY not set.")
@@ -38,7 +59,7 @@ def main() -> None:
     logger.info("  SOVEREIGN NEWS CURATOR  |  Model: %s", MODEL)
     logger.info("=" * 52)
 
-    articles = fetch_all_feeds()
+    articles = filter_empty_articles(fetch_all_feeds())
 
     total_articles = len(articles["global"]) + len(articles["local"])
     if total_articles < MIN_ARTICLES:
