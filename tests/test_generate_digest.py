@@ -13,6 +13,13 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 from datetime import datetime, timezone
+from scripts.main import filter_empty_articles
+from scripts.renderer import (
+    _build_badges,
+    _build_spin_section,
+    get_category_counts,
+    next_run_display,
+)
 from scripts.generate_digest import (
     strip_html,
     extract_json,
@@ -357,13 +364,6 @@ def test_build_toc_html_escaping():
 # ────────────────────────────────────────────────────────────────
 # Tests: _build_badges() / _build_spin_section() helpers
 # ────────────────────────────────────────────────────────────────
-
-from scripts.renderer import (
-    _build_badges,
-    _build_spin_section,
-    get_category_counts,
-    next_run_display,
-)
 
 
 def test_build_badges_top_and_developing():
@@ -1145,8 +1145,6 @@ def test_validate_digest_empty_sections_pass():
 # ────────────────────────────────────────────────────────────────
 # Tests: filter_empty_articles()
 # ────────────────────────────────────────────────────────────────
-
-from scripts.main import filter_empty_articles
 
 
 def test_filter_empty_articles_removes_no_summary(mocker):

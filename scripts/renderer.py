@@ -142,6 +142,9 @@ def count_words(digest: dict[str, list[dict[str, Any]]]) -> int:
 def next_run_display(generated_at: datetime) -> str:
     """Return the next scheduled digest run as an Arabic-Indic time string."""
     saudi_tz = timezone(timedelta(hours=3))
+    # Ensure tz-aware for safe astimezone() call
+    if generated_at.tzinfo is None:
+        generated_at = generated_at.replace(tzinfo=timezone.utc)
     # Pipeline fires daily at 06:00 UTC = 09:00 AST (+3)
     run_at_utc = generated_at.replace(hour=6, minute=0, second=0, microsecond=0)
     if generated_at >= run_at_utc:
@@ -254,7 +257,7 @@ def build_html(
     :root{{
       --bg:#0a0a0a;--bg2:#111113;--bg3:#18181b;
       --bd:#27272a;--bd2:#1f1f23;
-      --t1:#f4f4f5;--t2:#a1a1aa;--t3:#52525b;
+      --t1:#f4f4f5;--t2:#a1a1aa;--t3:#808080;
       --blue:#3b82f6;--blue-d:#1d3b6e;
       --green:#10b981;--green-d:#064e3b;
       --amber:#f59e0b;--amber-d:#292203;
@@ -263,7 +266,7 @@ def build_html(
     .light{{
       --bg:#f4f4f5;--bg2:#fff;--bg3:#e4e4e7;
       --bd:#d4d4d8;--bd2:#e4e4e7;
-      --t1:#09090b;--t2:#52525b;--t3:#a1a1aa;
+      --t1:#09090b;--t2:#52525b;--t3:#5a5a65;
       --blue-d:#dbeafe;--green-d:#d1fae5;--amber-d:#fef3c7;
     }}
     *,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
@@ -675,8 +678,18 @@ function filterCat(btn){{
   curCat=btn.dataset.cat;
   document.querySelectorAll('.flt-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+  try{{sessionStorage.setItem('snc-cat',curCat);}}catch{{}}
   applyFilter();
 }}
+(function restoreCat(){{
+  try{{
+    const saved=sessionStorage.getItem('snc-cat');
+    if(saved&&saved!=='all'){{
+      const btn=document.querySelector('.flt-btn[data-cat="'+saved+'"]');
+      if(btn){{curCat=saved;document.querySelectorAll('.flt-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');applyFilter();}}
+    }}
+  }}catch{{}}
+}})();
 function applyFilter(){{
   const section=document.getElementById('sec-'+curTab);
   let visible=0;
