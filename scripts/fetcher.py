@@ -2,6 +2,7 @@
 
 import concurrent.futures
 import re
+import socket
 
 import feedparser
 
@@ -10,6 +11,8 @@ import feedparser
 # ─────────────────────────────────────────────
 
 ARTICLES_PER_FEED = 3
+FEED_TIMEOUT = 10  # seconds per feed request
+USER_AGENT = "Sovereign-News-Curator/1.0 (+https://github.com/HotSalsa10/Sovereign-News-Curator)"
 
 GLOBAL_FEEDS = [
     {"name": "BBC World News",        "url": "http://feeds.bbci.co.uk/news/world/rss.xml"},
@@ -48,9 +51,14 @@ def strip_html(text: str) -> str:
     return re.sub(r'<[^>]+>', '', text or '').strip()
 
 
-def fetch_feed(feed: dict) -> list[dict]:
+def fetch_feed(feed: dict[str, str]) -> list[dict[str, str]]:
     try:
-        parsed = feedparser.parse(feed["url"])
+        old_timeout = socket.getdefaulttimeout()
+        socket.setdefaulttimeout(FEED_TIMEOUT)
+        try:
+            parsed = feedparser.parse(feed["url"], agent=USER_AGENT)
+        finally:
+            socket.setdefaulttimeout(old_timeout)
         articles = []
         for entry in parsed.entries[:ARTICLES_PER_FEED]:
             title = strip_html(entry.get("title", "")).strip()
@@ -68,15 +76,18 @@ def fetch_feed(feed: dict) -> list[dict]:
             })
         print(f"  [OK]   {feed['name']}: {len(articles)} articles")
         return articles
-    except Exception as e:
+    except (OSError, TimeoutError) as e:
         print(f"  [FAIL] {feed['name']}: {e}")
+        return []
+    except Exception as e:
+        print(f"  [FAIL] {feed['name']}: Unexpected error: {e}")
         return []
 
 
-def fetch_all_feeds() -> dict:
+def fetch_all_feeds() -> dict[str, list[dict[str, str]]]:
     print(f"\n[RSS] Fetching {len(GLOBAL_FEEDS) + len(LOCAL_FEEDS)} feeds in parallel...")
     all_feeds = [("global", f) for f in GLOBAL_FEEDS] + [("local", f) for f in LOCAL_FEEDS]
-    results: dict[str, list] = {"global": [], "local": []}
+    results: dict[str, list[dict[str, str]]] = {"global": [], "local": []}
     with concurrent.futures.ThreadPoolExecutor(max_workers=23) as executor:
         future_to_cat = {executor.submit(fetch_feed, f): cat for cat, f in all_feeds}
         for future in concurrent.futures.as_completed(future_to_cat):

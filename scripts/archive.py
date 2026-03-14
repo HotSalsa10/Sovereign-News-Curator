@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+from typing import Any
 
 # ─────────────────────────────────────────────
 # CONFIG
@@ -29,12 +30,12 @@ def load_archive() -> str:
             g = " / ".join(data.get("global", [])[:6])
             local_line = " / ".join(data.get("local", [])[:4])
             lines.append(f"[{date}] Global: {g} | Saudi: {local_line}")
-        except Exception:
-            pass
+        except (json.JSONDecodeError, UnicodeDecodeError, OSError) as e:
+            print(f"[Archive] Warning: {f.name} corrupted, skipping: {e}")
     return "\n".join(lines)
 
 
-def save_archive(digest: dict, date_str: str) -> None:
+def save_archive(digest: dict[str, Any], date_str: str) -> None:
     archive_dir = ROOT_DIR / "archive"
     archive_dir.mkdir(exist_ok=True)
     data = {

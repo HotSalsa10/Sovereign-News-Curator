@@ -2,6 +2,7 @@
 
 import html as html_lib
 from datetime import datetime, timezone, timedelta
+from typing import Any
 
 # ─────────────────────────────────────────────
 # HELPERS
@@ -18,7 +19,7 @@ def safe(text: str) -> str:
     return html_lib.escape(str(text or ""), quote=True)
 
 
-def build_story_cards(stories: list, section_id: str) -> str:
+def build_story_cards(stories: list[dict[str, Any]], section_id: str) -> str:
     if not stories:
         return '<p class="empty-state">لا أستطيع حالياً تحديد توافق حقيقي لهذه الفئة اليوم.</p>'
 
@@ -77,7 +78,7 @@ def build_story_cards(stories: list, section_id: str) -> str:
     return "\n".join(cards)
 
 
-def build_toc(digest: dict) -> str:
+def build_toc(digest: dict[str, list[dict[str, Any]]]) -> str:
     lines = []
     for section_key, label in [("global", "الأخبار العالمية"), ("local", "أخبار المملكة")]:
         stories = digest.get(section_key, [])
@@ -93,7 +94,7 @@ def build_toc(digest: dict) -> str:
     return "\n".join(lines)
 
 
-def get_categories(digest: dict) -> list:
+def get_categories(digest: dict[str, list[dict[str, Any]]]) -> list[str]:
     cats = set()
     for sk in ("global", "local"):
         for s in digest.get(sk, []):
@@ -102,7 +103,7 @@ def get_categories(digest: dict) -> list:
     return sorted(cats)
 
 
-def count_words(digest: dict) -> int:
+def count_words(digest: dict[str, list[dict[str, Any]]]) -> int:
     words = 0
     for sk in ("global", "local"):
         for s in digest.get(sk, []):
@@ -110,7 +111,7 @@ def count_words(digest: dict) -> int:
     return words
 
 
-def all_headlines_js(digest: dict) -> str:
+def all_headlines_js(digest: dict[str, list[dict[str, Any]]]) -> str:
     lines = []
     for i, s in enumerate(digest.get("global", []), 1):
         lines.append(f"{i}. {s.get('headline','')}")
@@ -124,7 +125,11 @@ def all_headlines_js(digest: dict) -> str:
 # HTML BUILD
 # ─────────────────────────────────────────────
 
-def build_html(digest: dict, generated_at: datetime, article_count: dict) -> str:
+def build_html(
+    digest: dict[str, list[dict[str, Any]]],
+    generated_at: datetime,
+    article_count: dict[str, int],
+) -> str:
     saudi_tz  = timezone(timedelta(hours=3))
     saudi_now = generated_at.astimezone(saudi_tz)
     iso       = generated_at.isoformat()

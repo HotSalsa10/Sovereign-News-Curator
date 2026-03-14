@@ -4,7 +4,7 @@ import json
 import os
 import re
 import time
-from typing import cast
+from typing import Any, cast
 
 import anthropic
 
@@ -27,7 +27,11 @@ RULES: Empty section = []. All Arabic text in headline/summary/spin/context/cate
 # FUNCTIONS
 # ─────────────────────────────────────────────
 
-def format_for_claude(global_articles: list, local_articles: list, archive_context: str) -> str:
+def format_for_claude(
+    global_articles: list[dict[str, str]],
+    local_articles: list[dict[str, str]],
+    archive_context: str,
+) -> str:
     def section(articles: list, label: str) -> str:
         if not articles:
             return f"### {label}\n(No articles fetched from feeds)"
@@ -45,16 +49,16 @@ def format_for_claude(global_articles: list, local_articles: list, archive_conte
     return "\n\n".join(parts)
 
 
-def extract_json(text: str) -> dict:
+def extract_json(text: str) -> dict[str, Any]:
     text = re.sub(r'^```(?:json)?\s*', '', text.strip(), flags=re.MULTILINE)
     text = re.sub(r'\s*```$', '', text.strip(), flags=re.MULTILINE)
     match = re.search(r'\{[\s\S]*\}', text)
     if match:
-        return json.loads(match.group())
+        return json.loads(match.group())  # type: ignore[no-any-return]
     raise ValueError("No valid JSON in Claude response")
 
 
-def validate_digest(digest: dict) -> None:
+def validate_digest(digest: dict[str, Any]) -> None:
     """Raise ValueError if digest is missing required top-level keys or story fields."""
     required_story_fields = ("headline", "summary", "sources", "category")
     for key in ("global", "local"):
@@ -67,7 +71,7 @@ def validate_digest(digest: dict) -> None:
                     raise ValueError(f"Story {i} in '{section}' missing field '{field}'")
 
 
-def call_claude(articles: dict, archive_context: str) -> dict:
+def call_claude(articles: dict[str, Any], archive_context: str) -> dict[str, Any]:
     from anthropic.types import TextBlock
     print(f"\n[Claude] Calling {MODEL}...")
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
@@ -78,17 +82,30 @@ def call_claude(articles: dict, archive_context: str) -> dict:
             message = client.messages.create(
                 model=MODEL,
                 max_tokens=8192,
+                timeout=300.0,
                 system=SYSTEM_PROMPT,
                 messages=[{"role": "user", "content": user_content}],
             )
             raw = cast(TextBlock, message.content[0]).text
-            print(f"[Claude] Done. Tokens — input: {message.usage.input_tokens}, output: {message.usage.output_tokens}")
+            print(
+                f"[Claude] Done. Tokens — "
+                f"input: {message.usage.input_tokens}, "
+                f"output: {message.usage.output_tokens}"
+            )
             digest = extract_json(raw)
             validate_digest(digest)
             for section_key in ("global", "local"):
                 for story in digest.get(section_key, []):
                     story["source_count"] = len(story.get("sources", []))
             return digest
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except (anthropic.APIError, anthropic.APIConnectionError, anthropic.APITimeoutError) as e:
+            last_exc = e
+            if attempt < MAX_RETRIES:
+                wait = 2 ** attempt
+                print(f"[Claude] Attempt {attempt} failed: {e}. Retrying in {wait}s...")
+                time.sleep(wait)
         except Exception as e:
             last_exc = e
             if attempt < MAX_RETRIES:
