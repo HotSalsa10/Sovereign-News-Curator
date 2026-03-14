@@ -1,0 +1,46 @@
+"""Archive loading and saving for the Living Context Engine."""
+
+import json
+from pathlib import Path
+
+# ─────────────────────────────────────────────
+# CONFIG
+# ─────────────────────────────────────────────
+
+ARCHIVE_DAYS = 3
+ROOT_DIR = Path(__file__).parent.parent
+
+# ─────────────────────────────────────────────
+# FUNCTIONS
+# ─────────────────────────────────────────────
+
+def load_archive() -> str:
+    archive_dir = ROOT_DIR / "archive"
+    if not archive_dir.exists():
+        return ""
+    files = sorted(archive_dir.glob("*.json"), reverse=True)[:ARCHIVE_DAYS]
+    if not files:
+        return ""
+    lines = ["HISTORICAL CONTEXT — story headlines from the past 7 days (use this to detect developing stories and add context):"]
+    for f in reversed(files):
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            date = f.stem
+            g = " / ".join(data.get("global", [])[:6])
+            local_line = " / ".join(data.get("local", [])[:4])
+            lines.append(f"[{date}] Global: {g} | Saudi: {local_line}")
+        except Exception:
+            pass
+    return "\n".join(lines)
+
+
+def save_archive(digest: dict, date_str: str) -> None:
+    archive_dir = ROOT_DIR / "archive"
+    archive_dir.mkdir(exist_ok=True)
+    data = {
+        "global": [s.get("headline", "") for s in digest.get("global", [])],
+        "local":  [s.get("headline", "") for s in digest.get("local", [])],
+    }
+    out = archive_dir / f"{date_str}.json"
+    out.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"[Archive] Saved → {out.name}")

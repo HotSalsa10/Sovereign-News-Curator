@@ -449,7 +449,7 @@ def test_load_archive_empty_directory():
     """Empty archive directory should return empty string."""
     with tempfile.TemporaryDirectory() as tmpdir:
         tmppath = Path(tmpdir)
-        with patch("scripts.generate_digest.ROOT_DIR", tmppath):
+        with patch("scripts.archive.ROOT_DIR", tmppath):
             result = load_archive()
             assert result == ""
 
@@ -471,7 +471,7 @@ def test_load_archive_single_file():
             encoding="utf-8"
         )
 
-        with patch("scripts.generate_digest.ROOT_DIR", tmppath):
+        with patch("scripts.archive.ROOT_DIR", tmppath):
             result = load_archive()
             assert "2026-03-10" in result
             assert "Headline 1" in result
@@ -495,7 +495,7 @@ def test_load_archive_multiple_files():
                 encoding="utf-8"
             )
 
-        with patch("scripts.generate_digest.ROOT_DIR", tmppath):
+        with patch("scripts.archive.ROOT_DIR", tmppath):
             result = load_archive()
             # Should contain the newest file references
             assert "2026-03-10" in result
@@ -519,7 +519,7 @@ def test_load_archive_corrupt_file():
             encoding="utf-8"
         )
 
-        with patch("scripts.generate_digest.ROOT_DIR", tmppath):
+        with patch("scripts.archive.ROOT_DIR", tmppath):
             result = load_archive()
             # Should not crash, should contain valid file
             assert "Valid" in result
@@ -543,8 +543,8 @@ def test_load_archive_max_7_days():
                 encoding="utf-8"
             )
 
-        with patch("scripts.generate_digest.ROOT_DIR", tmppath):
-            with patch("scripts.generate_digest.ARCHIVE_DAYS", 7):
+        with patch("scripts.archive.ROOT_DIR", tmppath):
+            with patch("scripts.archive.ARCHIVE_DAYS", 7):
                 result = load_archive()
                 # Should only have the 7 most recent days
                 assert result.count("[2026-03-") == 7
@@ -562,7 +562,7 @@ def test_save_archive_creates_file():
     }
     with tempfile.TemporaryDirectory() as tmpdir:
         tmppath = Path(tmpdir)
-        with patch("scripts.generate_digest.ROOT_DIR", tmppath):
+        with patch("scripts.archive.ROOT_DIR", tmppath):
             save_archive(digest, "2026-03-14")
             out = tmppath / "archive" / "2026-03-14.json"
             assert out.exists()
@@ -575,7 +575,7 @@ def test_save_archive_empty_digest():
     """save_archive with empty digest should write empty arrays."""
     with tempfile.TemporaryDirectory() as tmpdir:
         tmppath = Path(tmpdir)
-        with patch("scripts.generate_digest.ROOT_DIR", tmppath):
+        with patch("scripts.archive.ROOT_DIR", tmppath):
             save_archive({}, "2026-03-14")
             out = tmppath / "archive" / "2026-03-14.json"
             data = json.loads(out.read_text(encoding="utf-8"))
@@ -680,7 +680,7 @@ def test_fetch_feed_returns_empty_on_exception(mocker):
 def test_fetch_all_feeds_aggregates_results(mocker):
     """fetch_all_feeds should combine results from all feeds."""
     mocker.patch(
-        "scripts.generate_digest.fetch_feed",
+        "scripts.fetcher.fetch_feed",
         return_value=[{"source": "Test", "title": "T", "summary": "S"}],
     )
     result = fetch_all_feeds()
@@ -851,11 +851,11 @@ def test_main_runs_full_pipeline(mocker, tmp_path):
                 "local":  [{"source": "SPA", "title": f"L{i}", "summary": "S"} for i in range(2)]}
 
     mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
-    mocker.patch("scripts.generate_digest.fetch_all_feeds", return_value=articles)
-    mocker.patch("scripts.generate_digest.load_archive", return_value="")
-    mocker.patch("scripts.generate_digest.call_claude", return_value=digest)
-    mocker.patch("scripts.generate_digest.save_archive")
-    mocker.patch("scripts.generate_digest.ROOT_DIR", tmp_path)
+    mocker.patch("scripts.main.fetch_all_feeds", return_value=articles)
+    mocker.patch("scripts.main.load_archive", return_value="")
+    mocker.patch("scripts.main.call_claude", return_value=digest)
+    mocker.patch("scripts.main.save_archive")
+    mocker.patch("scripts.main.ROOT_DIR", tmp_path)
 
     main()
 
@@ -985,10 +985,10 @@ def test_main_exits_when_no_articles(mocker):
     """main() should exit(1) if fetch returns fewer than MIN_ARTICLES articles."""
     mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
     mocker.patch(
-        "scripts.generate_digest.fetch_all_feeds",
+        "scripts.main.fetch_all_feeds",
         return_value={"global": [], "local": []},
     )
-    mocker.patch("scripts.generate_digest.load_archive", return_value="")
+    mocker.patch("scripts.main.load_archive", return_value="")
 
     with pytest.raises(SystemExit) as exc_info:
         main()
@@ -1003,11 +1003,11 @@ def test_main_continues_when_enough_articles(mocker, tmp_path):
     digest = _sample_digest()
 
     mocker.patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
-    mocker.patch("scripts.generate_digest.fetch_all_feeds", return_value=articles)
-    mocker.patch("scripts.generate_digest.load_archive", return_value="")
-    mocker.patch("scripts.generate_digest.call_claude", return_value=digest)
-    mocker.patch("scripts.generate_digest.save_archive")
-    mocker.patch("scripts.generate_digest.ROOT_DIR", tmp_path)
+    mocker.patch("scripts.main.fetch_all_feeds", return_value=articles)
+    mocker.patch("scripts.main.load_archive", return_value="")
+    mocker.patch("scripts.main.call_claude", return_value=digest)
+    mocker.patch("scripts.main.save_archive")
+    mocker.patch("scripts.main.ROOT_DIR", tmp_path)
 
     main()  # should not raise
     assert (tmp_path / "index.html").exists()
